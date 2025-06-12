@@ -58,6 +58,7 @@ export default function Dashboard({ children }) {
             href: '#',
             subHref: [
                 { title: 'Contenido', href: 'bannerportada' },
+                { title: 'Slider', href: 'slider' },
                 { title: 'Marcas', href: 'marcas' },
                 { title: 'Instagram', href: 'instagram' },
             ],

@@ -21,6 +21,7 @@ use App\Http\Controllers\NovedadesController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\PrivadaController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\SliderController;
 use App\Http\Controllers\SubProductoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ValoresController;
@@ -130,6 +131,11 @@ Route::middleware('auth:admin')->group(function () {
     Route::delete('admin/marcasProducto/destroy', [MarcaProductoController::class, 'destroy'])->name('admin.marcasProducto.destroy');
 
     Route::post('/importar-excel', [ImportController::class, 'importar'])->name('importar.excel');
+
+    Route::get('admin/slider', [SliderController::class, 'index'])->name('admin.slider');
+    Route::post('admin/slider/update', [SliderController::class, 'update'])->name('admin.slider.update');
+    Route::delete('admin/slider/destroy', [SliderController::class, 'destroy'])->name('admin.slider.destroy');
+    Route::post('admin/slider/store', [SliderController::class, 'store'])->name('admin.slider.store');
 
     Route::get('/admin/dashboard', function () {
         if (!Auth::guard('admin')->check()) {

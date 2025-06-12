@@ -17,6 +17,7 @@ use App\Models\Nosotros;
 use App\Models\Novedades;
 use App\Models\Producto;
 use App\Models\Provincia;
+use App\Models\Slider;
 use App\Models\Valores;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,7 +43,8 @@ Route::get('/sitemap.xml', function () {
 
 
 Route::get('/', function () {
-    return view('home');
+    $sliders = Slider::orderBy('order', 'asc')->get();
+    return view('home', compact('sliders'));
 })->name('home');
 
 Route::get('/nosotros', function () {

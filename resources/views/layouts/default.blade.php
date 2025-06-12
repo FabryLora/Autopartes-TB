@@ -14,6 +14,7 @@
             display: none !important;
         }
     </style>
+    <script src="//unpkg.com/alpinejs" defer></script>
 
 </head>
 
@@ -23,7 +24,7 @@
     @include('components.navbar')
 
     {{-- Contenido principal --}}
-    <main>
+    <main class="min-h-screen">
         @yield('content')
     </main>
 
