@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\BannerPortada;
-use DragonCode\Support\Facades\Filesystem\File;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 
 class BannerPortadaController extends Controller
 {
@@ -20,69 +20,38 @@ class BannerPortadaController extends Controller
     }
 
 
-    /**
-     * Update the specified resource in storage.
-     */
+
+
+
     public function update(Request $request)
     {
-
-        $bannerPortada = BannerPortada::first();
-        if (!$bannerPortada) {
-            return redirect()->back()->with('error', 'No se encontró el banner de portada.');
-        }
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'video' => 'sometimes|file',
             'image' => 'sometimes|file',
-            'logo_banner' => 'sometimes|file',
-            'desc' => 'sometimes|string|max:255',
         ]);
 
+        $bannerPortada = BannerPortada::first();
 
-        // Handle file upload if video exists
-        if ($request->hasFile('video')) {
-
-            if ($bannerPortada->video) {
-                $absolutePath = public_path('storage/' . $bannerPortada->video);
-                if (File::exists($absolutePath)) {
-                    File::delete($absolutePath);
-                }
+        // Si no existe, lo creamos
+        if (!$bannerPortada) {
+            if ($request->hasFile('image')) {
+                $data['image'] = $request->file('image')->store('banner_portada', 'public');
             }
+            BannerPortada::create($data);
 
-            $videoPath = $request->file('video')->store('images', 'public');
-            $data['video'] = $videoPath;
+            return redirect()->back()->with('success', 'Banner creado correctamente');
         }
 
-        if ($request->hasFile('logo_banner')) {
-
-            if ($bannerPortada->logo_banner) {
-                $absolutePath = public_path('storage/' . $bannerPortada->logo_banner);
-                if (File::exists($absolutePath)) {
-                    File::delete($absolutePath);
-                }
-            }
-
-            $videoPath = $request->file('logo_banner')->store('images', 'public');
-            $data['logo_banner'] = $videoPath;
-        }
-
+        // Si existe y se sube nueva imagen, eliminamos la anterior
         if ($request->hasFile('image')) {
-
-            if ($bannerPortada->image) {
-                $absolutePath = public_path('storage/' . $bannerPortada->image);
-                if (File::exists($absolutePath)) {
-                    File::delete($absolutePath);
-                }
+            if ($bannerPortada->getRawOriginal('image')) {
+                Storage::disk('public')->delete($bannerPortada->getRawOriginal('image'));
             }
-
-            $videoPath = $request->file('image')->store('images', 'public');
-            $data['image'] = $videoPath;
+            $data['image'] = $request->file('image')->store('banner_portada', 'public');
         }
 
-        // Save the changes
         $bannerPortada->update($data);
 
-        // Return a response (for API) or redirect
         return redirect()->back()->with('success', 'Banner actualizado correctamente');
     }
 }

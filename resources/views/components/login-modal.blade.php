@@ -1,20 +1,23 @@
 <!-- resources/views/components/auth/login-modal.blade.php -->
-<div x-show="showLogin" x-transition @click.away="showLogin = false" x-cloak
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="bg-white w-full max-w-md p-6 rounded shadow-lg" @click.stop>
-        <h2 class="text-2xl font-bold mb-4">Iniciar sesión</h2>
 
-        <form method="POST" action="{{ route('login') }}" class="flex flex-col gap-4">
-            @csrf
-            <input name="name" required placeholder="Usuario" class="input" />
-            <input type="password" name="password" required placeholder="Contraseña" class="input" />
+<div x-show="showLogin" x-transition.opacity x-cloak @click.away="showLogin = false"
+    class="absolute bg-white top-14 right-0 w-full max-w-md p-6 rounded shadow-lg z-10" @click.stop>
+    <h2 class="text-2xl font-bold mb-4">Iniciar sesión</h2>
 
-            <button type="submit" class="bg-orange-500 text-white py-2">Ingresar</button>
-        </form>
+    <form method="POST" action="{{ route('login') }}" class="flex flex-col gap-7 h-full">
+        @csrf
+        <input name="name" required placeholder="Usuario"
+            class="outline outline-gray-200 py-2 px-4 focus:outline-primary-orange transition duration-300 rounded-full" />
+        <input type="password" name="password" required placeholder="Contraseña"
+            class="outline outline-gray-200 py-2 px-4 focus:outline-primary-orange transition duration-300 rounded-full" />
+        <div class="h-[1px] bg-gray-200 w-full" />
+        <button type="submit" class="bg-primary-orange w-full text-white py-2 rounded-full font-bold">Ingresar</button>
+    </form>
 
-        <p class="mt-4 text-center text-sm">
-            ¿No tienes cuenta? <button class="text-orange-500 underline"
-                @click="showLogin = false; showRegister = true">Registrarse</button>
-        </p>
-    </div>
+
+
+    <button class="text-sm text-primary-orange underline mt-2 " @click="showLogin = false">
+        Cerrar
+    </button>
+
 </div>

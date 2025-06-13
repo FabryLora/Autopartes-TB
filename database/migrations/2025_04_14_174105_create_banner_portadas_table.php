@@ -14,10 +14,7 @@ return new class extends Migration
         Schema::create('banner_portadas', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('video')->nullable();
             $table->string('image')->nullable();
-            $table->string('logo_banner')->nullable();
-            $table->string('desc')->nullable();
             $table->timestamps();
         });
     }

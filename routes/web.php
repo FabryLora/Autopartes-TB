@@ -44,7 +44,11 @@ Route::get('/sitemap.xml', function () {
 
 Route::get('/', function () {
     $sliders = Slider::orderBy('order', 'asc')->get();
-    return view('home', compact('sliders'));
+    $bannerPortada = BannerPortada::first();
+    return view('home', [
+        'sliders' => $sliders,
+        'bannerPortada' => $bannerPortada,
+    ]);
 })->name('home');
 
 Route::get('/nosotros', function () {

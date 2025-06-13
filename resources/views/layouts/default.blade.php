@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Mi sitio')</title>
+    <title>@yield('title', 'Autopartes TB')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js']) {{-- si usás Vite --}}
     @stack('head') {{-- Para inyectar scripts o estilos específicos --}}
     <style>
@@ -24,9 +24,9 @@
     @include('components.navbar')
 
     {{-- Contenido principal --}}
-    <main class="min-h-screen">
-        @yield('content')
-    </main>
+
+    @yield('content')
+
 
     {{-- Footer (opcional) --}}
     @includeIf('components.footer')

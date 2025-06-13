@@ -8,20 +8,21 @@
                         <img src="{{ asset($slider->media) }}" alt="Slider Image" class="w-full h-full object-cover"
                             data-duration="6000">
                     @elseif (in_array($ext, ['mp4', 'webm', 'ogg']))
-                        <video class="w-full h-full object-cover" autoplay muted onended="nextSlide()">
+                        <video class="w-full h-full object-cover object-center" autoplay muted onended="nextSlide()">
                             <source src="{{ asset($slider->media) }}" type="video/{{ $ext }}">
                             {{ __('Tu navegador no soporta el formato de video.') }}
                         </video>
                     @endif
                 </div>
                 <div class="absolute inset-0 bg-black opacity-30 z-10"></div>
-                <div class="absolute inset-0 flex z-20 lg:max-w-[1224px] lg:mx-auto">
-                    <div class="relative flex flex-col gap-4 sm:gap-6 lg:gap-19 w-full justify-center">
-                        <div class="max-w-[320px] sm:max-w-[400px] lg:max-w-[480px] text-white">
+                <div class="absolute inset-0 flex z-20 lg:max-w-[1200px] lg:mx-auto">
+                    <div class="relative flex flex-col gap-4 sm:gap-6 lg:gap-19 w-full justify-end pb-30">
+                        <div class="max-w-[320px] sm:max-w-[400px] lg:max-w-[480px] text-white flex flex-col gap-5">
                             <h1
-                                class="text-lg sm:text-xl md:text-3xl lg:text-5xl font-bold leading-tight sm:leading-normal lg:leading-14">
+                                class="text-[32px] font-medium sm:text-xl md:text-3xl lg:text-5xl  leading-tight sm:leading-normal lg:leading-14">
                                 {{ $slider->title }}
                             </h1>
+                            <button class="w-[163px] h-[41px] bg-primary-orange text-[16px]">Ver productos</button>
                         </div>
                         {{-- <a href="{{ route('categorias') }}"
                             class="border border-white w-[180px] sm:w-[200px] lg:w-[230px] text-center py-2 sm:py-2.5 text-sm sm:text-base rounded-full hover:bg-white hover:text-black transition duration-300">Ver
@@ -32,8 +33,8 @@
         @endforeach
     </div>
     <!-- Slider Navigation Dots -->
-    <div class="relative lg:max-w-[1224px] lg:mx-auto">
-        <div class="absolute bottom-4 sm:bottom-6 lg:bottom-30 w-full z-30">
+    <div class="relative lg:max-w-[1200px] lg:mx-auto">
+        <div class="absolute bottom-10 w-full z-30">
             <div class="flex space-x-1 lg:space-x-2">
                 @foreach ($sliders as $i => $slider)
                     <button
