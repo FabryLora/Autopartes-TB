@@ -1,20 +1,14 @@
-<!-- resources/views/components/novedades-inicio.blade.php -->
+@extends('layouts.default')
 
-<div class="w-full py-10 sm:py-16 md:py-20">
+@section('title', 'Lanzamientos - Autopartes TB')
 
-    <div class="mx-auto flex max-w-[1200px] flex-col gap-6 sm:gap-8">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-0">
-            <h2 class="text-2xl font-bold sm:text-2xl md:text-3xl">Lanzamientos</h2>
-            <a href="{{ url('/lanzamientos') }}"
-                class="text-primary-orange border-primary-orange hover:bg-primary-orange flex h-[41px] w-[127px] items-center justify-center border text-base font-semibold transition duration-300 hover:text-white">
-                Ver todas
-            </a>
-        </div>
+@section('content')
+    <div class="w-[1200px] mx-auto my-20">
         <div class="flex flex-row gap-6">
-            @foreach($novedades as $novedad)
+            @foreach($lanzamientos as $novedad)
                 <a href="{{ url('/lanzamientos/' . $novedad->id) }}" class="flex flex-col gap-2 max-w-[392px] h-[530px]">
                     <div class="max-w-[391px] min-h-[321px]">
-                        <img src="{{ $novedad->image }}" alt="{{ $novedad->title }}" class="h-full w-full object-cover">
+                        <img src="{{ $novedad->image }}" alt="{{ $novedad->title }}" class="h-full outline w-full object-cover">
                     </div>
                     <div class="flex h-full flex-col justify-between">
                         <div class="flex flex-col gap-2">
@@ -29,8 +23,8 @@
                         <div class="mt-4 flex flex-row items-center justify-between">
                             <p class="font-bold">Leer más</p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="#0072C6" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="#0072C6" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
                             </svg>
                         </div>
                     </div>
@@ -38,4 +32,5 @@
             @endforeach
         </div>
     </div>
-</div>
+
+@endsection

@@ -113,6 +113,20 @@ class NovedadesController extends Controller
         return redirect()->back()->with('success', 'Novedad updated successfully.');
     }
 
+    public function novedadesShow($id)
+    {
+        $novedad = Novedades::findOrFail($id);
+
+        // Check if the Novedad entry exists
+        if (!$novedad) {
+            return redirect()->back()->with('error', 'Novedad not found.');
+        }
+
+        return view('novedad', [
+            'novedad' => $novedad,
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

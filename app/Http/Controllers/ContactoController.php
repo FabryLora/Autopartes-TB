@@ -30,14 +30,9 @@ class ContactoController extends Controller
     {
         $contacto = Contacto::first();
 
-        // Check if the Contacto entry exists
-        if (!$contacto) {
-            return redirect()->back()->with('error', 'Contacto not found.');
-        }
 
         $data = $request->validate([
 
-            'banner' => 'sometimes|file',
             'phone' => 'sometimes|string|max:255',
             'mail' => 'sometimes|email|max:255',
             'location' => 'sometimes|string|max:255',
@@ -46,20 +41,14 @@ class ContactoController extends Controller
             'wp' => 'sometimes|string|max:255',
         ]);
 
-        // Handle file upload if banner exists
-        if ($request->hasFile('banner')) {
-            // Delete the old banner if it exists
-            if ($contacto->banner) {
-                $absolutePath = public_path('storage/' . $contacto->banner);
-                if (file_exists($absolutePath)) {
-                    unlink($absolutePath);
-                }
-            }
-            // Store the new banner
-            $data['banner'] = $request->file('banner')->store('images', 'public');
+        if (!$contacto) {
+            $contacto = Contacto::create($data);
+            return redirect()->back()->with('success', 'Contacto created successfully.');
+        } else {
+            $contacto->update($data);
         }
 
-        $contacto->update($data);
+
 
         return redirect()->back()->with('success', 'Contacto updated successfully.');
     }

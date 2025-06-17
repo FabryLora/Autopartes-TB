@@ -7,8 +7,6 @@ import Dashboard from './dashboard';
 export default function CalidadAdmin() {
     const { calidad } = usePage().props;
 
-    console.log(calidad);
-
     const [text, setText] = useState(calidad?.text || '');
 
     const { data, setData, processing, post, reset } = useForm({

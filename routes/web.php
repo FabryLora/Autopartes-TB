@@ -1,106 +1,33 @@
 <?php
 
 use App\Http\Controllers\DescargarArchivo;
+use App\Http\Controllers\HomePages;
+use App\Http\Controllers\NovedadesController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\SendContactInfoController;
 use App\Models\ArchivoCalidad;
-use App\Models\BannerNovedades;
-use App\Models\BannerPortada;
 use App\Models\Calidad;
-use App\Models\Categoria;
-use App\Models\Contacto;
-use App\Models\Instagram;
-use App\Models\Logos;
-use App\Models\Marca;
 use App\Models\Metadatos;
-use App\Models\Nosotros;
 use App\Models\Novedades;
-use App\Models\Producto;
-use App\Models\Provincia;
-use App\Models\Slider;
-use App\Models\Valores;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Spatie\Sitemap\Sitemap;
-use Spatie\Sitemap\Tags\Url;
-
-Route::get('/sitemap.xml', function () {
-    $sitemap = Sitemap::create();
-
-    // Página de inicio
-    $sitemap->add(Url::create('/'));
-    $sitemap->add(Url::create("/nosotros"));
-    $sitemap->add(Url::create("/productos"));
-    $sitemap->add(Url::create("/calidad"));
-    $sitemap->add(Url::create("/novedades"));
-    $sitemap->add(Url::create("/contacto"));
 
 
-    return $sitemap->toResponse(request());
-});
+
+# ---------------------- Rutas de zona pública ---------------------- #
+
+Route::get('/', [HomePages::class, 'home'])->name('home');
+Route::get('/empresa', [HomePages::class, 'empresa'])->name('empresa');
+Route::get('/calidad', [HomePages::class, 'calidad'])->name('calidad');
+Route::get('/lanzamientos', [HomePages::class, 'lanzamientos'])->name('lanzamientos');
+Route::get('/contacto', [HomePages::class, 'contacto'])->name('contacto');
+Route::get('/lanzamientos/{id}', [NovedadesController::class, 'novedadesShow'])->name('novedades');
+
+# ------------------------------------------------------------------- #
 
 
-Route::get('/', function () {
-    $sliders = Slider::orderBy('order', 'asc')->get();
-    $bannerPortada = BannerPortada::first();
-    $novedades = Novedades::where('featured', true)->orderBy('order', 'asc')->get();
-    return view('home', [
-        'sliders' => $sliders,
-        'bannerPortada' => $bannerPortada,
-        'novedades' => $novedades,
-    ]);
-})->name('home');
 
-Route::get('/nosotros', function () {
-    $bannerPortada = BannerPortada::first();
-    $nosotros = Nosotros::first();
-    $valores = Valores::first();
-    $metadatos = Metadatos::where('title', 'Nosotros')->first();
-
-    return Inertia::render('nosotros', [
-        'bannerPortada' => $bannerPortada,
-        'nosotros' => $nosotros,
-        'valores' => $valores,
-        'metadatos' => $metadatos,
-    ]);
-})->name('nosotros');
-
-Route::get('/calidad', function () {
-    $calidad = Calidad::first();
-    $archivos = ArchivoCalidad::orderBy('order', 'asc')->get();
-    $metadatos = Metadatos::where('title', 'Calidad')->first();
-
-
-    return Inertia::render('calidad', [
-        'calidad' => $calidad,
-        'archivos' => $archivos,
-        'metadatos' => $metadatos,
-
-    ]);
-})->name('calidad');
-
-Route::get('/novedades', function () {
-
-    $novedades = Novedades::orderBy('order', 'asc')->get();
-    $metadatos = Metadatos::where('title', 'Novedades')->first();
-
-    return Inertia::render('novedades', [
-        'novedades' => $novedades,
-
-        'metadatos' => $metadatos,
-
-    ]);
-})->name('novedades.index');
-
-Route::get('/novedades/{id}', function ($id) {
-    $novedad = Novedades::where('id', $id)->first();
-
-    return Inertia::render('novedadesShow', [
-        'novedad' => $novedad,
-    ]);
-})->name('novedades');
 
 
 

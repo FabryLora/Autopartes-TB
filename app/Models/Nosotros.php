@@ -12,8 +12,4 @@ class Nosotros extends Model
     {
         return url("storage/" . $value);
     }
-    public function getBannerAttribute($value)
-    {
-        return url("storage/" . $value);
-    }
 }

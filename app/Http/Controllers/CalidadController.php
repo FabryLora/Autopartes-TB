@@ -27,10 +27,7 @@ class CalidadController extends Controller
 
         $calidad = Calidad::first();
 
-        // Check if the Calidad entry exists
-        if (!$calidad) {
-            return redirect()->back()->with('error', 'Calidad not found.');
-        }
+
 
         $data = $request->validate([
             'title' => 'sometimes|string|max:255',
@@ -38,7 +35,7 @@ class CalidadController extends Controller
             'image' => 'sometimes|file',
         ]);
 
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('image') && $calidad) {
             // Guardar la ruta del archivo antiguo para eliminarlo después
             $oldImagePath = $calidad->getRawOriginal('image');
 
@@ -49,6 +46,15 @@ class CalidadController extends Controller
             if ($oldImagePath && Storage::disk('public')->exists($oldImagePath)) {
                 Storage::disk('public')->delete($oldImagePath);
             }
+        } else if ($request->hasFile('image') && !$calidad) {
+            $data['image'] = $request->file('image')->store('slider', 'public');
+        }
+
+        if (!$calidad) {
+            // Si no existe, crear una nueva entrada
+            $calidad = Calidad::create($data);
+            return redirect()->back()->with('success', 'Calidad created successfully.');
+            # code...
         }
 
         $calidad->update($data);

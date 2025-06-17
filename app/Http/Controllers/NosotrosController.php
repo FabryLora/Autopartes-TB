@@ -33,9 +33,6 @@ class NosotrosController extends Controller
 
 
         // Check if the Nosotros entry exists
-        if (!$nosotros) {
-            return redirect()->back()->with('error', 'Nosotros not found.');
-        }
 
         $data = $request->validate([
             'title' => 'sometimes|string|max:255',
@@ -43,10 +40,9 @@ class NosotrosController extends Controller
             'image' => 'sometimes|file',
         ]);
 
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('image') && $nosotros) {
             // Guardar la ruta del archivo antiguo para eliminarlo después
             $oldImagePath = $nosotros->getRawOriginal('image');
-
 
             // Guardar el nuevo archivo
             $data['image'] = $request->file('image')->store('slider', 'public');
@@ -55,6 +51,14 @@ class NosotrosController extends Controller
             if ($oldImagePath && Storage::disk('public')->exists($oldImagePath)) {
                 Storage::disk('public')->delete($oldImagePath);
             }
+        } else if ($request->hasFile('image') && !$nosotros) {
+            $data['image'] = $request->file('image')->store('slider', 'public');
+        }
+
+        if (!$nosotros) {
+            // Si no existe, crear una nueva entrada
+            $nosotros = Nosotros::create($data);
+            return redirect()->back()->with('success', 'Nosotros created successfully.');
         }
 
         $nosotros->update($data);

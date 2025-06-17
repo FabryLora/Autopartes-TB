@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ArchivoCalidad;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ArchivoCalidadController extends Controller
 {
@@ -67,30 +68,30 @@ class ArchivoCalidadController extends Controller
             'archivo' => 'sometimes|file',
         ]);
 
-        // Handle file upload if image exists
         if ($request->hasFile('image')) {
-            // Delete the old image if it exists
-            if ($archivoCalidad->image) {
-                $absolutePath = public_path('storage/' . $archivoCalidad->image);
-                if (file_exists($absolutePath)) {
-                    unlink($absolutePath);
-                }
-            }
-            // Store the new image
+            // Guardar la ruta del archivo antiguo para eliminarlo después
+            $oldImagePath = $archivoCalidad->getRawOriginal('image');
+
+            // Guardar el nuevo archivo
             $data['image'] = $request->file('image')->store('images', 'public');
+
+            // Eliminar el archivo antiguo si existe
+            if ($oldImagePath && Storage::disk('public')->exists($oldImagePath)) {
+                Storage::disk('public')->delete($oldImagePath);
+            }
         }
 
-        // Handle file upload if archivo exists
         if ($request->hasFile('archivo')) {
-            // Delete the old archivo if it exists
-            if ($archivoCalidad->archivo) {
-                $absolutePath = public_path('storage/' . $archivoCalidad->archivo);
-                if (file_exists($absolutePath)) {
-                    unlink($absolutePath);
-                }
+            // Guardar la ruta del archivo antiguo para eliminarlo después
+            $oldImagePath = $archivoCalidad->getRawOriginal('archivo');
+
+            // Guardar el nuevo archivo
+            $data['image'] = $request->file('archivo')->store('archivos', 'public');
+
+            // Eliminar el archivo antiguo si existe
+            if ($oldImagePath && Storage::disk('public')->exists($oldImagePath)) {
+                Storage::disk('public')->delete($oldImagePath);
             }
-            // Store the new archivo
-            $data['archivo'] = $request->file('archivo')->store('images', 'public');
         }
 
         $archivoCalidad->update($data);

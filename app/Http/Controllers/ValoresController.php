@@ -37,6 +37,12 @@ class ValoresController extends Controller
         ]);
 
         $valores = Valores::first();
+
+        if (!$valores) {
+            // If no Valores entry exists, create a new one
+            $valores = Valores::create($data);
+            return redirect()->back()->with('success', 'Valores created successfully.');
+        }
         $valores->update($data);
 
         return redirect()->back()->with('success', 'Valores updated successfully.');

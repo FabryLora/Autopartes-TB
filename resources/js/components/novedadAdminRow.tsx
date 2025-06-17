@@ -60,7 +60,10 @@ export default function NovedadAdminRow({ novedad }) {
             <td className="align-middle">{novedad?.type}</td>
             <td className="align-middle">{novedad?.title}</td>
             <td className="text-center align-middle">
-                <div className="w-[300px] text-center break-words" dangerouslySetInnerHTML={{ __html: novedad?.text }}></div>
+                <div
+                    className="line-clamp-3 w-[300px] overflow-hidden text-center break-words"
+                    dangerouslySetInnerHTML={{ __html: novedad?.text }}
+                ></div>
             </td>
 
             <td className="h-[90px] w-[90px] px-8">
@@ -99,6 +102,7 @@ export default function NovedadAdminRow({ novedad }) {
                                         type="text"
                                         name="ordennn"
                                         id="ordennn"
+                                        value={updateForm.data?.order}
                                         onChange={(e) => updateForm.setData('order', e.target.value)}
                                     />
                                     <label htmlFor="type">
@@ -109,6 +113,7 @@ export default function NovedadAdminRow({ novedad }) {
                                         type="text"
                                         name="type"
                                         id="type"
+                                        value={updateForm.data?.type}
                                         onChange={(e) => updateForm.setData('type', e.target.value)}
                                     />
                                     <label htmlFor="nombree">
@@ -119,6 +124,7 @@ export default function NovedadAdminRow({ novedad }) {
                                         type="text"
                                         name="nombree"
                                         id="nombree"
+                                        value={updateForm.data?.title}
                                         onChange={(e) => updateForm.setData('title', e.target.value)}
                                     />
                                     <label htmlFor="text">

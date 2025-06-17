@@ -9,13 +9,12 @@ import Dashboard from './dashboard';
 export default function NovedadesAdmin() {
     const { novedades } = usePage().props;
 
-    const [text, setText] = useState();
+    const [text, setText] = useState('');
 
     const { data, setData, post, reset } = useForm({
         title: '',
         type: '',
         text: '',
-        order: '',
     });
 
     useEffect(() => {
@@ -34,9 +33,10 @@ export default function NovedadesAdmin() {
                 toast.success('Novedad creada correctamente');
                 reset();
                 setCreateView(false);
+                setText('');
             },
             onError: (errors) => {
-                toast.error('Error al crear novedad');
+                toast.error('Error al crear lanzamiento');
                 console.log(errors);
             },
         });
@@ -85,7 +85,7 @@ export default function NovedadesAdmin() {
                         >
                             <form onSubmit={handleSubmit} method="POST" className="text-black">
                                 <div className="w-[500px] rounded-md bg-white p-4">
-                                    <h2 className="mb-4 text-2xl font-semibold">Crear Novedad</h2>
+                                    <h2 className="mb-4 text-2xl font-semibold">Crear Lanzamiento</h2>
                                     <div className="flex flex-col gap-4">
                                         <label htmlFor="ordennn">Orden</label>
                                         <input
@@ -161,7 +161,7 @@ export default function NovedadesAdmin() {
                     )}
                 </AnimatePresence>
                 <div className="mx-auto flex w-full flex-col gap-3">
-                    <h2 className="border-primary-orange text-primary-orange text-bold w-full border-b-2 text-2xl">Novedades</h2>
+                    <h2 className="border-primary-orange text-primary-orange text-bold w-full border-b-2 text-2xl">Lanzamientos</h2>
                     <div className="flex h-fit w-full flex-row gap-5">
                         <input
                             type="text"
@@ -178,9 +178,9 @@ export default function NovedadesAdmin() {
                         </button>
                         <button
                             onClick={() => setCreateView(true)}
-                            className="bg-primary-orange w-[200px] rounded px-4 py-1 font-bold text-white hover:bg-orange-400"
+                            className="bg-primary-orange w-[300px] rounded px-4 py-1 font-bold text-white hover:bg-orange-400"
                         >
-                            Crear Novedad
+                            Crear Lanzamiento
                         </button>
                     </div>
 

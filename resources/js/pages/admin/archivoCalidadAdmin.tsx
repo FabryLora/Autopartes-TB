@@ -58,7 +58,7 @@ export default function MarcasAdmin() {
                                             onChange={(e) => setData('order', e.target.value)}
                                         />
                                         <label htmlFor="nombree">
-                                            Link <span className="text-red-500">*</span>
+                                            Nombre <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"

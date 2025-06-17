@@ -1,7 +1,8 @@
-<!-- resources/views/components/navbar.blade.php -->
 @php
     $location = request()->path();
+    $isHome = $location === '/';
     $isPrivate = str_contains($location, 'privada');
+
     $defaultLinks = [
         ['title' => 'Empresa', 'href' => '/empresa'],
         ['title' => 'Productos', 'href' => '/productos'],
@@ -19,17 +20,24 @@
 
 <div x-data="{
         showLogin: false,
-        
         scrolled: false,
         logoPrincipal: '{{ $logos->logo_principal ?? '' }}',
         logoSecundario: '{{ $logos->logo_secundario ?? '' }}'
     }" x-init="
-        window.addEventListener('scroll', () => {
-            scrolled = window.scrollY > 0;
-        })
-    " :class="scrolled ? 'bg-white shadow-md' : 'bg-transparent'"
-    class="fixed top-0 z-50 w-full transition-colors duration-300 h-[131px] flex flex-col">
-
+        @if ($isHome)
+            window.addEventListener('scroll', () => {
+                scrolled = window.scrollY > 0;
+            });
+        @else
+            scrolled = true;
+        @endif
+    " :class="{
+        'bg-white shadow-md': scrolled || !{{ $isHome ? 'true' : 'false' }},
+        'bg-transparent': !scrolled && {{ $isHome ? 'true' : 'false' }},
+        'fixed top-0': {{ $isHome ? 'true' : 'false' }},
+        'sticky top-0': {{ $isHome ? 'false' : 'true' }}
+    }" class="z-50 w-full transition-colors duration-300 h-[131px] flex flex-col">
+    <!-- Franja superior -->
     <div class="min-h-[49px] bg-primary-orange">
         <div class="relative w-[1200px] mx-auto h-full flex justify-end items-center">
             <button>lupa</button>
@@ -38,12 +46,12 @@
                 Zona Privada
             </button>
             <div x-show="showLogin" x-transition.opacity x-cloak class="fixed inset-0 bg-black/50"></div>
-
         </div>
     </div>
 
-    <div class="mx-auto flex h-full w-[1200px] items-center justify-between ">
-        <a class="" href="/">
+    <!-- Contenido principal navbar -->
+    <div class="mx-auto flex h-full w-[1200px] items-center justify-between">
+        <a href="/">
             <img :src="scrolled ? logoSecundario : logoPrincipal" class="h-10 transition-all duration-300" alt="Logo" />
         </a>
 
@@ -51,7 +59,6 @@
             @foreach(($isPrivate ? $privateLinks : $defaultLinks) as $link)
                 <a href="{{ $link['href'] }}"
                     :class="[scrolled ? 'text-black' : 'text-white', 'text-sm hover:text-primary-orange transition-colors duration-300']">
-
                     {{ $link['title'] }}
                 </a>
             @endforeach
@@ -67,7 +74,4 @@
             @endauth
         </div>
     </div>
-
-
-
 </div>
