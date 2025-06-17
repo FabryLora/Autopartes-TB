@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import CustomReactQuill from './CustomReactQuill';
+import Switch from './Switch';
 
 export default function NovedadAdminRow({ novedad }) {
     const [edit, setEdit] = useState(false);
@@ -58,12 +59,16 @@ export default function NovedadAdminRow({ novedad }) {
             <td className="align-middle">{novedad?.order}</td>
             <td className="align-middle">{novedad?.type}</td>
             <td className="align-middle">{novedad?.title}</td>
-            <td className="align-middle">
-                <div dangerouslySetInnerHTML={{ __html: novedad?.text }}></div>
+            <td className="text-center align-middle">
+                <div className="w-[300px] text-center break-words" dangerouslySetInnerHTML={{ __html: novedad?.text }}></div>
             </td>
 
             <td className="h-[90px] w-[90px] px-8">
                 <img className="h-full w-full object-contain" src={novedad?.image} alt="" />
+            </td>
+
+            <td className="flex h-[90px] items-center justify-center">
+                <Switch id={novedad?.id} routeName={'admin.novedades.changeFeatured'} status={novedad?.featured == 1} />
             </td>
 
             <td className="w-[140px] text-center">

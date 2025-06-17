@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Nosotros;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class NosotrosController extends Controller
@@ -40,32 +41,20 @@ class NosotrosController extends Controller
             'title' => 'sometimes|string|max:255',
             'text' => 'sometimes',
             'image' => 'sometimes|file',
-            'banner' => 'sometimes|file',
         ]);
 
-        // Handle file upload if image exists
         if ($request->hasFile('image')) {
-            // Delete the old image if it exists
-            if ($nosotros->image) {
-                $absolutePath = public_path('storage/' . $nosotros->image);
-                if (file_exists($absolutePath)) {
-                    unlink($absolutePath);
-                }
-            }
-            // Store the new image
-            $data['image'] = $request->file('image')->store('images', 'public');
-        }
+            // Guardar la ruta del archivo antiguo para eliminarlo después
+            $oldImagePath = $nosotros->getRawOriginal('image');
 
-        // Handle file upload if banner exists
-        if ($request->hasFile('banner')) {
-            // Delete the old banner if it exists
-            if ($nosotros->banner) {
-                $absolutePath = public_path('storage/' . $nosotros->banner);
-                if (file_exists($absolutePath)) {
-                    unlink($absolutePath);
-                }
+
+            // Guardar el nuevo archivo
+            $data['image'] = $request->file('image')->store('slider', 'public');
+
+            // Eliminar el archivo antiguo si existe
+            if ($oldImagePath && Storage::disk('public')->exists($oldImagePath)) {
+                Storage::disk('public')->delete($oldImagePath);
             }
-            $data['banner'] = $request->file('banner')->store('images', 'public');
         }
 
         $nosotros->update($data);

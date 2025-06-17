@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->string('type')->nullable();
             $table->longText('text')->nullable();
-
+            $table->boolean('featured')->default(false);
             $table->timestamps();
         });
     }

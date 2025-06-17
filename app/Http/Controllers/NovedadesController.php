@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Novedades;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class NovedadesController extends Controller
 {
@@ -37,11 +38,12 @@ class NovedadesController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'order' => 'sometimes|string|max:255',
+            'order' => 'sometimes|nullable|string|max:255',
             'image' => 'required|file',
             'title' => 'required|string|max:255',
             'type' => 'required|string|max:255',
-            'text' => 'required|string|max:255',
+            'text' => 'required|string',
+            'featured' => 'sometimes|boolean',
         ]);
 
         // Handle file upload if image exists
@@ -49,12 +51,27 @@ class NovedadesController extends Controller
             $data['image'] = $request->file('image')->store('images', 'public');
         }
 
+
         Novedades::create($data);
 
         return redirect()->back()->with('success', 'Novedad created successfully.');
     }
 
+    public function changeFeatured(Request $request)
+    {
+        $novedad = Novedades::findOrFail($request->id);
 
+        // Check if the Novedad entry exists
+        if (!$novedad) {
+            return redirect()->back()->with('error', 'Novedad not found.');
+        }
+
+        // Toggle the featured status
+        $novedad->featured = !$novedad->featured;
+        $novedad->save();
+
+        return redirect()->back()->with('success', 'Novedad featured status updated successfully.');
+    }
 
     /**
      * Update the specified resource in storage.
@@ -69,25 +86,27 @@ class NovedadesController extends Controller
         }
 
         $data = $request->validate([
-            'order' => 'sometimes|string|max:255',
+            'order' => 'sometimes|nullable|string|max:255',
             'image' => 'sometimes|file',
             'title' => 'sometimes|string|max:255',
             'type' => 'sometimes|string|max:255',
-            'text' => 'sometimes|string|max:255',
+            'text' => 'sometimes|string',
+            'featured' => 'sometimes|boolean',
         ]);
 
-        // Handle file upload if image exists
         if ($request->hasFile('image')) {
-            // Delete the old image if it exists
-            if ($novedad->image) {
-                $absolutePath = public_path('storage/' . $novedad->image);
-                if (file_exists($absolutePath)) {
-                    unlink($absolutePath);
-                }
-            }
-            // Store the new image
+            // Guardar la ruta del archivo antiguo para eliminarlo después
+            $oldImagePath = $novedad->getRawOriginal('image');
+
+            // Guardar el nuevo archivo
             $data['image'] = $request->file('image')->store('images', 'public');
+
+            // Eliminar el archivo antiguo si existe
+            if ($oldImagePath && Storage::disk('public')->exists($oldImagePath)) {
+                Storage::disk('public')->delete($oldImagePath);
+            }
         }
+
 
         $novedad->update($data);
 
@@ -106,12 +125,11 @@ class NovedadesController extends Controller
             return redirect()->back()->with('error', 'Novedad not found.');
         }
 
-        // Delete the image if it exists
-        if ($novedad->image) {
-            $absolutePath = public_path('storage/' . $novedad->image);
-            if (file_exists($absolutePath)) {
-                unlink($absolutePath);
-            }
+        // Check if the image file exists and delete it
+        $imagePath = $novedad->getRawOriginal('image');
+
+        if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+            Storage::disk('public')->delete($imagePath);
         }
 
         $novedad->delete();

@@ -45,9 +45,11 @@ Route::get('/sitemap.xml', function () {
 Route::get('/', function () {
     $sliders = Slider::orderBy('order', 'asc')->get();
     $bannerPortada = BannerPortada::first();
+    $novedades = Novedades::where('featured', true)->orderBy('order', 'asc')->get();
     return view('home', [
         'sliders' => $sliders,
         'bannerPortada' => $bannerPortada,
+        'novedades' => $novedades,
     ]);
 })->name('home');
 
@@ -80,17 +82,17 @@ Route::get('/calidad', function () {
 })->name('calidad');
 
 Route::get('/novedades', function () {
-    $bannerNovedades = BannerNovedades::first();
+
     $novedades = Novedades::orderBy('order', 'asc')->get();
     $metadatos = Metadatos::where('title', 'Novedades')->first();
 
     return Inertia::render('novedades', [
         'novedades' => $novedades,
-        'bannerNovedades' => $bannerNovedades,
+
         'metadatos' => $metadatos,
 
     ]);
-})->name('novedades');
+})->name('novedades.index');
 
 Route::get('/novedades/{id}', function ($id) {
     $novedad = Novedades::where('id', $id)->first();

@@ -4,7 +4,7 @@ import { useForm, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import UserSwitch from './Switch';
+import UserSwitch from './switch';
 
 export default function ClientesAdminRow({ cliente }) {
     const [edit, setEdit] = useState(false);

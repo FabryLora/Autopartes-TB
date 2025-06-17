@@ -1,4 +1,4 @@
-import { Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 // Assuming logo import works in your environment
 import logo from '../../../images/logos/logotb-azul.png';
 
@@ -16,6 +16,9 @@ export default function AdminLogin() {
 
     return (
         <div className="bg-opacity-50 fixed top-0 left-0 z-10 flex h-screen w-screen flex-col items-center justify-center gap-10 bg-black/50">
+            <Head>
+                <title>Administrador</title>
+            </Head>
             <div className="font-roboto-condensed top-10 right-10 z-20 flex h-fit w-fit flex-col rounded-lg bg-white p-5 shadow-md">
                 <Link className="self-center py-5" href={'/'}>
                     <img src={logo} alt="Logo" />

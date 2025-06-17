@@ -14,7 +14,7 @@ import {
     faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import logo from '../../../images/logos/logotb-azul.png';
@@ -104,10 +104,7 @@ export default function Dashboard({ children }) {
             title: 'Novedades',
             icon: faNewspaper,
             href: 'novedades',
-            subHref: [
-                { title: 'Banner', href: 'bannernovedades' },
-                { title: 'Contenido', href: 'novedades' },
-            ],
+            subHref: [],
         },
         {
             id: 'contacto',
@@ -221,6 +218,9 @@ export default function Dashboard({ children }) {
     return (
         <div className="font-red-hat flex flex-row">
             <Toaster />
+            <Head>
+                <title>Administrador</title>
+            </Head>
             {/* Sidebar - sin animación inicial */}
             <div
                 className={`scrollbar-hide flex h-screen w-[300px] flex-col overflow-y-auto bg-white text-black transition-transform duration-200 ${

@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('contactos', function (Blueprint $table) {
             $table->id();
-            $table->string('banner')->nullable();
             $table->string('mail')->nullable();
             $table->string('phone')->nullable();
             $table->string('location')->nullable();

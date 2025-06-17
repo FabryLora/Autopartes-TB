@@ -3,7 +3,6 @@
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArchivoCalidadController;
-use App\Http\Controllers\BannerNovedadesController;
 use App\Http\Controllers\BannerPortadaController;
 use App\Http\Controllers\CalidadController;
 use App\Http\Controllers\CategoriaController;
@@ -81,9 +80,9 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('admin/novedades', [NovedadesController::class, 'store'])->name('admin.novedades.store');
     Route::post('admin/novedades/update', [NovedadesController::class, 'update'])->name('admin.novedades.update');
     Route::delete('admin/novedades/destroy', [NovedadesController::class, 'destroy'])->name('admin.novedades.destroy');
+    Route::post('admin/novedades/featured', [NovedadesController::class, 'changeFeatured'])->name('admin.novedades.changeFeatured');
 
-    Route::get('admin/bannernovedades', [BannerNovedadesController::class, 'index'])->name('admin.bannernovedades');
-    Route::post('admin/bannernovedades/update', [BannerNovedadesController::class, 'update'])->name('admin.bannernovedades.update');
+
 
     Route::get('admin/contacto', [ContactoController::class, 'index'])->name('admin.contacto');
     Route::post('admin/contacto', [ContactoController::class, 'update'])->name('admin.contacto.update');
