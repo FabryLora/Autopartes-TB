@@ -4,8 +4,84 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f97032a366f8e2a047015c0ef98c1f3",
+    "content-hash": "c437389db51bb5b3e9125774b1db4a08",
     "packages": [
+        {
+            "name": "anayarojo/shoppingcart",
+            "version": "4.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/anayarojo/laravel-shopping-cart.git",
+                "reference": "776023ad546b7b54a680f783b84cc55bc3fa1a77"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/anayarojo/laravel-shopping-cart/zipball/776023ad546b7b54a680f783b84cc55bc3fa1a77",
+                "reference": "776023ad546b7b54a680f783b84cc55bc3fa1a77",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/events": "5.4.*||5.5.*||5.6.*||5.7.*||5.8.*||^6.0||^7.0||^8.0||^9.0||^10||^11||^12.0",
+                "illuminate/session": "5.4.*||5.5.*||5.6.*||5.7.*||5.8.*||^6.0||^7.0||^8.0||^9.0||^10||^11||^12.0",
+                "illuminate/support": "5.4.*||5.5.*||5.6.*||5.7.*||5.8.*||^6.0||^7.0||^8.0||^9.0||^10||^11||^12.0",
+                "nesbot/carbon": "~1.20||^1.26.3||^2.0||^3.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.0",
+                "orchestra/testbench": "^3.4|^4.0|^5.0|^6.0|^9.0|^10.0",
+                "phpunit/phpunit": "~5.0||~6.0||~7.0||~8.0||~9.0||~10.0||~11.0"
+            },
+            "suggest": {
+                "gloudemans/notify": "Simple flash notifications for Laravel"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Cart": "Gloudemans\\Shoppingcart\\Facades\\Cart"
+                    },
+                    "providers": [
+                        "Gloudemans\\Shoppingcart\\ShoppingcartServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Gloudemans\\Shoppingcart\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Gloudemans",
+                    "email": "info@robgloudemans.nl",
+                    "homepage": "http://robgloudemans.nl/"
+                },
+                {
+                    "name": "Patrick Henninger",
+                    "email": "privat@skyraptor.eu",
+                    "homepage": "https://skyraptor.eu/"
+                },
+                {
+                    "name": "Raul Anaya Rojo",
+                    "email": "isw.anayarojo@gmail.com",
+                    "homepage": "https://anayarojo.net/"
+                }
+            ],
+            "description": "Laravel Shoppingcart",
+            "keywords": [
+                "laravel",
+                "shoppingcart"
+            ],
+            "support": {
+                "issues": "https://github.com/anayarojo/laravel-shopping-cart/issues",
+                "source": "https://github.com/anayarojo/laravel-shopping-cart/tree/4.2.4"
+            },
+            "time": "2025-03-05T22:20:00+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.12.3",
@@ -659,6 +735,58 @@
                 }
             ],
             "time": "2023-10-12T05:21:21+00:00"
+        },
+        {
+            "name": "google/recaptcha",
+            "version": "1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/google/recaptcha.git",
+                "reference": "d59a801e98a4e9174814a6d71bbc268dff1202df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/google/recaptcha/zipball/d59a801e98a4e9174814a6d71bbc268dff1202df",
+                "reference": "d59a801e98a4e9174814a6d71bbc268dff1202df",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.14",
+                "php-coveralls/php-coveralls": "^2.5",
+                "phpunit/phpunit": "^10"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ReCaptcha\\": "src/ReCaptcha"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Client library for reCAPTCHA, a free service that protects websites from spam and abuse.",
+            "homepage": "https://www.google.com/recaptcha/",
+            "keywords": [
+                "Abuse",
+                "captcha",
+                "recaptcha",
+                "spam"
+            ],
+            "support": {
+                "forum": "https://groups.google.com/forum/#!forum/recaptcha",
+                "issues": "https://github.com/google/recaptcha/issues",
+                "source": "https://github.com/google/recaptcha"
+            },
+            "time": "2023-02-18T17:41:46+00:00"
         },
         {
             "name": "graham-campbell/result-type",

@@ -1,7 +1,10 @@
 <div class="mx-auto flex w-[1200px] flex-col gap-5 my-10">
     <div class="flex flex-row items-center justify-between">
         <h2 class="text-[32px] font-semibold">Productos destacados</h2>
-
+        <a href="{{ url('/productos') }}"
+            class="text-primary-orange border-primary-orange hover:bg-primary-orange flex h-[41px] w-[127px] items-center justify-center border text-base font-semibold transition duration-300 hover:text-white">
+            Ver todos
+        </a>
     </div>
 
     <div class="flex flex-row gap-5">

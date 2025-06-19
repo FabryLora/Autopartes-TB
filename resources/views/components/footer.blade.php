@@ -27,11 +27,11 @@
         <div class="hidden flex-col  gap-10 lg:flex">
             <h2 class="text-lg font-bold text-white">Secciones</h2>
             <div class="grid h-fit grid-flow-col grid-cols-2 grid-rows-3 gap-x-20 gap-y-3">
-                <a {{-- href="{{ route('nosotros') }}" --}} class="text-[15px] text-white/80">Empresa</a>
+                <a href="{{ route('empresa') }}" class="text-[15px] text-white/80">Empresa</a>
                 <a {{-- href="{{ route('productos') }}" --}} class="text-[15px] text-white/80">Productos</a>
-                <a {{-- href="{{ route('calidad') }}" --}} class="text-[15px] text-white/80">Calidad</a>
-                <a {{-- href="{{ route('novedades') }}" --}} class="text-[15px] text-white/80">Lanzamientos</a>
-                <a {{-- href="{{ route('contacto') }}" --}} class="text-[15px] text-white/80">Contacto</a>
+                <a href="{{ route('calidad') }}" class="text-[15px] text-white/80">Calidad</a>
+                <a href="{{ route('lanzamientos') }}" class="text-[15px] text-white/80">Lanzamientos</a>
+                <a href="{{ route('contacto') }}" class="text-[15px] text-white/80">Contacto</a>
             </div>
         </div>
 

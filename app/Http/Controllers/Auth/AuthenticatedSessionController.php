@@ -28,13 +28,14 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request)
     {
+
         $credentials = $request->validate([
             'name' => 'required',
             'password' => 'required',
         ]);
 
         // Agregar el campo autorizado a las credenciales
-        $credentials['autorizado'] = true;
+
 
         if (Auth::guard()->attempt($credentials)) {
             $request->session()->regenerate();
@@ -52,7 +53,5 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request)
     {
         Auth::guard('web')->logout();
-
-        return redirect('/')->with('status', 'Has cerrado sesión correctamente.');
     }
 }

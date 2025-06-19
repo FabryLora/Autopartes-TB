@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ArchivoCalidad;
 use App\Models\BannerPortada;
 use App\Models\Calidad;
+use App\Models\Contacto;
 use App\Models\Nosotros;
 use App\Models\Novedades;
 use App\Models\Slider;
@@ -52,6 +53,14 @@ class HomePages extends Controller
             ->get();
         return view('lanzamientos', [
             'lanzamientos' => $lanzamientos,
+        ]);
+    }
+
+    public function contacto()
+    {
+        $contacto = Contacto::first();
+        return view('contacto', [
+            'contacto' => $contacto,
         ]);
     }
 }

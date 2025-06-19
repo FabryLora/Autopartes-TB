@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\DescargarArchivo;
 use App\Http\Controllers\HomePages;
 use App\Http\Controllers\NovedadesController;
@@ -23,6 +24,7 @@ Route::get('/calidad', [HomePages::class, 'calidad'])->name('calidad');
 Route::get('/lanzamientos', [HomePages::class, 'lanzamientos'])->name('lanzamientos');
 Route::get('/contacto', [HomePages::class, 'contacto'])->name('contacto');
 Route::get('/lanzamientos/{id}', [NovedadesController::class, 'novedadesShow'])->name('novedades');
+Route::post('/contacto/sendemail', [ContactoController::class, 'sendContact'])->name('send.contact');
 
 # ------------------------------------------------------------------- #
 
@@ -31,12 +33,7 @@ Route::get('/lanzamientos/{id}', [NovedadesController::class, 'novedadesShow'])-
 
 
 
-Route::get('/contacto', function (Request $request) {
-    $producto = $request->producto;
-    return Inertia::render('contacto', [
-        'producto' => $producto,
-    ]);
-})->name('contacto');
+
 Route::get('/productos', [ProductoController::class, 'indexVistaPrevia'])->name('/productos');
 Route::get('/productos/{id}', [ProductoController::class, 'indexInicio'])->name('/productos');
 Route::get('/productos/{categoria_id}/{producto_id}', [ProductoController::class, 'show'])->name('/productoss');

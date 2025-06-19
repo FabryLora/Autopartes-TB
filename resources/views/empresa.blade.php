@@ -1,6 +1,6 @@
 @extends('layouts.default')
 
-@section('title', 'Nosotros - Autopartes TB')
+@section('title', 'Empresa - Autopartes TB')
 
 @section('content')
     <div
