@@ -28,9 +28,9 @@ class DatabaseSeeder extends Seeder
             'lista' => 0,
         ]);
 
-        Admin::factory()->create([
+        /* Admin::factory()->create([
             'name' => 'pablo',
             'password' => bcrypt('pablopablo'),
-        ]);
+        ]); */
     }
 }

@@ -160,7 +160,7 @@
 
                 <div class="data-row">
                     <div class="data-label">Nombre:</div>
-                    <div class="data-value">{{ $datos['nombre'] }}</div>
+                    <div class="data-value">{{ $datos['name'] }}</div>
                 </div>
 
                 <div class="data-row">
@@ -170,7 +170,7 @@
 
                 <div class="data-row">
                     <div class="data-label">Teléfono:</div>
-                    <div class="data-value">{{ $datos['telefono'] }}</div>
+                    <div class="data-value">{{ $datos['celular'] }}</div>
                 </div>
 
                 @if (!empty($datos['empresa']))
@@ -188,7 +188,7 @@
         </div>
 
         <div class="footer">
-            <p>© {{ date('Y') }} Metac. Todos los derechos reservados.</p>
+            <p>© {{ date('Y') }} Autopartes TB. Todos los derechos reservados.</p>
             <p>Este es un correo automático, por favor no responda a este mensaje.</p>
         </div>
     </div>

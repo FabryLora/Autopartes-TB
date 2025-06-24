@@ -63,6 +63,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('privada')->group(function () {
         Route::get('privada/productos', [SubProductoController::class, 'indexPrivada'])->name('index.privada.subproductos');
         Route::get('privada/carrito', [PrivadaController::class, 'carrito']);
+        Route::get('privada/margenes', function () {
+            return inertia('privada/margenes');
+        })->name('margenes');
 
         Route::get('privada/mispedidos', [PedidoController::class, 'misPedidos']);
         Route::get('privada/listadeprecios', [ListaDePreciosController::class, 'index']);
