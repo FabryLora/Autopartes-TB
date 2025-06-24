@@ -133,23 +133,6 @@ export default function ProductosAdmin() {
                                                 </option>
                                             ))}
                                         </select>
-                                        <label htmlFor="marca">
-                                            Marca <span className="text-red-500">*</span>
-                                        </label>
-                                        <select
-                                            onChange={(e) => setData('marca_id', e.target.value)}
-                                            value={data.marca_id}
-                                            className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
-                                            name="marca"
-                                            id="marca"
-                                        >
-                                            <option value="">Seleccionar marca</option>
-                                            {marcas?.map((marca) => (
-                                                <option key={marca?.id} value={marca?.id}>
-                                                    {marca?.name}
-                                                </option>
-                                            ))}
-                                        </select>
 
                                         <label htmlFor="imagenn">Imagen</label>
                                         <span className="text-base font-normal">Resolucion recomendada: 286px x 286px</span>

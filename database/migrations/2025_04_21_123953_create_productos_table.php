@@ -23,9 +23,6 @@ return new class extends Migration
             $table->foreignIdFor(Categoria::class, 'categoria_id')->nullable()
                 ->constrained('categorias')
                 ->cascadeOnDelete();
-            $table->foreignIdFor(MarcaProducto::class, 'marca_id')->nullable()
-                ->constrained('marcas')
-                ->cascadeOnDelete();
             $table->string('ficha_tecnica')->nullable();
             $table->string('aplicacion')->nullable();
             $table->string('anio')->nullable();
