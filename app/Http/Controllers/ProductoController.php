@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
-use App\Models\Contacto;
+
 use App\Models\ImagenProducto;
-use App\Models\Marca;
-use App\Models\MarcaProducto;
+
 use App\Models\Metadatos;
 use App\Models\Producto;
 use App\Models\SubProducto;
@@ -45,17 +44,20 @@ class ProductoController extends Controller
         ]);
     }
 
-    public function indexVistaPrevia()
+    public function indexVistaPrevia($id)
     {
-        $productos = Producto::select('id', 'code')->get();
-        $categorias = Categoria::orderBy('order', 'asc')->get();
+        $productos = Producto::where('categoria_id', $id)
+
+            ->orderBy('order', 'asc')
+            ->get();
+        $categorias = Categoria::with('subCategorias')->orderBy('order', 'asc')->get();
 
 
 
-        return Inertia::render('productosVistaPrevia', [
+        return view('productos', [
             'categorias' => $categorias,
-
             'productos' => $productos,
+            'categoria' => Categoria::findOrFail($id),
         ]);
     }
 

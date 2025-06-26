@@ -25,19 +25,17 @@ Route::get('/lanzamientos', [HomePages::class, 'lanzamientos'])->name('lanzamien
 Route::get('/contacto', [HomePages::class, 'contacto'])->name('contacto');
 Route::get('/lanzamientos/{id}', [NovedadesController::class, 'novedadesShow'])->name('novedades');
 Route::post('/contacto/sendemail', [ContactoController::class, 'sendContact'])->name('send.contact');
+Route::get('/productos/{id}', [ProductoController::class, 'indexVistaPrevia'])->name('/productos');
+
+Route::get('/productos/{categoria_id}/{producto_id}', [ProductoController::class, 'show'])->name('/productoss');
+Route::get('/busqueda', [ProductoController::class, 'SearchProducts'])->name('searchproducts');
+
 
 # ------------------------------------------------------------------- #
 
 
 
 
-
-
-
-Route::get('/productos', [ProductoController::class, 'indexVistaPrevia'])->name('/productos');
-Route::get('/productos/{id}', [ProductoController::class, 'indexInicio'])->name('/productos');
-Route::get('/productos/{categoria_id}/{producto_id}', [ProductoController::class, 'show'])->name('/productoss');
-Route::get('/busqueda', [ProductoController::class, 'SearchProducts'])->name('searchproducts');
 
 
 Route::get('/fix-images', [ProductoController::class, 'fixImagePath'])->name('fix.images');

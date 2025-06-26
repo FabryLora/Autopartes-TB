@@ -82,6 +82,7 @@ export default function Dashboard({ children }) {
             href: '#',
             subHref: [
                 { title: 'Categorias', href: 'categorias' },
+                { title: 'Sub-categorias', href: 'subcategorias' },
                 { title: 'Productos', href: 'productos' },
                 { title: 'Sub-productos', href: 'subproductos' },
                 { title: 'Marcas', href: 'marcasProducto' },

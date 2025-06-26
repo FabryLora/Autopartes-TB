@@ -10,7 +10,12 @@ class Categoria extends Model
 
     public function productos()
     {
-        return $this->hasMany(Producto::class);
+        return $this->hasMany(Producto::class)->orderBy('order');
+    }
+
+    public function subCategorias()
+    {
+        return $this->hasMany(SubCategoria::class)->orderBy('order');
     }
 
     public function getImageAttribute($value)

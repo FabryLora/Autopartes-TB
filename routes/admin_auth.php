@@ -21,6 +21,7 @@ use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\PrivadaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\SliderController;
+use App\Http\Controllers\SubCategoriaController;
 use App\Http\Controllers\SubProductoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ValoresController;
@@ -52,10 +53,19 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('admin/nosotros/update', [NosotrosController::class, 'update'])->name('admin.nosotros.update');
     Route::get('admin/valores', [ValoresController::class, 'index'])->name('admin.valores');
     Route::post('admin/valores', [ValoresController::class, 'update'])->name('admin.valores.update');
+
+    # Categorias
     Route::get('admin/categorias', [CategoriaController::class, 'index'])->name('admin.categorias');
     Route::post('admin/categorias', [CategoriaController::class, 'store'])->name('admin.categorias.store');
     Route::post('admin/categorias/update', [CategoriaController::class, 'update'])->name('admin.categorias.update');
     Route::delete('admin/categorias/destroy/{id}', [CategoriaController::class, 'destroy'])->name('admin.categorias.destroy');
+
+    # Subcategorias
+    Route::get('admin/subcategorias', [SubCategoriaController::class, 'index'])->name('admin.subcategorias');
+    Route::post('admin/subcategorias', [SubCategoriaController::class, 'store'])->name('admin.subcategorias.store');
+    Route::post('admin/subcategorias/update', [SubCategoriaController::class, 'update'])->name('admin.subcategorias.update');
+    Route::delete('admin/subcategorias/destroy', [SubCategoriaController::class, 'destroy'])->name('admin.subcategorias.destroy');
+
     Route::get('admin/marcas', [MarcaController::class, 'index'])->name('admin.marcas');
     Route::post('admin/marcas', [MarcaController::class, 'store'])->name('admin.marcas.store');
     Route::post('admin/marcas/update', [MarcaController::class, 'update'])->name('admin.marcas.update');
