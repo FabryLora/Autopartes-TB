@@ -81,11 +81,9 @@ export default function Dashboard({ children }) {
             icon: faBoxArchive,
             href: '#',
             subHref: [
-                { title: 'Categorias', href: 'categorias' },
-                { title: 'Sub-categorias', href: 'subcategorias' },
+                { title: 'Marcas', href: 'categorias' },
+                { title: 'Modelos', href: 'subcategorias' },
                 { title: 'Productos', href: 'productos' },
-                { title: 'Sub-productos', href: 'subproductos' },
-                { title: 'Marcas', href: 'marcasProducto' },
             ],
         },
         {

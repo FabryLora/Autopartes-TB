@@ -47,11 +47,7 @@ export default function CategoriasAdminRow({ categoria }) {
     return (
         <tr className={`border text-black odd:bg-gray-100 even:bg-white`}>
             <td className="align-middle">{categoria?.order}</td>
-            <td className="align-middle">{categoria?.name}</td>
-
-            <td className="h-[90px] w-[90px] px-8">
-                <img className="h-full w-full object-contain" src={categoria?.image} alt="" />
-            </td>
+            <td className="h-[90px] align-middle">{categoria?.name}</td>
 
             <td className="w-[140px] text-center">
                 <div className="flex flex-row justify-center gap-3">
@@ -95,25 +91,6 @@ export default function CategoriasAdminRow({ categoria }) {
                                         value={updateForm?.data?.name}
                                         onChange={(e) => updateForm.setData('name', e.target.value)}
                                     />
-                                    <label htmlFor="imagenn">Imagen</label>
-
-                                    <span className="text-base font-normal">Resolucion recomendada: 501x181px</span>
-                                    <div className="flex flex-row">
-                                        <input
-                                            type="file"
-                                            name="imagen"
-                                            id="imagenn"
-                                            onChange={(e) => updateForm.setData('image', e.target.files[0])}
-                                            className="hidden"
-                                        />
-                                        <label
-                                            className="border-primary-orange text-primary-orange hover:bg-primary-orange cursor-pointer rounded-md border px-2 py-1 transition duration-300 hover:text-white"
-                                            htmlFor="imagenn"
-                                        >
-                                            Elegir imagen
-                                        </label>
-                                        <p className="self-center px-2">{updateForm?.data?.image?.name}</p>
-                                    </div>
 
                                     <div className="flex justify-end gap-4">
                                         <button

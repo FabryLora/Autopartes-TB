@@ -21,12 +21,12 @@ export default function CategoriasAdmin() {
         post(route('admin.categorias.store'), {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success('Categoria creada correctamente');
+                toast.success('Marca creada correctamente');
                 reset();
                 setCreateView(false);
             },
             onError: (errors) => {
-                toast.error('Error al crear categoria');
+                toast.error('Error al crear marca');
                 console.log(errors);
             },
         });
@@ -75,7 +75,7 @@ export default function CategoriasAdmin() {
                         >
                             <form onSubmit={handleSubmit} method="POST" className="text-black">
                                 <div className="w-[500px] rounded-md bg-white p-4">
-                                    <h2 className="mb-4 text-2xl font-semibold">Crear Categoria</h2>
+                                    <h2 className="mb-4 text-2xl font-semibold">Crear Marca</h2>
                                     <div className="flex flex-col gap-4">
                                         <label htmlFor="ordennn">Orden</label>
                                         <input
@@ -95,25 +95,6 @@ export default function CategoriasAdmin() {
                                             id="nombree"
                                             onChange={(e) => setData('name', e.target.value)}
                                         />
-                                        <label htmlFor="imagenn">Imagen</label>
-
-                                        <span className="text-base font-normal">Resolucion recomendada: 501x181px</span>
-                                        <div className="flex flex-row">
-                                            <input
-                                                type="file"
-                                                name="imagen"
-                                                id="imagenn"
-                                                onChange={(e) => setData('image', e.target.files[0])}
-                                                className="hidden"
-                                            />
-                                            <label
-                                                className="border-primary-orange text-primary-orange hover:bg-primary-orange cursor-pointer rounded-md border px-2 py-1 transition duration-300 hover:text-white"
-                                                htmlFor="imagenn"
-                                            >
-                                                Elegir imagen
-                                            </label>
-                                            <p className="self-center px-2">{data?.image?.name}</p>
-                                        </div>
 
                                         <div className="flex justify-end gap-4">
                                             <button
@@ -137,11 +118,11 @@ export default function CategoriasAdmin() {
                     )}
                 </AnimatePresence>
                 <div className="mx-auto flex w-full flex-col gap-3">
-                    <h2 className="border-primary-orange text-primary-orange text-bold w-full border-b-2 text-2xl">Categorias</h2>
+                    <h2 className="border-primary-orange text-primary-orange text-bold w-full border-b-2 text-2xl">Marcas</h2>
                     <div className="flex h-fit w-full flex-row gap-5">
                         <input
                             type="text"
-                            placeholder="Buscar categoria..."
+                            placeholder="Buscar marca..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full rounded-md border border-gray-300 px-3"
@@ -156,7 +137,7 @@ export default function CategoriasAdmin() {
                             onClick={() => setCreateView(true)}
                             className="bg-primary-orange w-[200px] rounded px-4 py-1 font-bold text-white hover:bg-orange-400"
                         >
-                            Crear Categoria
+                            Crear Marca
                         </button>
                     </div>
 
@@ -165,8 +146,8 @@ export default function CategoriasAdmin() {
                             <thead className="bg-gray-300 text-sm font-medium text-black uppercase">
                                 <tr>
                                     <td className="text-center">ORDEN</td>
-                                    <td className="text-center">NOMBRE</td>
-                                    <td className="w-[400px] px-3 py-2 text-center">IMAGEN</td>
+                                    <td className="py-2 text-center">NOMBRE</td>
+
                                     <td className="text-center">EDITAR</td>
                                 </tr>
                             </thead>

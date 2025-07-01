@@ -22,7 +22,7 @@
                 <div class="relative border-t border-gray-200">
                     @foreach ($categorias as $cat)
                     <div class="flex flex-row justify-between items-center py-3 px-2 border-b border-gray-200 hover:bg-gray-100 hover:pl-3 transition-all duration-300 ease-in-out text-lg {{ $cat->id == $categoria->id ? 'font-bold bg-gray-50' : '' }}">
-<a {{-- href="{{ route('productos', ['id' => $cat->id]) }}" --}}
+                            <a {{-- href="{{ route('productos', ['id' => $cat->id]) }}" --}}
                             class="block">
                             {{ $cat->name }}
                             @if ($cat->productos_count)
@@ -40,7 +40,7 @@
                     </div>
                         
                         @if ($cat->subCategorias)
-                        <div class="flex flex-col gap-3">
+                        <div class="flex flex-col gap-3">   
                             @foreach ($cat->subCategorias as $subCategoria)
                                 <a href="#" {{-- href="{{ route('productos', ['id' => $subCategoria->id]) }}" --}}
                                     class="block py-2 px-4 border-b border-gray-200 hover:bg-gray-100 hover:pl-3 transition-all duration-300 ease-in-out text-md
@@ -67,7 +67,7 @@
                     @forelse($productos as $producto)
                         <a
                             href="#"
-                            class="border border-gray-200 transition-transform transform hover:-translate-y-1 hover:shadow-lg duration-300 h-[349px] flex flex-col">
+                            class=" border-gray-200 transition-transform transform hover:-translate-y-1 hover:shadow-lg duration-300 h-[349px] flex flex-col">
                             <div class="h-full flex flex-col">
                                 @if ($producto->imagenes->count() > 0)
                                     <img src="{{ asset('storage/' . $producto->imagenes->first()->path) }}"

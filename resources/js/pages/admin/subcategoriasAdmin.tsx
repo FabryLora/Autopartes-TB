@@ -24,7 +24,7 @@ export default function SubCategoriasAdmin() {
         post(route('admin.subcategorias.store'), {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success('Sub-categoria creada correctamente');
+                toast.success('Modelo creada correctamente');
                 reset();
                 setCreateView(false);
             },
@@ -65,8 +65,6 @@ export default function SubCategoriasAdmin() {
         );
     };
 
-    console.log(subCategorias);
-
     return (
         <Dashboard>
             <div className="flex w-full flex-col p-6">
@@ -80,7 +78,7 @@ export default function SubCategoriasAdmin() {
                         >
                             <form onSubmit={handleSubmit} method="POST" className="text-black">
                                 <div className="w-[500px] rounded-md bg-white p-4">
-                                    <h2 className="mb-4 text-2xl font-semibold">Crear Sub-categoria</h2>
+                                    <h2 className="mb-4 text-2xl font-semibold">Crear Modelo</h2>
                                     <div className="flex flex-col gap-4">
                                         <label htmlFor="ordennn">Orden</label>
                                         <input
@@ -101,7 +99,7 @@ export default function SubCategoriasAdmin() {
                                             onChange={(e) => setData('name', e.target.value)}
                                         />
 
-                                        <label htmlFor="categoria">Categoria</label>
+                                        <label htmlFor="categoria">Marca</label>
                                         <select
                                             className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
                                             name="categoria"
@@ -109,7 +107,7 @@ export default function SubCategoriasAdmin() {
                                             onChange={(e) => setData('categoria_id', e.target.value)}
                                             value={data.categoria_id}
                                         >
-                                            <option value="">Seleccionar Categoria</option>
+                                            <option value="">Seleccionar marca</option>
                                             {categorias?.map((categoria) => (
                                                 <option key={categoria.id} value={categoria.id}>
                                                     {categoria.name}
@@ -139,11 +137,11 @@ export default function SubCategoriasAdmin() {
                     )}
                 </AnimatePresence>
                 <div className="mx-auto flex w-full flex-col gap-3">
-                    <h2 className="border-primary-orange text-primary-orange text-bold w-full border-b-2 text-2xl">Sub-categorias</h2>
+                    <h2 className="border-primary-orange text-primary-orange text-bold w-full border-b-2 text-2xl">Modelos</h2>
                     <div className="flex h-fit w-full flex-row gap-5">
                         <input
                             type="text"
-                            placeholder="Buscar sub-categoria..."
+                            placeholder="Buscar modelo..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full rounded-md border border-gray-300 px-3"
@@ -158,7 +156,7 @@ export default function SubCategoriasAdmin() {
                             onClick={() => setCreateView(true)}
                             className="bg-primary-orange w-[300px] rounded px-4 py-1 font-bold text-white hover:bg-orange-400"
                         >
-                            Crear Sub-categoria
+                            Crear Modelo
                         </button>
                     </div>
 
@@ -168,7 +166,7 @@ export default function SubCategoriasAdmin() {
                                 <tr>
                                     <td className="text-center">ORDEN</td>
                                     <td className="text-center">NOMBRE</td>
-                                    <td className="py-2 text-center">CATEGORIA</td>
+                                    <td className="py-2 text-center">Marca</td>
                                     <td className="text-center">EDITAR</td>
                                 </tr>
                             </thead>

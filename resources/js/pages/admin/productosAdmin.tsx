@@ -3,27 +3,31 @@ import { router, useForm, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import Select from 'react-select';
 import Dashboard from './dashboard';
 
 export default function ProductosAdmin() {
-    const { productos, categorias, marcas } = usePage().props;
+    const { productos, categorias, subcategorias } = usePage().props;
 
     const { data, setData, post, reset } = useForm({
         name: '',
         code: '',
-        oreder: '',
+        code_oem: '',
+        code_competitor: '',
         categoria_id: '',
-        marca_id: '',
-        aplicacion: '',
-        anios: '',
-        num_original: '',
-        tonelaje: '',
-        espigon: '',
-        bujes: '',
+        sub_categoria_id: '',
+        desc_visible: '',
+        desc_invisible: '',
+        unidad_pack: '',
+        familia: '',
+        stock: '',
     });
 
     const [searchTerm, setSearchTerm] = useState('');
     const [createView, setCreateView] = useState(false);
+
+    const [modeloSelected, setModeloSelected] = useState([]);
+    const [marcaSelected, setMarcaSelected] = useState([]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -116,23 +120,57 @@ export default function ProductosAdmin() {
                                             onChange={(e) => setData('code', e.target.value)}
                                         />
 
-                                        <label htmlFor="categoria">
-                                            Categoria <span className="text-red-500">*</span>
+                                        <label htmlFor="code_oem">
+                                            Codigo OEM <span className="text-red-500">*</span>
                                         </label>
-                                        <select
-                                            onChange={(e) => setData('categoria_id', e.target.value)}
-                                            value={data.categoria_id}
+                                        <input
                                             className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
+                                            type="text"
+                                            name="code_oem"
+                                            id="code_oem"
+                                            onChange={(e) => setData('code_oem', e.target.value)}
+                                        />
+
+                                        <label htmlFor="code_competitor">
+                                            Codigo competidor <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
+                                            type="text"
+                                            name="code_competitor"
+                                            id="code_competitor"
+                                            onChange={(e) => setData('code_competitor', e.target.value)}
+                                        />
+
+                                        <label htmlFor="categoria">
+                                            Marcas <span className="text-red-500">*</span>
+                                        </label>
+                                        <Select
+                                            options={categorias?.map((categoria) => ({
+                                                value: categoria.id,
+                                                label: categoria.name,
+                                            }))}
+                                            onChange={(options) => setMarcaSelected(options)}
+                                            className=""
                                             name="categoria"
                                             id="categoria"
-                                        >
-                                            <option value="">Seleccionar categoria</option>
-                                            {categorias?.map((categoria) => (
-                                                <option key={categoria?.id} value={categoria?.id}>
-                                                    {categoria?.name}
-                                                </option>
-                                            ))}
-                                        </select>
+                                            isMulti
+                                        />
+
+                                        <label htmlFor="subcategoria">
+                                            Modelos <span className="text-red-500">*</span>
+                                        </label>
+                                        <Select
+                                            options={subcategorias?.map((subcategoria) => ({
+                                                value: subcategoria.id,
+                                                label: subcategoria.name,
+                                            }))}
+                                            onChange={(options) => setModeloSelected(options)}
+                                            className=""
+                                            name="subcategoria"
+                                            id="subcategoria"
+                                            isMulti
+                                        />
 
                                         <label htmlFor="imagenn">Imagen</label>
                                         <span className="text-base font-normal">Resolucion recomendada: 286px x 286px</span>
@@ -196,11 +234,9 @@ export default function ProductosAdmin() {
                                     <td className="text-center">ORDEN</td>
                                     <td className="text-center">NOMBRE</td>
                                     <td className="text-center">CODIGO</td>
-                                    <td className="text-center">CATEGORIA</td>
-                                    <td className="text-center">MARCA</td>
+                                    <td className="text-center">MARCAS</td>
+                                    <td className="py-2 text-center">MODELOS</td>
 
-                                    <td className="text-center">CARACTERISTICAS</td>
-                                    <td className="px-3 py-2 text-center">IMAGEN</td>
                                     <td className="text-center">EDITAR</td>
                                 </tr>
                             </thead>

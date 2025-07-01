@@ -100,19 +100,7 @@ export default function ProductosAdminRow({ producto, marcas, categorias }) {
             <td className="align-middle">{producto?.name}</td>
             <td className="align-middle">{producto?.code}</td>
             <td className="align-middle">{producto?.categoria?.name}</td>
-            <td className="align-middle">{producto?.marca?.name}</td>
-
-            <td>
-                <button onClick={() => setCaracteristicasView(true)} className="h-10 w-10 rounded-md border border-blue-500 px-2 py-1 text-white">
-                    <FontAwesomeIcon icon={faPen} size="lg" color="#3b82f6" />
-                </button>
-            </td>
-
-            <td className="h-[90px] w-[90px] px-8">
-                <button onClick={() => setImagenesView(true)} className="h-10 w-10 rounded-md border border-blue-500 px-2 py-1 text-white">
-                    <FontAwesomeIcon icon={faPen} size="lg" color="#3b82f6" />
-                </button>
-            </td>
+            <td className="h-[90px] align-middle">{producto?.marca?.name}</td>
 
             <td className="w-[140px] text-center">
                 <div className="flex flex-row justify-center gap-3">

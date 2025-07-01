@@ -12,6 +12,11 @@ class Producto extends Model
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 
+    public function subcategoria()
+    {
+        return $this->belongsTo(SubCategoria::class, 'sub_categoria_id');
+    }
+
     public function imagenes()
     {
         return $this->hasMany(ImagenProducto::class, 'producto_id');
@@ -23,11 +28,6 @@ class Producto extends Model
     }
 
     public function getImageAttribute($value)
-    {
-        return url("storage/" . $value);
-    }
-
-    public function getFichaTecnicaAttribute($value)
     {
         return url("storage/" . $value);
     }

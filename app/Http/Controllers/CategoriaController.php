@@ -40,13 +40,10 @@ class CategoriaController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'order' => 'required|string',
+            'order' => 'nullable|sometimes|string',
             'name' => 'required|string|max:255',
-            'image' => 'required|file',
         ]);
 
-        // Store the image
-        $data['image'] = $request->file('image')->store('images', 'public');
 
         // Create the category
         Categoria::create($data);
@@ -70,21 +67,9 @@ class CategoriaController extends Controller
         $data = $request->validate([
             'order' => 'sometimes|string',
             'name' => 'sometimes|string|max:255',
-            'image' => 'sometimes|file',
         ]);
 
-        // Handle file upload if image exists
-        if ($request->hasFile('image')) {
-            // Delete the old image if it exists
-            if ($categoria->image) {
-                $absolutePath = public_path('storage/' . $categoria->image);
-                if (file_exists($absolutePath)) {
-                    unlink($absolutePath);
-                }
-            }
-            // Store the new image
-            $data['image'] = $request->file('image')->store('images', 'public');
-        }
+
 
         // Update the category
         $categoria->update($data);
@@ -104,13 +89,7 @@ class CategoriaController extends Controller
             return redirect()->back()->with('error', 'Category not found.');
         }
 
-        // Delete the image if it exists
-        if ($categoria->image) {
-            $absolutePath = public_path('storage/' . $categoria->image);
-            if (file_exists($absolutePath)) {
-                unlink($absolutePath);
-            }
-        }
+
 
         // Delete the category
         $categoria->delete();

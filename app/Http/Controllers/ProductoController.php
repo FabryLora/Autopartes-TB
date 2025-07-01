@@ -8,6 +8,7 @@ use App\Models\ImagenProducto;
 
 use App\Models\Metadatos;
 use App\Models\Producto;
+use App\Models\SubCategoria;
 use App\Models\SubProducto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -35,11 +36,14 @@ class ProductoController extends Controller
 
         $productos = $query->paginate($perPage);
 
+        $subcategorias = SubCategoria::orderBy('order', 'asc')->get();
+
 
 
         return Inertia::render('admin/productosAdmin', [
             'productos' => $productos,
             'categorias' => $categorias,
+            'subcategorias' => $subcategorias
 
         ]);
     }
@@ -58,6 +62,27 @@ class ProductoController extends Controller
             'categorias' => $categorias,
             'productos' => $productos,
             'categoria' => Categoria::findOrFail($id),
+        ]);
+    }
+
+    public function show($categoria_id, $producto_id)
+    {
+        $categoria = Categoria::findOrFail($categoria_id);
+        $producto = Producto::with(['categoria:id,name',  'imagenes'])->findOrFail($producto_id);
+        $categorias = Categoria::select('id', 'name', 'order')->orderBy('order', 'asc')->get();
+        $productosRelacionados = Producto::with(['imagenes'])
+
+            ->where('id', '!=', $producto_id)
+            ->inRandomOrder()
+            ->limit(3)
+            ->get();
+
+
+        return view('producto', [
+            'producto' => $producto,
+            'categorias' => $categorias,
+            'categoria' => $categoria,
+            'productosRelacionados' => $productosRelacionados,
         ]);
     }
 
@@ -146,27 +171,7 @@ class ProductoController extends Controller
 
 
 
-    public function show($id, $producto_id)
-    {
 
-        $subproductos = SubProducto::where('producto_id', $producto_id)->orderBy('order', 'asc')->get();
-        $producto = Producto::with(['categoria:id,name',  'imagenes'])->findOrFail($producto_id);
-        $categorias = Categoria::select('id', 'name', 'order')->orderBy('order', 'asc')->get();
-        $productosRelacionados = Producto::with(['imagenes'])
-
-            ->where('id', '!=', $producto_id)
-            ->inRandomOrder()
-            ->limit(3)
-            ->get();
-
-
-        return Inertia::render('productos/productoShow', [
-            'producto' => $producto,
-            'subproductos' => $subproductos,
-            'categorias' => $categorias,
-            'productosRelacionados' => $productosRelacionados,
-        ]);
-    }
 
     public function SearchProducts(Request $request)
     {
@@ -216,27 +221,23 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'order' => 'nullable|sometimes|max:255',
             'name' => 'required|string|max:255',
-            'order' => 'sometimes|string|max:255',
             'code' => 'required|string|max:255',
+            'code_oem' => 'required|string|max:255',
+            'code_competitor' => 'required|string|max:255',
             'categoria_id' => 'required|exists:categorias,id',
-
-            'ficha_tecnica' => 'sometimes|file',
-            'aplicacion' => 'nullable|string|max:255',
-            'anio' => 'nullable|string|max:255',
-            'num_original' => 'nullable|string|max:255',
-            'tonelaje' => 'nullable|string|max:255',
-            'espigon' => 'nullable|string|max:255',
-            'bujes' => 'nullable|string|max:255',
-
-
+            'sub_categoria_id' => 'nullable|exists:sub_categorias,id',
+            'medida' => 'nullable|string|max:255',
+            'desc_visible' => 'nullable|string',
+            'desc_invisible' => 'nullable|string',
+            'unidad_pack' => 'nullable|integer',
+            'familia' => 'nullable|string|max:255',
+            'stock' => 'nullable|integer',
+            'descuento_oferta' => 'nullable|integer',
         ]);
 
-        // Handle file upload
-        if ($request->hasFile('ficha_tecnica')) {
-            $imagePath = $request->file('ficha_tecnica')->store('images', 'public');
-            $data['ficha_tecnica'] = $imagePath;
-        }
+
 
         Producto::create($data);
     }
@@ -256,32 +257,23 @@ class ProductoController extends Controller
         }
 
         $data = $request->validate([
-            'name' => 'sometimes|string|max:255',
             'order' => 'sometimes|string|max:255',
+            'name' => 'sometimes|string|max:255',
             'code' => 'sometimes|string|max:255',
+            'code_oem' => 'nullable|string|max:255',
+            'code_competitor' => 'nullable|string|max:255',
             'categoria_id' => 'sometimes|exists:categorias,id',
-
-            'ficha_tecnica' => 'sometimes|file',
-            'aplicacion' => 'sometimes|string|max:255',
-            'anio' => 'sometimes|string|max:255',
-            'num_original' => 'sometimes|string|max:255',
-            'tonelaje' => 'sometimes|string|max:255',
-            'espigon' => 'sometimes|string|max:255',
-            'bujes' => 'sometimes|string|max:255',
+            'sub_categoria_id' => 'nullable|exists:sub_categorias,id',
+            'medida' => 'nullable|string|max:255',
+            'desc_visible' => 'nullable|string',
+            'desc_invisible' => 'nullable|string',
+            'unidad_pack' => 'nullable|integer',
+            'familia' => 'nullable|string|max:255',
+            'stock' => 'nullable|integer',
+            'descuento_oferta' => 'nullable|integer',
         ]);
 
         // Handle file upload
-        if ($request->hasFile('ficha_tecnica')) {
-            // Delete the old image if it exists
-            if ($producto->ficha_tecnica) {
-                $absolutePath = public_path('storage/' . $producto->ficha_tecnica);
-                if (file_exists($absolutePath)) {
-                    unlink($absolutePath);
-                }
-            }
-            // Store the new image
-            $data['ficha_tecnica'] = $request->file('ficha_tecnica')->store('images', 'public');
-        }
 
         $producto->update($data);
 
@@ -301,13 +293,6 @@ class ProductoController extends Controller
             return redirect()->back()->with('error', 'Producto no encontrado.');
         }
 
-        // Delete the image if it exists
-        if ($producto->ficha_tecnica) {
-            $absolutePath = public_path('storage/' . $producto->ficha_tecnica);
-            if (file_exists($absolutePath)) {
-                unlink($absolutePath);
-            }
-        }
 
         $producto->delete();
 
