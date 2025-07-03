@@ -13,8 +13,6 @@ export default function SubCategoriasAdmin() {
         categoria_id: '',
     });
 
-    console.log(subCategorias?.data);
-
     const [searchTerm, setSearchTerm] = useState('');
     const [createView, setCreateView] = useState(false);
 

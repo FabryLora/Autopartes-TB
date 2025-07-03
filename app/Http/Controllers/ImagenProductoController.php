@@ -25,16 +25,35 @@ class ImagenProductoController extends Controller
         $data = $request->validate([
             'producto_id' => 'required|exists:productos,id',
             'order' => 'nullable|string|max:255',
-            'image' => 'required|file',
+            'images' => 'required|array|min:1', // Cambié a array
+            'images.*' => 'required|file|image', // Validación para cada imagen
         ]);
 
-        // Handle file upload
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public');
-            $data['image'] = $imagePath;
+        $createdImages = [];
+
+        // Procesar cada imagen
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                // Subir cada imagen
+                $imagePath = $image->store('images', 'public');
+
+                // Crear registro para cada imagen
+                $imageRecord = ImagenProducto::create([
+                    'producto_id' => $data['producto_id'],
+                    'order' => $data['order'],
+                    'image' => $imagePath,
+                ]);
+
+                $createdImages[] = $imageRecord;
+            }
         }
 
-        ImagenProducto::create($data);
+        // Opcional: retornar las imágenes creadas
+        return response()->json([
+            'message' => 'Imágenes subidas correctamente',
+            'images' => $createdImages,
+            'count' => count($createdImages)
+        ]);
     }
 
 

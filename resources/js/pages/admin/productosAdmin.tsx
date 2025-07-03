@@ -1,7 +1,6 @@
-import ProductosAdminRow from '@/components/productosAdminRow';
 import { router, useForm, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
 import Dashboard from './dashboard';
@@ -9,7 +8,7 @@ import Dashboard from './dashboard';
 export default function ProductosAdmin() {
     const { productos, categorias, subcategorias } = usePage().props;
 
-    const { data, setData, post, reset } = useForm({
+    const { data, setData, post, reset, errors } = useForm({
         name: '',
         code: '',
         code_oem: '',
@@ -21,6 +20,9 @@ export default function ProductosAdmin() {
         unidad_pack: '',
         familia: '',
         stock: '',
+        modelos: [],
+        marcas: [],
+        images: [],
     });
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -28,6 +30,51 @@ export default function ProductosAdmin() {
 
     const [modeloSelected, setModeloSelected] = useState([]);
     const [marcaSelected, setMarcaSelected] = useState([]);
+    const [imagePreviews, setImagePreviews] = useState([]);
+
+    useEffect(() => {
+        setData(
+            'modelos',
+            modeloSelected.map((m) => m.value),
+        );
+        setData(
+            'marcas',
+            marcaSelected.map((m) => m.value),
+        );
+    }, [modeloSelected, marcaSelected]);
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+
+        // Actualizar el form data con los archivos
+        setData('images', files);
+
+        // Crear previews de las imágenes
+        const previews = files.map((file) => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) =>
+                    resolve({
+                        file: file,
+                        url: e.target.result,
+                        name: file.name,
+                        size: file.size,
+                    });
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // Actualizar el estado de previews
+        Promise.all(previews).then(setImagePreviews);
+    };
+
+    const removeImage = (indexToRemove) => {
+        const newImages = data.images.filter((_, index) => index !== indexToRemove);
+        const newPreviews = imagePreviews.filter((_, index) => index !== indexToRemove);
+
+        setData('images', newImages);
+        setImagePreviews(newPreviews);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -172,16 +219,45 @@ export default function ProductosAdmin() {
                                             isMulti
                                         />
 
-                                        <label htmlFor="imagenn">Imagen</label>
-                                        <span className="text-base font-normal">Resolucion recomendada: 286px x 286px</span>
+                                        <div>
+                                            <label>Imágenes del Producto</label>
+                                            <input
+                                                type="file"
+                                                multiple
+                                                accept="image/*"
+                                                onChange={handleFileChange}
+                                                className="w-full rounded border p-2"
+                                            />
+                                            {errors.images && <span className="text-red-500">{errors.images}</span>}
+                                            {errors['images.*'] && <span className="text-red-500">{errors['images.*']}</span>}
+                                        </div>
 
-                                        <input
-                                            type="file"
-                                            name="imagen"
-                                            id="imagenn"
-                                            onChange={(e) => setData('image', e.target.files[0])}
-                                            className="file:border-primary-orange file:text-primary-orange hover:file:bg-primary-orange file:cursor-pointer file:rounded-md file:border file:px-2 file:py-1 file:transition file:duration-300 hover:file:text-white"
-                                        />
+                                        {/* Preview de imágenes */}
+                                        {imagePreviews.length > 0 && (
+                                            <div className="space-y-2">
+                                                <h4>Imágenes seleccionadas ({imagePreviews.length})</h4>
+                                                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                                                    {imagePreviews.map((preview, index) => (
+                                                        <div key={index} className="relative">
+                                                            <img
+                                                                src={preview.url}
+                                                                alt={preview.name}
+                                                                className="h-32 w-full rounded border object-cover"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeImage(index)}
+                                                                className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-sm text-white hover:bg-red-600"
+                                                            >
+                                                                ×
+                                                            </button>
+                                                            <p className="mt-1 truncate text-xs text-gray-600">{preview.name}</p>
+                                                            <p className="text-xs text-gray-500">{(preview.size / 1024 / 1024).toFixed(2)} MB</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
 
                                         <div className="flex justify-end gap-4">
                                             <button
@@ -241,9 +317,9 @@ export default function ProductosAdmin() {
                                 </tr>
                             </thead>
                             <tbody className="text-center">
-                                {productos.data?.map((producto) => (
+                                {/* {productos.data?.map((producto) => (
                                     <ProductosAdminRow key={producto.id} producto={producto} categorias={categorias} marcas={marcas} />
-                                ))}
+                                ))} */}
                             </tbody>
                         </table>
                     </div>

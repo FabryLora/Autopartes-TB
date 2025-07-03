@@ -8,9 +8,12 @@ use App\Models\ImagenProducto;
 
 use App\Models\Metadatos;
 use App\Models\Producto;
+use App\Models\ProductoMarca;
+use App\Models\ProductoModelo;
 use App\Models\SubCategoria;
 use App\Models\SubProducto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -220,14 +223,14 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
+
         $data = $request->validate([
+            // Validaciones del producto
             'order' => 'nullable|sometimes|max:255',
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:255',
             'code_oem' => 'required|string|max:255',
             'code_competitor' => 'required|string|max:255',
-            'categoria_id' => 'required|exists:categorias,id',
-            'sub_categoria_id' => 'nullable|exists:sub_categorias,id',
             'medida' => 'nullable|string|max:255',
             'desc_visible' => 'nullable|string',
             'desc_invisible' => 'nullable|string',
@@ -235,11 +238,73 @@ class ProductoController extends Controller
             'familia' => 'nullable|string|max:255',
             'stock' => 'nullable|integer',
             'descuento_oferta' => 'nullable|integer',
+            'modelos' => 'nullable|array',
+            'modelos.*' => 'integer|exists:sub_categorias,id', // Cada elemento debe ser un ID válido
+            'marcas' => 'nullable|array',
+            'marcas.*' => 'integer|exists:categorias,id',
+            // Validaciones de las imágenes (opcionales)
+            'images' => 'nullable|array|min:1',
+            'images.*' => 'required|file|image', // máximo 2MB por imagen
         ]);
 
+        try {
+            return DB::transaction(function () use ($request, $data) {
+                // Crear el producto primero
+                $producto = Producto::create([
+                    'name' => $data['name'],
+                    'code' => $data['code'],
+                    'code_oem' => $data['code_oem'],
+                    'code_competitor' => $data['code_competitor'],
+                    'desc_visible' => $data['desc_visible'],
+                    'desc_invisible' => $data['desc_invisible'],
+                    'unidad_pack' => $data['unidad_pack'],
+                    'familia' => $data['familia'],
+                    'stock' => $data['stock'],
+                ]);
 
+                $createdImages = [];
 
-        Producto::create($data);
+                // Procesar imágenes si existen
+                if ($request->hasFile(key: 'images')) {
+                    foreach ($request->file('images') as $image) {
+                        // Subir cada imagen
+                        $imagePath = $image->store('images', 'public');
+
+                        // Crear registro para cada imagen usando el ID del producto recién creado
+                        $imageRecord = ImagenProducto::create([
+                            'producto_id' => $producto->id,
+                            'order' => $data['order'] ?? null,
+                            'image' => $imagePath,
+                        ]);
+
+                        $createdImages[] = $imageRecord;
+                    }
+                }
+
+                if ($request->has('modelos')) {
+                    foreach ($data['modelos'] as $modeloId) {
+                        ProductoModelo::create([
+                            'producto_id' => $producto->id,
+                            'sub_categoria_id' => $modeloId,
+                        ]);
+                    }
+                }
+
+                if ($request->has('marcas')) {
+                    foreach ($data['marcas'] as $marcaId) {
+                        ProductoMarca::create([
+                            'producto_id' => $producto->id,
+                            'categoria_id' => $marcaId,
+                        ]);
+                    }
+                }
+            });
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al crear el producto',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 

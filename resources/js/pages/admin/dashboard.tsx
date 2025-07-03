@@ -59,8 +59,6 @@ export default function Dashboard({ children }) {
             subHref: [
                 { title: 'Contenido', href: 'bannerportada' },
                 { title: 'Slider', href: 'slider' },
-                { title: 'Marcas', href: 'marcas' },
-                { title: 'Instagram', href: 'instagram' },
             ],
         },
         {
@@ -98,9 +96,9 @@ export default function Dashboard({ children }) {
             ],
         },
         {
-            id: 'novedades',
+            id: 'lanzamientos',
             open: false,
-            title: 'Novedades',
+            title: 'Lanzamientos',
             icon: faNewspaper,
             href: 'novedades',
             subHref: [],

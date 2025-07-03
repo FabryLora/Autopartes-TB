@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Categoria;
+use App\Models\Producto;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,6 +15,12 @@ return new class extends Migration
     {
         Schema::create('producto_marcas', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(Producto::class, 'producto_id')
+                ->constrained('productos')
+                ->cascadeOnDelete();
+            $table->foreignIdFor(Categoria::class, 'categoria_id')
+                ->constrained('categorias')
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }
