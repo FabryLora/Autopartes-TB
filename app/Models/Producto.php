@@ -17,6 +17,15 @@ class Producto extends Model
         return $this->belongsTo(SubCategoria::class, 'sub_categoria_id');
     }
 
+    public function modelos()
+    {
+        return $this->hasMany(ProductoModelo::class);
+    }
+    public function marcas()
+    {
+        return $this->hasMany(ProductoMarca::class);
+    }
+
     public function imagenes()
     {
         return $this->hasMany(ImagenProducto::class, 'producto_id');

@@ -24,18 +24,12 @@ return new class extends Migration
             $table->string('code_oem')->nullable();
             $table->string('code_competitor')->nullable();
             $table->string('medida')->nullable();
-            $table->foreignIdFor(Categoria::class, 'categoria_id')->nullable()
-                ->constrained('categorias')
-                ->cascadeOnDelete();
-            $table->foreignIdFor(SubCategoria::class, 'sub_categoria_id')->nullable()
-                ->constrained('sub_categorias')
-                ->cascadeOnDelete();
             $table->longText('desc_visible')->nullable();
             $table->longText('desc_invisible')->nullable();
-            $table->unsignedBigInteger('unidad_pack')->nullable();
+            $table->unsignedBigInteger('unidad_pack')->default(1);
             $table->string('familia')->nullable();
-            $table->unsignedBigInteger('stock')->nullable();
-            $table->unsignedInteger('descuento_oferta')->nullable();
+            $table->unsignedBigInteger('stock')->default(0);
+            $table->unsignedInteger('descuento_oferta')->default(0);
             $table->timestamps();
         });
     }

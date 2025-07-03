@@ -1,3 +1,4 @@
+import ProductosAdminRow from '@/components/productosAdminRow';
 import { router, useForm, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
@@ -20,6 +21,7 @@ export default function ProductosAdmin() {
         unidad_pack: '',
         familia: '',
         stock: '',
+        medida: '',
         modelos: [],
         marcas: [],
         images: [],
@@ -134,9 +136,27 @@ export default function ProductosAdmin() {
                             exit={{ opacity: 0 }}
                             className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-black/50 text-left"
                         >
-                            <form onSubmit={handleSubmit} method="POST" className="max-h-[90vh] overflow-y-auto text-black">
-                                <div className="w-[500px] rounded-md bg-white p-4">
-                                    <h2 className="mb-4 text-2xl font-semibold">Crear Producto</h2>
+                            <form onSubmit={handleSubmit} method="POST" className="relative rounded-lg bg-white text-black">
+                                <div className="bg-primary-orange sticky top-0 flex flex-row items-center gap-2 rounded-t-lg p-4">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="28"
+                                        height="28"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="#ffffff"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        className="lucide lucide-plus-icon lucide-plus"
+                                    >
+                                        <path d="M5 12h14" />
+                                        <path d="M12 5v14" />
+                                    </svg>
+                                    <h2 className="text-2xl font-semibold text-white">Crear Producto</h2>
+                                </div>
+
+                                <div className="max-h-[60vh] w-[500px] overflow-y-auto rounded-md bg-white p-4">
                                     <div className="flex flex-col gap-4">
                                         <label htmlFor="ordennn">Orden</label>
                                         <input
@@ -155,6 +175,20 @@ export default function ProductosAdmin() {
                                             name="nombree"
                                             id="nombree"
                                             onChange={(e) => setData('name', e.target.value)}
+                                        />
+                                        <label htmlFor="descripcion">Descripcion visible</label>
+                                        <textarea
+                                            className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
+                                            name="descripcion"
+                                            id="descripcion"
+                                            onChange={(e) => setData('desc_visible', e.target.value)}
+                                        />
+                                        <label htmlFor="descripcion_invisible">Descripcion no visible</label>
+                                        <textarea
+                                            className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
+                                            name="descripcion_invisible"
+                                            id="descripcion_invisible"
+                                            onChange={(e) => setData('desc_invisible', e.target.value)}
                                         />
                                         <label htmlFor="code">
                                             Codigo <span className="text-red-500">*</span>
@@ -178,15 +212,66 @@ export default function ProductosAdmin() {
                                             onChange={(e) => setData('code_oem', e.target.value)}
                                         />
 
-                                        <label htmlFor="code_competitor">
-                                            Codigo competidor <span className="text-red-500">*</span>
-                                        </label>
+                                        <label htmlFor="code_competitor">Codigo competidor</label>
                                         <input
                                             className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
                                             type="text"
                                             name="code_competitor"
                                             id="code_competitor"
                                             onChange={(e) => setData('code_competitor', e.target.value)}
+                                        />
+
+                                        <label htmlFor="medida">
+                                            Medida <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
+                                            type="text"
+                                            name="medida"
+                                            id="medida"
+                                            onChange={(e) => setData('medida', e.target.value)}
+                                        />
+
+                                        <label htmlFor="familia">
+                                            Familia <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
+                                            type="text"
+                                            name="familia"
+                                            id="familia"
+                                            onChange={(e) => setData('familia', e.target.value)}
+                                        />
+
+                                        <label htmlFor="unidad">
+                                            Unidad por pack <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
+                                            type="number"
+                                            name="unidad"
+                                            id="unidad"
+                                            onChange={(e) => setData('unidad_pack', e.target.value)}
+                                        />
+
+                                        <label htmlFor="stock">
+                                            Stock <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
+                                            type="number"
+                                            name="stock"
+                                            id="stock"
+                                            onChange={(e) => setData('stock', e.target.value)}
+                                        />
+
+                                        <label htmlFor="descuento">Descuento por oferta</label>
+                                        <input
+                                            className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
+                                            type="number"
+                                            name="descuento"
+                                            id="descuento"
+                                            onChange={(e) => setData('descuento_oferta', e.target.value)}
                                         />
 
                                         <label htmlFor="categoria">
@@ -219,18 +304,16 @@ export default function ProductosAdmin() {
                                             isMulti
                                         />
 
-                                        <div>
-                                            <label>Imágenes del Producto</label>
-                                            <input
-                                                type="file"
-                                                multiple
-                                                accept="image/*"
-                                                onChange={handleFileChange}
-                                                className="w-full rounded border p-2"
-                                            />
-                                            {errors.images && <span className="text-red-500">{errors.images}</span>}
-                                            {errors['images.*'] && <span className="text-red-500">{errors['images.*']}</span>}
-                                        </div>
+                                        <label>Imágenes del Producto</label>
+                                        <input
+                                            type="file"
+                                            multiple
+                                            accept="image/*"
+                                            onChange={handleFileChange}
+                                            className="file:bg-primary-orange w-full rounded border p-2 file:cursor-pointer file:rounded-full file:px-4 file:py-2 file:text-white"
+                                        />
+                                        {errors.images && <span className="text-red-500">{errors.images}</span>}
+                                        {errors['images.*'] && <span className="text-red-500">{errors['images.*']}</span>}
 
                                         {/* Preview de imágenes */}
                                         {imagePreviews.length > 0 && (
@@ -258,23 +341,22 @@ export default function ProductosAdmin() {
                                                 </div>
                                             </div>
                                         )}
-
-                                        <div className="flex justify-end gap-4">
-                                            <button
-                                                type="button"
-                                                onClick={() => setCreateView(false)}
-                                                className="border-primary-orange text-primary-orange hover:bg-primary-orange rounded-md border px-2 py-1 transition duration-300 hover:text-white"
-                                            >
-                                                Cancelar
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                className="border-primary-orange text-primary-orange hover:bg-primary-orange rounded-md border px-2 py-1 transition duration-300 hover:text-white"
-                                            >
-                                                Guardar
-                                            </button>
-                                        </div>
                                     </div>
+                                </div>
+                                <div className="bg-primary-orange sticky bottom-0 flex justify-end gap-4 rounded-b-md p-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setCreateView(false)}
+                                        className="rounded-md border border-red-500 bg-red-500 px-2 py-1 text-white transition duration-300"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="hover:text-primary-orange rounded-md px-2 py-1 text-white outline outline-white transition duration-300 hover:bg-white"
+                                    >
+                                        Actualizar
+                                    </button>
                                 </div>
                             </form>
                         </motion.div>
@@ -310,16 +392,14 @@ export default function ProductosAdmin() {
                                     <td className="text-center">ORDEN</td>
                                     <td className="text-center">NOMBRE</td>
                                     <td className="text-center">CODIGO</td>
+                                    <td className="text-center">CODIGO OEM</td>
                                     <td className="text-center">MARCAS</td>
                                     <td className="py-2 text-center">MODELOS</td>
-
                                     <td className="text-center">EDITAR</td>
                                 </tr>
                             </thead>
                             <tbody className="text-center">
-                                {/* {productos.data?.map((producto) => (
-                                    <ProductosAdminRow key={producto.id} producto={producto} categorias={categorias} marcas={marcas} />
-                                ))} */}
+                                {productos.data?.map((producto) => <ProductosAdminRow key={producto.id} producto={producto} />)}
                             </tbody>
                         </table>
                     </div>

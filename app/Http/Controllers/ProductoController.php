@@ -30,7 +30,7 @@ class ProductoController extends Controller
 
         $perPage = $request->input('per_page', default: 10);
 
-        $query = Producto::query()->orderBy('order', 'asc')->with(['categoria:id,name', 'imagenes']);
+        $query = Producto::query()->orderBy('order', 'asc')->with(['marcas', 'modelos', 'imagenes']);
 
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = $request->search;
@@ -309,26 +309,15 @@ class ProductoController extends Controller
 
 
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request)
     {
-        $producto = Producto::findOrFail($request->id);
-
-        // Check if the product entry exists
-        if (!$producto) {
-            return redirect()->back()->with('error', 'Producto no encontrado.');
-        }
-
         $data = $request->validate([
-            'order' => 'sometimes|string|max:255',
-            'name' => 'sometimes|string|max:255',
-            'code' => 'sometimes|string|max:255',
-            'code_oem' => 'nullable|string|max:255',
-            'code_competitor' => 'nullable|string|max:255',
-            'categoria_id' => 'sometimes|exists:categorias,id',
-            'sub_categoria_id' => 'nullable|exists:sub_categorias,id',
+            // Validaciones del producto
+            'order' => 'nullable|sometimes|max:255',
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:255',
+            'code_oem' => 'required|string|max:255',
+            'code_competitor' => 'required|string|max:255',
             'medida' => 'nullable|string|max:255',
             'desc_visible' => 'nullable|string',
             'desc_invisible' => 'nullable|string',
@@ -336,13 +325,129 @@ class ProductoController extends Controller
             'familia' => 'nullable|string|max:255',
             'stock' => 'nullable|integer',
             'descuento_oferta' => 'nullable|integer',
+            'modelos' => 'nullable|array',
+            'modelos.*' => 'integer|exists:sub_categorias,id',
+            'marcas' => 'nullable|array',
+            'marcas.*' => 'integer|exists:categorias,id',
+            // Validaciones de las imágenes (opcionales)
+            'images' => 'nullable|array|min:1',
+            'images.*' => 'required|file|image',
+            // Para eliminar imágenes existentes
+            'delete_images' => 'nullable|array',
+            'delete_images.*' => 'integer|exists:imagen_productos,id',
         ]);
 
-        // Handle file upload
+        try {
+            return DB::transaction(function () use ($request, $data) {
+                // Buscar el producto
+                $producto = Producto::findOrFail($request->id);
 
-        $producto->update($data);
+                // Actualizar los datos del producto
+                $producto->update([
+                    'name' => $data['name'],
+                    'code' => $data['code'],
+                    'code_oem' => $data['code_oem'],
+                    'code_competitor' => $data['code_competitor'],
+                    'desc_visible' => $data['desc_visible'],
+                    'desc_invisible' => $data['desc_invisible'],
+                    'unidad_pack' => $data['unidad_pack'],
+                    'familia' => $data['familia'],
+                    'stock' => $data['stock'],
+                ]);
 
-        return redirect()->back()->with('success', 'Producto actualizado correctamente.');
+                if ($request->has('images_to_delete')) {
+                    foreach ($request->images_to_delete as $imageId) {
+                        $image = ImagenProducto::find($imageId);
+                        if ($image) {
+                            // Eliminar archivo del storage
+                            Storage::delete($image->image);
+                            // Eliminar registro de la base de datos
+                            $image->delete();
+                        }
+                    }
+                }
+
+                // Agregar nuevas imágenes
+                if ($request->hasFile('new_images')) {
+                    foreach ($request->file('new_images') as $image) {
+                        $path = $image->store('images', 'public');
+
+                        ImagenProducto::create([
+                            'producto_id' => $producto->id,
+                            'image' => $path,
+
+                        ]);
+                    }
+                }
+
+                // Actualizar otros campos del producto
+
+
+                // Eliminar imágenes seleccionadas si se especificaron
+                if ($request->has('delete_images')) {
+                    $imagesToDelete = ImagenProducto::where('producto_id', $producto->id)
+                        ->whereIn('id', $data['delete_images'])
+                        ->get();
+
+                    foreach ($imagesToDelete as $imageRecord) {
+                        // Eliminar archivo físico
+                        if (Storage::disk('public')->exists($imageRecord->image)) {
+                            Storage::disk('public')->delete($imageRecord->image);
+                        }
+                        // Eliminar registro de la base de datos
+                        $imageRecord->delete();
+                    }
+                }
+
+                // Procesar nuevas imágenes si existen
+                if ($request->hasFile('images')) {
+                    foreach ($request->file('images') as $image) {
+                        // Subir cada imagen
+                        $imagePath = $image->store('images', 'public');
+
+                        // Crear registro para cada imagen
+                        ImagenProducto::create([
+                            'producto_id' => $producto->id,
+                            'order' => $data['order'] ?? null,
+                            'image' => $imagePath,
+                        ]);
+                    }
+                }
+
+                // Actualizar relaciones con modelos
+                if ($request->has('modelos')) {
+                    // Eliminar relaciones existentes
+                    ProductoModelo::where('producto_id', $producto->id)->delete();
+
+                    // Crear nuevas relaciones
+                    foreach ($data['modelos'] as $modeloId) {
+                        ProductoModelo::create([
+                            'producto_id' => $producto->id,
+                            'sub_categoria_id' => $modeloId,
+                        ]);
+                    }
+                }
+
+                // Actualizar relaciones con marcas
+                if ($request->has('marcas')) {
+                    // Eliminar relaciones existentes
+                    ProductoMarca::where('producto_id', $producto->id)->delete();
+
+                    // Crear nuevas relaciones
+                    foreach ($data['marcas'] as $marcaId) {
+                        ProductoMarca::create([
+                            'producto_id' => $producto->id,
+                            'categoria_id' => $marcaId,
+                        ]);
+                    }
+                }
+            });
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al actualizar el producto',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 
@@ -351,16 +456,38 @@ class ProductoController extends Controller
      */
     public function destroy(Request $request)
     {
-        $producto = Producto::findOrFail($request->id);
 
-        // Check if the product entry exists
-        if (!$producto) {
-            return redirect()->back()->with('error', 'Producto no encontrado.');
+        $id = $request->id;
+        try {
+            return DB::transaction(function () use ($id) {
+                // Buscar el producto
+                $producto = Producto::findOrFail($id);
+
+                // Eliminar todas las imágenes asociadas
+                $imagenes = ImagenProducto::where('producto_id', $producto->id)->get();
+                foreach ($imagenes as $imagen) {
+                    // Eliminar archivo físico del storage
+                    if (Storage::disk('public')->exists($imagen->image)) {
+                        Storage::disk('public')->delete($imagen->image);
+                    }
+                    // Eliminar registro de la base de datos
+                    $imagen->delete();
+                }
+
+                // Eliminar relaciones con modelos
+                ProductoModelo::where('producto_id', $producto->id)->delete();
+
+                // Eliminar relaciones con marcas
+                ProductoMarca::where('producto_id', $producto->id)->delete();
+
+                // Eliminar el producto
+                $producto->delete();
+            });
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar el producto',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-
-        $producto->delete();
-
-        return redirect()->back()->with('success', 'Producto eliminado correctamente.');
     }
 }
