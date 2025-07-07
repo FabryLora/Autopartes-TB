@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import EmailTemplateAdmin from './emailTemplateAdmin';
-import MiSwitch from './miSwitch';
 
 export default function PedidoAdminRow({ pedido }) {
     const [pedidoView, setPedidoView] = useState(false);
@@ -28,21 +26,21 @@ export default function PedidoAdminRow({ pedido }) {
 
     return (
         <>
-            {pedidoView && (
+            {/* {pedidoView && (
                 <div className="absolute top-0 left-0 z-50 flex h-screen w-full items-center justify-center bg-black/50">
                     <div ref={modalRef}>
                         <EmailTemplateAdmin user={pedido?.user} productos={pedido?.productos} pedido={pedido} />
                     </div>
                 </div>
-            )}
+            )} */}
             <tr className="odd:bg-gray-200">
                 <td className="h-[90px]">{pedido?.id}</td>
                 <td>{pedido?.user?.name}</td>
-                <td>
+                {/* <td>
                     <button>
                         <MiSwitch initialState={pedido?.entregado == 1 ? true : false} id={pedido?.id} />{' '}
                     </button>
-                </td>
+                </td> */}
                 <td>
                     <button
                         onClick={() => setPedidoView(true)}
