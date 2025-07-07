@@ -82,6 +82,7 @@ export default function Dashboard({ children }) {
                 { title: 'Marcas', href: 'categorias' },
                 { title: 'Modelos', href: 'subcategorias' },
                 { title: 'Productos', href: 'productos' },
+                { title: 'Lista de precios', href: 'listadeprecios' },
             ],
         },
         {
@@ -121,7 +122,7 @@ export default function Dashboard({ children }) {
                 { title: 'Clientes', href: 'clientes' },
                 { title: 'Carrito', href: 'carrito' },
                 { title: 'Mis Pedidos', href: 'pedidos' },
-                { title: 'Lista de precios', href: 'listadeprecios' },
+                { title: 'Informacion importante', href: 'informacion' },
             ],
         },
         {

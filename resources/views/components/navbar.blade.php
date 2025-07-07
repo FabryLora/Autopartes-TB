@@ -19,11 +19,25 @@
 @endphp
 
 <div x-data="{
-        showLogin: false,
+        showModal: false,
+        modalType: 'login',
         scrolled: false,
         searchOpen: false,
         logoPrincipal: '{{ $logos->logo_principal ?? '' }}',
-        logoSecundario: '{{ $logos->logo_secundario ?? '' }}'
+        logoSecundario: '{{ $logos->logo_secundario ?? '' }}',
+        switchToLogin() {
+            this.modalType = 'login';
+        },
+        switchToRegister() {
+            this.modalType = 'register';
+        },
+        openModal(type = 'login') {
+            this.modalType = type;
+            this.showModal = true;
+        },
+        closeModal() {
+            this.showModal = false;
+        }
     }" x-init="
         @if ($isHome)
             window.addEventListener('scroll', () => {
@@ -55,31 +69,10 @@
                     placeholder="Buscar productos" />
             </div>
 
-            <button @click="showLogin = true"
+            <button @click="openModal('login')"
                 class="text-sm text-white border border-white h-[33px] w-[184px] hover:bg-white hover:text-black">
                 Zona Privada
             </button>
-            <div x-show="showLogin" x-transition.opacity x-cloak class="fixed inset-0 bg-black/50"></div>
-            <form x-show="showLogin" method="POST" action="{{ route('login') }}" x-transition.opacity
-                @click.away="showLogin = false" x-cloak
-                class="absolute border top-12 right-0 flex flex-col bg-white w-fit h-fit gap-5 items-center pt-5 px-5 pb-10">
-                @csrf
-                <h2 class="text-[24px] font-semibold">Área de clientes</h2>
-                <div class="flex flex-col gap-2">
-                    <label for="username">Nombre de usuario o correo electrónico</label>
-                    <input name="name" type="text" class="w-[328px] h-[48px] border border-gray-200 px-2">
-                </div>
-
-                <div class="flex flex-col gap-2">
-                    <label for="password">Contraseña</label>
-                    <input name="password" type="password" id="password"
-                        class="w-[328px] h-[48px] border border-gray-200 px-2">
-                </div>
-
-                <div class="flex flex-col">
-                    <button class="bg-primary-orange w-[328px] h-[48px] text-white font-bold">Iniciar sesión</button>
-                </div>
-            </form>
         </div>
     </div>
 
@@ -93,14 +86,203 @@
             @foreach(($isPrivate ? $privateLinks : $defaultLinks) as $link)
                 <a href="{{ $link['href'] }}" :class="scrolled ? 'text-black' : 'text-white'"
                     class="text-sm hover:text-primary-orange transition-colors duration-300 
-                                                                                                                                        {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold' : '' }} 
-                                                                                                                                            ">
+                                                                                                                                                                                    {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold' : '' }} 
+                                                                                                                                                                                        ">
                     {{ $link['title'] }}
                 </a>
             @endforeach
-
-
         </div>
-
     </div>
+
+    <!-- Overlay del modal -->
+    <div x-show="showModal" x-transition.opacity x-cloak class="fixed inset-0 bg-black/50 z-50" @click="closeModal()">
+    </div>
+    <!-- Modal de Login -->
+    <div x-show="showModal && modalType === 'login'" x-transition.opacity x-cloak
+        class="fixed inset-0 flex items-center justify-center z-50">
+        <form method="POST" action="{{ route('login') }}" @click.away="closeModal()"
+            class="relative bg-white rounded-lg shadow-lg w-[400px] max-w-[90vw] p-6">
+
+            <!-- Botón cerrar -->
+            <button type="button" @click="closeModal()"
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+
+            @csrf
+            <h2 class="text-2xl font-semibold mb-6 text-center">Iniciar Sesión</h2>
+
+            <div class="space-y-4">
+                <div>
+                    <label for="login_name" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre de usuario o correo electrónico
+                    </label>
+                    <input name="name" type="text" id="login_name"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange">
+                </div>
+
+                <div>
+                    <label for="login_password" class="block text-sm font-medium text-gray-700 mb-2">
+                        Contraseña
+                    </label>
+                    <input name="password" type="password" id="login_password"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange">
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-primary-orange text-white py-2 px-4 rounded-md hover:bg-orange-600 transition-colors">
+                    Iniciar Sesión
+                </button>
+            </div>
+
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-600">
+                    ¿No tienes cuenta?
+                    <button type="button" @click="switchToRegister()"
+                        class="text-primary-orange hover:underline font-medium">
+                        Regístrate aquí
+                    </button>
+                </p>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal de Registro -->
+    <div x-show="showModal && modalType === 'register'" x-transition.opacity x-cloak
+        class="fixed inset-0 flex items-center justify-center z-50">
+        <form method="POST" action="{{ route('register') }}" @click.away="closeModal()"
+            class="relative bg-white rounded-lg shadow-lg w-[500px] max-w-[90vw] p-6">
+
+            <!-- Botón cerrar -->
+            <button type="button" @click="closeModal()"
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+
+            @csrf
+            <h2 class="text-2xl font-semibold mb-6 text-center">Crear Cuenta</h2>
+
+            <div class="grid grid-cols-2 gap-5">
+                <div class="col-span-2">
+                    <label for="register_name" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre de usuario
+                    </label>
+                    <input name="name" type="text" id="register_name"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange">
+                </div>
+
+                <div>
+                    <label for="password">Contraseña</label>
+                    <input name="password" type="password" id="register_password"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange">
+                </div>
+
+
+                <div>
+                    <label for="register_password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
+                        Confirmar contraseña
+                    </label>
+                    <input name="password_confirmation" type="password" id="register_password_confirmation"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange">
+                </div>
+
+                {{-- mail--}}
+                <div>
+                    <label for="register_email" class="block text-sm font-medium text-gray-700 mb-2">
+                        Correo electrónico
+                    </label>
+                    <input name="email" type="email" id="register_email"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange">
+                </div>
+
+                {{-- cuit --}}
+                <div>
+                    <label for="register_cuit" class="block text-sm font-medium text-gray-700 mb-2">
+                        CUIT
+                    </label>
+                    <input name="cuit" type="text" id="register_cuit"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange">
+                </div>
+
+                {{-- direccion --}}
+                <div>
+                    <label for="register_address" class="block text-sm font-medium text-gray-700 mb-2">
+                        Dirección
+                    </label>
+                    <input name="direccion" type="text" id="register_address"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange">
+                </div>
+
+                {{-- telefono --}}
+
+                <div>
+                    <label for="register_phone" class="block text-sm font-medium text-gray-700 mb-2">
+                        Teléfono
+                    </label>
+                    <input name="telefono" type="text" id="register_phone"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange">
+                </div>
+
+                {{-- provincia --}}
+                <div>
+                    <label for="register_provincia" class="block text-sm font-medium text-gray-700 mb-2">
+                        Provincia
+                    </label>
+                    <select name="provincia" id="register_provincia"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange">
+                        <option value="">Seleccione una provincia</option>
+                        @foreach($provincias as $provincia)
+                            <option value="{{ $provincia->name }}">{{ $provincia->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- localidad --}}
+                <div>
+                    <label for="register_localidad" class="block text-sm font-medium text-gray-700 mb-2">
+                        Localidad
+                    </label>
+                    <select name="localidad" id="register_localidad"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange">
+                        <option value="">Seleccione una localidad</option>
+                        @foreach($provincias as $provincia)
+                            @foreach($provincia->localidades as $localidad)
+                                <option value="{{ $localidad->name }}">{{ $localidad->name }}</option>
+                            @endforeach
+                        @endforeach
+                    </select>
+                </div>
+
+
+
+                <button type="submit"
+                    class="w-full bg-primary-orange text-white py-2 px-4 rounded-md hover:bg-orange-600 transition-colors col-span-2">
+                    Crear Cuenta
+                </button>
+            </div>
+
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-600">
+                    ¿Ya tienes cuenta?
+                    <button type="button" @click="switchToLogin()"
+                        class="text-primary-orange hover:underline font-medium">
+                        Inicia sesión aquí
+                    </button>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+</div>
+
+
+</form>
+</div>
 </div>

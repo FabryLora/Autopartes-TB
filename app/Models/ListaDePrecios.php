@@ -10,33 +10,38 @@ class ListaDePrecios extends Model
     protected $guarded = [];
 
     // Si el archivo se guarda como una ruta
-
     public function getArchivoAttribute($value)
     {
-        return url("storage/" . $value);
+        return asset("storage/" . $value);
     }
 
     public function getFormatoArchivo()
     {
-        if (empty($this->archivo)) {
+        // Usar getOriginal() para obtener el valor sin procesar por el accessor
+        $archivoOriginal = $this->getOriginal('archivo');
+
+        if (empty($archivoOriginal)) {
             return null;
         }
 
         // Obtener la extensión del archivo
-        $extension = pathinfo($this->archivo, PATHINFO_EXTENSION);
+        $extension = pathinfo($archivoOriginal, PATHINFO_EXTENSION);
         return $extension;
     }
 
     public function getPesoArchivo()
     {
-        if (empty($this->archivo)) {
+        // Usar getOriginal() para obtener el valor sin procesar por el accessor
+        $archivoOriginal = $this->getOriginal('archivo');
+
+        if (empty($archivoOriginal)) {
             return null;
         }
 
         // Verificar si el archivo existe en el almacenamiento
-        if (Storage::exists($this->archivo)) {
+        if (Storage::exists($archivoOriginal)) {
             // Obtener el tamaño en bytes
-            $bytes = Storage::size($this->archivo);
+            $bytes = Storage::size($archivoOriginal);
 
             // Convertir a KB, MB, etc.
             $units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -50,5 +55,21 @@ class ListaDePrecios extends Model
         }
 
         return null;
+    }
+
+    // Método adicional para obtener solo la ruta del archivo sin la URL completa
+    public function getRutaArchivoAttribute()
+    {
+        return $this->getOriginal('archivo');
+    }
+
+    public function productos()
+    {
+        return $this->hasMany(ListaProductos::class, 'lista_de_precios_id');
+    }
+
+    public function clientes()
+    {
+        return $this->hasMany(User::class, 'lista_de_precios_id');
     }
 }

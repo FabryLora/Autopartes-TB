@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ListaDePrecios;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -21,7 +22,12 @@ return new class extends Migration
             $table->string("provincia")->nullable();
             $table->string("localidad")->nullable();
             $table->string("telefono")->nullable();
-            $table->tinyInteger('lista')->default(3);
+            $table->unsignedInteger("descuento_uno")->default(0);
+            $table->unsignedInteger("descuento_dos")->default(0);
+            $table->unsignedInteger("descuento_tres")->default(0);
+            $table->foreignIdFor(ListaDePrecios::class)->nullable()
+                ->constrained('lista_de_precios')
+            ; // Default to the third list
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('autorizado')->default(false);
             $table->rememberToken();

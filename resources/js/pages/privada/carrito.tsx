@@ -1,6 +1,6 @@
 import PedidoTemplate from '@/components/pedidoTemplate';
-import SubproductosPrivadaRow from '@/components/subproductosPrivadaRow';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { default as ProductosPrivadaRow } from '@/components/productosPrivadaRow';
+import { Link, useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
@@ -11,48 +11,38 @@ import DefaultLayout from '../defaultLayout';
 //import PedidoTemplate from "../components/PedidoTemplate";
 //import ProductRow from "../components/ProductRow";
 
-export default function Carrito() {
-    const { informacion, auth } = usePage().props;
+export default function Carrito({
+    informacion,
+    auth,
+    carrito,
+    productos,
+    subtotal,
+    iva,
+    descuento_uno,
+    descuento_dos,
+    descuento_tres,
+    subtotal_descuento,
+    total,
+}) {
     const { user } = auth;
     const { items, emptyCart } = useCart();
 
     const [selected, setSelected] = useState('retiro');
-    const [subtotal, setSubtotal] = useState();
-    const [iva, setIva] = useState();
-    const [iibb, setIibb] = useState();
-    const [totalFinal, setTotalFinal] = useState();
     const [tipo_entrega, setTipo_entrega] = useState('retiro cliente');
+
+    const [selectedEnvio, setSelectedEnvio] = useState('retiro');
+    const [tipo_entrega_envio, setTipo_entrega_envio] = useState('retiro cliente');
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(false);
     const [succ, setSucc] = useState(false);
     const [succID, setSuccID] = useState();
 
-    useEffect(() => {
-        let subtotal = 0;
-        let iva = 0;
-        let iibb = 0;
-        let total = 0;
-
-        items.forEach((prod) => {
-            subtotal += prod.price * prod.quantity;
-        });
-
-        iibb = subtotal * 0.03; // 3% de IIBB
-        iva = subtotal * 0.21; // 21% de IVA
-        total = subtotal + iva + iibb; // Total final
-
-        setSubtotal(subtotal);
-        setIibb(iibb);
-        setIva(iva);
-        setTotalFinal(total);
-    }, [items]);
-
     const pedidoForm = useForm({
         tipo_entrega: tipo_entrega,
         subtotal: subtotal,
         iva: iva,
-        iibb: iibb,
-        total: totalFinal,
+
         user_id: user?.id,
     });
 
@@ -121,11 +111,10 @@ export default function Carrito() {
             tipo_entrega: tipo_entrega,
             subtotal: subtotal,
             iva: iva,
-            iibb: iibb,
-            total: totalFinal,
+
             user_id: user?.id,
         });
-    }, [tipo_entrega, subtotal, iva, iibb, totalFinal, user]);
+    }, [tipo_entrega, subtotal, iva, user]);
 
     return (
         <DefaultLayout>
@@ -166,26 +155,30 @@ export default function Carrito() {
 
                 <div className="col-span-2 grid w-full items-start">
                     <div className="w-full">
-                        <div className="grid h-[52px] grid-cols-8 items-center bg-[#F5F5F5]">
+                        <div className="grid h-[52px] grid-cols-12 items-center bg-[#ECECEC] text-[16px] font-semibold">
                             <p></p>
                             <p>Código</p>
-                            <p>Marca</p>
-                            <p>Modelo</p>
+                            <p>Código OEM</p>
                             <p>Descripción</p>
+                            <p>Marca</p>
+                            <p className="col-span-2">Modelo</p>
                             <p>Precio</p>
-                            <p className="text-center">Cantidad</p>
+                            <p>Cantidad</p>
+                            <p>Subtotal</p>
+                            <p className="text-center">Stock</p>
                             <p></p>
                         </div>
-                        {items?.map((subProducto) => <SubproductosPrivadaRow key={subProducto?.id} subProducto={subProducto} />)}
+                        {productos?.map((producto) => <ProductosPrivadaRow key={producto?.id} producto={producto} />)}
                     </div>
                 </div>
+
                 <div className="col-span-2">
                     <div className="">
                         <Link
                             href={'/privado/productos'}
                             className="border-primary-orange text-primary-orange hover:bg-primary-orange h-[47px] border px-5 py-2 font-semibold transition duration-300 hover:text-white"
                         >
-                            SEGUIR COMPRANDO
+                            Agregar productos
                         </Link>
                     </div>
                 </div>
@@ -201,50 +194,30 @@ export default function Carrito() {
                         }}
                     ></div>
                 </div>
-                <div className="h-[206px] w-full border bg-gray-50 max-sm:order-3 max-sm:col-span-2">
+
+                <div className="h-fit w-full border bg-gray-50 max-sm:order-3 max-sm:col-span-2">
                     <div className="bg-[#EAEAEA] p-3">
-                        <h2 className="text-xl font-bold">Entrega</h2>
+                        <h2 className="text-xl font-bold">Formas de pago</h2>
                     </div>
 
-                    <div className="flex h-[160px] w-full flex-col justify-center gap-6 text-[#74716A]">
+                    <div className="flex h-fit w-full flex-col justify-center gap-4 py-4 text-[18px] text-[#74716A]">
                         {/* Opción: Retiro Cliente */}
                         <div
                             className={`flex cursor-pointer items-center justify-between rounded-lg pl-3`}
                             onClick={() => {
-                                setSelected('retiro');
-                                setTipo_entrega('retiro cliente');
+                                setSelected('Efectivo');
+                                setTipo_entrega('Efectivo');
                             }}
                         >
                             <div className="flex items-center gap-3">
                                 <div
                                     className={`h-5 w-5 rounded-full border-2 ${
-                                        selected === 'retiro' ? 'border-primary-orange flex items-center justify-center' : 'border-gray-400'
+                                        selected === 'Efectivo' ? 'border-primary-orange flex items-center justify-center' : 'border-gray-400'
                                     }`}
                                 >
-                                    {selected === 'retiro' && <div className="bg-primary-orange h-[10px] w-[10px] rounded-full"></div>}
+                                    {selected === 'Efectivo' && <div className="bg-primary-orange h-[10px] w-[10px] rounded-full"></div>}
                                 </div>
-                                <label className="cursor-pointer">Retiro cliente</label>
-                            </div>
-                        </div>
-
-                        <div
-                            className={`flex cursor-pointer items-center justify-between rounded-lg pl-3`}
-                            onClick={() => {
-                                setSelected('reparto SR Repuestos');
-                                setTipo_entrega('reparto SR Repuestos');
-                            }}
-                        >
-                            <div className="flex items-center gap-3">
-                                <div
-                                    className={`h-5 w-5 rounded-full border-2 ${
-                                        selected === 'reparto SR Repuestos'
-                                            ? 'border-primary-orange flex items-center justify-center'
-                                            : 'border-gray-400'
-                                    }`}
-                                >
-                                    {selected === 'reparto SR Repuestos' && <div className="bg-primary-orange h-[10px] w-[10px] rounded-full"></div>}
-                                </div>
-                                <label className="cursor-pointer">Reparto SR Repuestos</label>
+                                <label className="cursor-pointer">Efectivo</label>
                             </div>
                         </div>
 
@@ -252,19 +225,78 @@ export default function Carrito() {
                         <div
                             className={`flex cursor-pointer items-center rounded-lg pl-3`}
                             onClick={() => {
-                                setSelected('acon');
-                                setTipo_entrega('A Convenir');
+                                setSelected('Transferencia');
+                                setTipo_entrega('Transferencia');
                             }}
                         >
                             <div className="flex items-center gap-3">
                                 <div
                                     className={`h-5 w-5 rounded-full border-2 ${
-                                        selected === 'acon' ? 'border-primary-orange flex items-center justify-center' : 'border-gray-400'
+                                        selected === 'Transferencia' ? 'border-primary-orange flex items-center justify-center' : 'border-gray-400'
                                     }`}
                                 >
-                                    {selected === 'acon' && <div className="bg-primary-orange h-[10px] w-[10px] rounded-full"></div>}
+                                    {selected === 'Transferencia' && <div className="bg-primary-orange h-[10px] w-[10px] rounded-full"></div>}
                                 </div>
-                                <label className="cursor-pointer">A Convenir</label>
+                                <label className="cursor-pointer">Transferencia</label>
+                            </div>
+                        </div>
+
+                        <div
+                            className={`flex cursor-pointer items-center justify-between rounded-lg pl-3`}
+                            onClick={() => {
+                                setSelected('Depósito bancario');
+                                setTipo_entrega('Depósito bancario');
+                            }}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div
+                                    className={`h-5 w-5 rounded-full border-2 ${
+                                        selected === 'Depósito bancario'
+                                            ? 'border-primary-orange flex items-center justify-center'
+                                            : 'border-gray-400'
+                                    }`}
+                                >
+                                    {selected === 'Depósito bancario' && <div className="bg-primary-orange h-[10px] w-[10px] rounded-full"></div>}
+                                </div>
+                                <label className="cursor-pointer">Depósito bancario</label>
+                            </div>
+                        </div>
+
+                        <div
+                            className={`flex cursor-pointer items-center justify-between rounded-lg pl-3`}
+                            onClick={() => {
+                                setSelected('Cheque');
+                                setTipo_entrega('Cheque');
+                            }}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div
+                                    className={`h-5 w-5 rounded-full border-2 ${
+                                        selected === 'Cheque' ? 'border-primary-orange flex items-center justify-center' : 'border-gray-400'
+                                    }`}
+                                >
+                                    {selected === 'Cheque' && <div className="bg-primary-orange h-[10px] w-[10px] rounded-full"></div>}
+                                </div>
+                                <label className="cursor-pointer">Cheque</label>
+                            </div>
+                        </div>
+
+                        <div
+                            className={`flex cursor-pointer items-center justify-between rounded-lg pl-3`}
+                            onClick={() => {
+                                setSelected('Echeq');
+                                setTipo_entrega('Echeq');
+                            }}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div
+                                    className={`h-5 w-5 rounded-full border-2 ${
+                                        selected === 'Echeq' ? 'border-primary-orange flex items-center justify-center' : 'border-gray-400'
+                                    }`}
+                                >
+                                    {selected === 'Echeq' && <div className="bg-primary-orange h-[10px] w-[10px] rounded-full"></div>}
+                                </div>
+                                <label className="cursor-pointer">Echeq</label>
                             </div>
                         </div>
                     </div>
@@ -286,52 +318,51 @@ export default function Carrito() {
                     ></textarea>
                 </div>
 
-                <div className="h-fit border max-sm:order-5 max-sm:col-span-2">
-                    <div className="bg-[#EAEAEA]">
-                        <h2 className="p-3 text-xl font-bold">Pedido</h2>
+                <div className="h-fit w-full border bg-gray-50 max-sm:order-3 max-sm:col-span-2">
+                    <div className="bg-[#EAEAEA] p-3">
+                        <h2 className="text-xl font-bold">Formas de entrega</h2>
                     </div>
 
-                    <div className="flex flex-col justify-between gap-6 border-b px-4 py-6 text-xl text-[#74716A]">
-                        <div className="flex w-full flex-row justify-between">
-                            <p>Subtotal</p>
-                            <p>
-                                ${' '}
-                                {Number(subtotal)?.toLocaleString('es-AR', {
-                                    minimumFractionDigits: 2,
-                                })}
-                            </p>
+                    <div className="flex h-fit w-full flex-col justify-center gap-4 py-4 text-[18px] text-[#74716A]">
+                        {/* Opción: Retiro Cliente */}
+                        <div
+                            className={`flex cursor-pointer items-center justify-between rounded-lg pl-3`}
+                            onClick={() => {
+                                setSelectedEnvio('retiro');
+                                setTipo_entrega_envio('retiro cliente');
+                            }}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div
+                                    className={`h-5 w-5 rounded-full border-2 ${
+                                        selectedEnvio === 'retiro' ? 'border-primary-orange flex items-center justify-center' : 'border-gray-400'
+                                    }`}
+                                >
+                                    {selectedEnvio === 'retiro' && <div className="bg-primary-orange h-[10px] w-[10px] rounded-full"></div>}
+                                </div>
+                                <label className="cursor-pointer">Retiro cliente</label>
+                            </div>
                         </div>
 
-                        <div className="flex w-full flex-row justify-between">
-                            <p>IVA 21%</p>
-                            <p>
-                                ${' '}
-                                {Number(iva)?.toLocaleString('es-AR', {
-                                    minimumFractionDigits: 2,
-                                })}
-                            </p>
+                        {/* Opción: A convenir */}
+                        <div
+                            className={`flex cursor-pointer items-center rounded-lg pl-3`}
+                            onClick={() => {
+                                setSelectedEnvio('Envio');
+                                setTipo_entrega_envio('Envio');
+                            }}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div
+                                    className={`h-5 w-5 rounded-full border-2 ${
+                                        selectedEnvio === 'Envio' ? 'border-primary-orange flex items-center justify-center' : 'border-gray-400'
+                                    }`}
+                                >
+                                    {selectedEnvio === 'Envio' && <div className="bg-primary-orange h-[10px] w-[10px] rounded-full"></div>}
+                                </div>
+                                <label className="cursor-pointer">Envío</label>
+                            </div>
                         </div>
-
-                        <div className="flex w-full flex-row justify-between">
-                            <p>Retención IIBB 3%</p>
-                            <p>
-                                ${' '}
-                                {Number(iibb)?.toLocaleString('es-AR', {
-                                    minimumFractionDigits: 2,
-                                })}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="flex flex-row justify-between p-3 text-[#74716A]">
-                        <p className="text-2xl font-medium">
-                            Total <span className="text-base">{'(IVA + IIBB)'}</span>
-                        </p>
-                        <p className="text-2xl">
-                            ${' '}
-                            {Number(totalFinal)?.toLocaleString('es-AR', {
-                                minimumFractionDigits: 2,
-                            })}
-                        </p>
                     </div>
                 </div>
 
@@ -356,19 +387,75 @@ export default function Carrito() {
                     </div>
                 </div>
 
+                <div className="h-fit border max-sm:order-5 max-sm:col-span-2">
+                    <div className="bg-[#EAEAEA]">
+                        <h2 className="p-3 text-xl font-bold">Pedido</h2>
+                    </div>
+
+                    <div className="flex flex-col justify-between gap-4 border-b px-4 py-4 text-xl text-[18px] text-[#74716A]">
+                        <div className="flex w-full flex-row justify-between">
+                            <p>Subtotal</p>
+                            <p>
+                                ${' '}
+                                {Number(subtotal)?.toLocaleString('es-AR', {
+                                    minimumFractionDigits: 2,
+                                })}
+                            </p>
+                        </div>
+
+                        {subtotal_descuento != subtotal && (
+                            <div className="flex w-full flex-row justify-between">
+                                <p className="text-green-500">
+                                    Descuento {descuento_uno ? descuento_uno + '%' : ''} {descuento_dos ? descuento_dos + '%' : ''} +{' '}
+                                    {descuento_tres ? descuento_tres + '%' : ''}
+                                </p>
+                                <p>
+                                    ${' '}
+                                    {Number(subtotal_descuento)?.toLocaleString('es-AR', {
+                                        minimumFractionDigits: 2,
+                                    })}
+                                </p>
+                            </div>
+                        )}
+
+                        <div className="flex w-full flex-row justify-between">
+                            <p>IVA 21%</p>
+                            <p>
+                                ${' '}
+                                {Number(iva)?.toLocaleString('es-AR', {
+                                    minimumFractionDigits: 2,
+                                })}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex flex-row justify-between p-3 text-[#74716A]">
+                        <p className="text-2xl font-medium">
+                            Total <span className="text-base">{'(IVA incluido)'}</span>
+                        </p>
+                        <p className="text-2xl">
+                            ${' '}
+                            {Number(total)?.toLocaleString('es-AR', {
+                                minimumFractionDigits: 2,
+                            })}
+                        </p>
+                    </div>
+                </div>
+                <div></div>
+
                 <div className="flex w-full flex-row items-end gap-3 max-sm:order-6 max-sm:col-span-2">
                     <Link
-                        href={'/privado/productos'}
+                        href={route('destroy')}
+                        method="post"
                         onClick={emptyCart}
                         className="border-primary-orange text-primary-orange flex h-[47px] w-full items-center justify-center border transition-transform hover:scale-95"
                     >
-                        CANCELAR PEDIDO
+                        Cancelar pedido
                     </Link>
                     <button
                         onClick={handleSubmit}
                         className={`h-[47px] w-full text-white transition-transform hover:scale-95 ${isSubmitting ? 'bg-gray-400' : 'bg-primary-orange'}`}
                     >
-                        {isSubmitting ? 'Enviando pedido...' : 'REALIZAR PEDIDO'}
+                        {isSubmitting ? 'Enviando pedido...' : 'Realizar pedido'}
                     </button>
                 </div>
             </div>

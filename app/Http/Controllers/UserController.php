@@ -39,6 +39,8 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
+
+
         $user = User::findOrFail($request->id);
 
         $data = $request->validate([
@@ -48,8 +50,11 @@ class UserController extends Controller
             'direccion' => 'nullable|string|max:255',
             'provincia' => 'nullable|string|max:255',
             'localidad' => 'nullable|string|max:255',
+            'descuento_uno' => 'nullable|integer|min:0|max:100',
+            'descuento_dos' => 'nullable|integer|min:0|max:100',
+            'descuento_tres' => 'nullable|integer|min:0|max:100',
             'telefono' => 'nullable|string|max:20',
-            'lista' => 'nullable|string|max:255',
+            'lista_de_precios_id' => 'sometimes|exists:lista_de_precios,id',
             'autorizado' => 'nullable|boolean'
         ]);
 

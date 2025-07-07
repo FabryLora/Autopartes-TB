@@ -24,7 +24,7 @@ return [
     |
     */
 
-    'tax' => 21,
+    'tax' => 1,
 
     /*
     |--------------------------------------------------------------------------
@@ -38,7 +38,7 @@ return [
 
     'database' => [
 
-        'connection' => null,
+        'connection' => env('DB_CONNECTION', 'mysql'),
 
         'table' => 'shoppingcart',
 

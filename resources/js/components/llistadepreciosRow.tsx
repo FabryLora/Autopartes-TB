@@ -1,9 +1,9 @@
-import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function ListaDePreciosRow({ lista }) {
@@ -11,9 +11,18 @@ export default function ListaDePreciosRow({ lista }) {
 
     const updateForm = useForm({
         name: lista?.name,
-        lista: lista?.lista,
         id: lista?.id,
     });
+
+    const updatePrices = useForm({
+        path: lista?.archivo,
+        lista_id: lista?.id,
+    });
+
+    useEffect(() => {
+        updatePrices.setData('archivo', lista?.archivo);
+        updatePrices.setData('lista_id', lista?.id);
+    }, [lista]);
 
     const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -45,6 +54,21 @@ export default function ListaDePreciosRow({ lista }) {
         }
     };
 
+    const cargarPrecios = () => {
+        if (confirm('¿Estas seguro que quieres cargar los precios?')) {
+            updatePrices.post(route('cambiarPrecios'), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    toast.success('Precios cargados correctamente');
+                },
+                onError: (errors) => {
+                    toast.error('Error al cargar precios');
+                    console.log(errors);
+                },
+            });
+        }
+    };
+
     const handleDownload = async () => {
         try {
             const filename = lista?.archivo.split('/').pop();
@@ -60,7 +84,7 @@ export default function ListaDePreciosRow({ lista }) {
 
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'Catalogo'; // Descargar con el nombre original
+            a.download = lista?.name; // Descargar con el nombre original
             document.body.appendChild(a);
             a.click();
 
@@ -75,8 +99,9 @@ export default function ListaDePreciosRow({ lista }) {
 
     return (
         <tr className={`border text-black odd:bg-gray-100 even:bg-white`}>
-            <td className="pl-4 align-middle">{lista?.name}</td>
-            <td className="h-[90px] align-middle">{lista?.lista}</td>
+            <td className="h-[90px] align-middle">{lista?.id}</td>
+
+            <td className="align-middle">{lista?.name}</td>
 
             <td className="align-middle">
                 <button className="text-blue-500" onClick={handleDownload}>
@@ -92,6 +117,9 @@ export default function ListaDePreciosRow({ lista }) {
                     <button onClick={deleteMarca} className="h-10 w-10 rounded-md border border-red-500 px-2 py-1 text-white">
                         <FontAwesomeIcon icon={faTrash} size="lg" color="#fb2c36" />
                     </button>
+                    <button onClick={cargarPrecios} className="h-10 w-10 rounded-md border border-blue-500 px-2 py-1 text-white">
+                        <FontAwesomeIcon icon={faUpload} size="lg" color="#3b82f6" />
+                    </button>
                 </div>
             </td>
             <AnimatePresence>
@@ -104,7 +132,7 @@ export default function ListaDePreciosRow({ lista }) {
                     >
                         <form onSubmit={handleUpdate} method="POST" className="text-black">
                             <div className="w-[500px] rounded-md bg-white p-4">
-                                <h2 className="mb-4 text-2xl font-semibold">Cargar Lista</h2>
+                                <h2 className="mb-4 text-2xl font-semibold">Editar Lista</h2>
                                 <div className="flex flex-col gap-4">
                                     <label htmlFor="nombree">
                                         Nombre <span className="text-red-500">*</span>
@@ -117,20 +145,6 @@ export default function ListaDePreciosRow({ lista }) {
                                         value={updateForm?.data?.name}
                                         onChange={(e) => updateForm.setData('name', e.target.value)}
                                     />
-                                    <label htmlFor="">Lista</label>
-
-                                    <select
-                                        value={updateForm?.data?.lista}
-                                        className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
-                                        onChange={(e) => updateForm.setData('lista', e.target.value)}
-                                        name=""
-                                        id=""
-                                    >
-                                        <option value="">Seleccionar lista</option>
-                                        <option value="1">Lista 1</option>
-                                        <option value="2">Lista 2</option>
-                                        <option value="3">Lista 3</option>
-                                    </select>
 
                                     <label htmlFor="archivo">Archivo</label>
 

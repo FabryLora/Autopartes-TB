@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('lista_de_precios', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('lista');
-            $table->string('archivo')->nullable();
+
             $table->timestamps();
         });
     }

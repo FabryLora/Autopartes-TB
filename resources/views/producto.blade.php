@@ -1,82 +1,97 @@
 @extends('layouts.default')
-@section('title', ' Producto')
+@section('title', 'Autopartes TB - ' . $producto->code)
 
 @section('content')
-    <div class="max-w-[80%] xl:max-w-[1224px] mx-auto">
+    <div class="flex flex-col gap-10">
         <!-- Breadcrumb navigation -->
-        <div class="hidden lg:block h-[120px]">
-            <div class="text-black py-4">
-                <a {{-- href="{{ route('home') }}" --}} class="hover:underline transition-all duration-300">Inicio</a>
-                <span class="mx-[5px]">&gt;</span>
-                <a {{-- href="{{ route('categorias') }}" --}}
-                    class="hover:underline transition-all duration-300">Productos</a>
-                <span class="mx-[5px]">&gt;</span>
-                <a {{-- href="{{ route('productos', ['id' => $categoria->id]) }}" --}}
-                    class="font-light hover:underline transition-all duration-300">{{ $categoria->name }}</a>
+        <div class="hidden lg:block  w-[1200px] mx-auto h-full mt-10">
+            <div class="text-black">
+                <a href="{{ route('home') }}" class="hover:underline transition-all duration-300 font-bold">Inicio</a>
+                <span class="mx-[2px]">/</span>
+                <a href="{{ route('productos') }}"
+                    class="hover:underline transition-all duration-300 font-bold">Productos</a>
+                <span class="mx-[2px]">/</span>
+                <a href="{{"/" . $producto->code }}"
+                    class="font-light hover:underline transition-all duration-300">{{ $producto->code ?? '' }}</a>
             </div>
         </div>
 
+
+
         <!-- Main content with sidebar and product detail -->
-        <div class="flex gap-6 py-20 lg:py-0 lg:mb-27">
+        <div class="flex flex-col lg:flex-row gap-6  w-[1200px] mx-auto">
             <!-- Sidebar (1/4 width) -->
             <div class="w-full lg:w-[380px]">
                 <div class="relative border-t border-gray-200">
                     @foreach ($categorias as $cat)
-                        <div
-                            class="flex flex-row justify-between items-center py-3 px-2 border-b border-gray-200 hover:bg-gray-100 hover:pl-3 transition-all duration-300 ease-in-out text-lg {{ $cat->id == $categoria->id ? 'font-bold bg-gray-50' : '' }}">
-                            <a {{-- href="{{ route('productos', ['id' => $cat->id]) }}" --}} class="block">
-                                {{ $cat->name }}
-                                @if ($cat->productos_count)
-                                    <span
-                                        class="ml-1 px-2 py-1 bg-red-500 text-white text-xs rounded-full transition-opacity duration-300">
-                                        {{ $cat->productos_count }}
-                                    </span>
+                        <div class="border-b border-gray-200"
+                            x-data="{ 
+                                                                                                                                                                                                                                                                                                                                                                                                    open: {{ $modelo_id && $cat->subCategorias && $cat->subCategorias->where('id', $modelo_id)->count() > 0 ? 'true' : 'false' }} 
+                                                                                                                                                                                                                                                                                                                                                                                                 }">
+                            <div
+                                class="flex flex-row justify-between items-center py-3 px-2 transition-all duration-300 ease-in-out text-lg {{ $categoria && $cat->id == $categoria->id ? 'font-semibold' : '' }}">
+                                <a href="{{ route('productos', ['id' => $cat->id]) }}" class="block flex-1">
+                                    {{ $cat->name }}
+                                    @if ($cat->productos_count)
+                                        <span
+                                            class="ml-1 px-2 py-1 bg-red-500 text-white text-xs rounded-full transition-opacity duration-300">
+                                            {{ $cat->productos_count }}
+                                        </span>
+                                    @endif
+                                </a>
+                                @if ($cat->subCategorias && $cat->subCategorias->count() > 0)
+                                    <button @click="open = !open"
+                                        class="p-1 hover:bg-gray-100 rounded transition-colors duration-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="8" viewBox="0 0 13 8" fill="none"
+                                            class="transform transition-transform duration-200" :class="{ 'rotate-180': open }">
+                                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                                d="M5.65703 7.071L2.66411e-05 1.414L1.41403 -4.94551e-07L6.36403 4.95L11.314 -6.18079e-08L12.728 1.414L7.07103 7.071C6.8835 7.25847 6.62919 7.36379 6.36403 7.36379C6.09886 7.36379 5.84455 7.25847 5.65703 7.071Z"
+                                                fill="black" />
+                                        </svg>
+                                    </button>
                                 @endif
-                            </a>
-                            <button>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="8" viewBox="0 0 13 8" fill="none">
-                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                        d="M5.65703 7.071L2.66411e-05 1.414L1.41403 -4.94551e-07L6.36403 4.95L11.314 -6.18079e-08L12.728 1.414L7.07103 7.071C6.8835 7.25847 6.62919 7.36379 6.36403 7.36379C6.09886 7.36379 5.84455 7.25847 5.65703 7.071Z"
-                                        fill="black" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        @if ($cat->subCategorias)
-                            <div class="flex flex-col gap-3">
-                                @foreach ($cat->subCategorias as $subCategoria)
-                                    <a href="#" {{-- href="{{ route('productos', ['id' => $subCategoria->id]) }}" --}}
-                                        class="block py-2 px-4 border-b border-gray-200 hover:bg-gray-100 hover:pl-3 transition-all duration-300 ease-in-out text-md
-                                                                                                                                                                                                                            {{ $subCategoria->id == $categoria->id ? 'font-bold bg-gray-50' : '' }}">
-                                        {{ $subCategoria->name }}
-                                        @if ($subCategoria->productos_count)
-                                            <span
-                                                class="ml-1 px-2 py-1 bg-red-500 text-white text-xs rounded-full transition-opacity duration-300">
-                                                {{ $subCategoria->productos_count }}
-                                            </span>
-                                        @endif
-                                    </a>
-                                @endforeach
                             </div>
-                        @endif
+
+                            @if ($cat->subCategorias && $cat->subCategorias->count() > 0)
+                                <div x-show="open" x-transition:enter="transition ease-out duration-200"
+                                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                    x-transition:enter-end="opacity-100 transform translate-y-0"
+                                    x-transition:leave="transition ease-in duration-150"
+                                    x-transition:leave-start="opacity-100 transform translate-y-0"
+                                    x-transition:leave-end="opacity-0 transform -translate-y-2">
+                                    @foreach ($cat->subCategorias as $subCategoria)
+                                        <a href="{{ route('productos', ['id' => $subCategoria->categoria->id, 'modelo_id' => $subCategoria->id]) }}"
+                                            class="block pl-4 py-2 text-[16px] hover:bg-gray-50 transition-colors duration-200 {{ $modelo_id && $subCategoria->id == $modelo_id ? 'font-semibold bg-gray-50' : '' }}">
+                                            {{ $subCategoria->name }}
+                                            @if ($subCategoria->productos_count)
+                                                <span
+                                                    class="ml-1 px-2 py-1 bg-red-500 text-white text-xs rounded-full transition-opacity duration-300">
+                                                    {{ $subCategoria->productos_count }}
+                                                </span>
+                                            @endif
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
                     @endforeach
                 </div>
             </div>
 
             <!-- Product Detail (3/4 width) -->
             <div class="w-full md:w-3/4">
-                <div class="flex flex-col md:flex-row gap-8">
+                <div class="flex flex-col md:flex-row gap-5">
                     <!-- Image Gallery -->
                     <div class="w-full md:w-1/2">
                         <!-- Main Image -->
-                        <div class="mb-4 flex items-center justify-center">
+                        <div class=" flex items-center justify-center h-[410px]">
                             @if ($producto->imagenes->first())
-                                <img id="mainImage" src="{{ asset('storage/' . $producto->imagenes->first()->path) }}"
+                                <img id="mainImage" src="{{ $producto->imagenes->first()->image }}"
                                     alt="{{ $producto->titulo }}"
-                                    class="w-full object-contain transition-opacity duration-300 ease-in-out">
+                                    class="w-full h-full object-cover object-center transition-opacity duration-300 ease-in-out">
                             @else
                                 <div
-                                    class="w-full h-[400px] bg-gray-100 text-gray-400 flex items-center justify-center transition-opacity duration-300 ease-in-out">
+                                    class="w-full h-full bg-gray-100 text-gray-400 flex items-center justify-center transition-opacity duration-300 ease-in-out">
                                     <span class="text-sm">Sin imagen disponible</span>
                                 </div>
                             @endif
@@ -84,13 +99,12 @@
 
 
                         <!-- Thumbnails -->
-                        <div class="flex lg:justify-start justify-center gap-2 overflow-x-auto">
+                        <div class="mt-5 flex lg:justify-start justify-center gap-2 overflow-x-auto">
                             @foreach ($producto->imagenes as $imagen)
-                                <div class="border border-gray-200 w-24 h-24 cursor-pointer hover:border-main-color flex-shrink-0
-                                                                                  {{ $loop->first ? 'border-main-color' : '' }}"
-                                    onclick="changeMainImage('{{ asset('storage/' . $imagen->path) }}', this)">
-                                    <img src="{{ asset('storage/' . $imagen->path) }}" alt="Thumbnail"
-                                        class="w-full h-full object-contain">
+                                <div class="border border-gray-200 w-[80px] h-[80px] cursor-pointer hover:border-main-color flex-shrink-0
+                                                                                                                                                                                                                                                                                                                                                                                          {{ $loop->first ? 'border-main-color' : '' }}"
+                                    onclick="changeMainImage('{{ $imagen->image }}', this)">
+                                    <img src="{{ $imagen->image }}" alt="Thumbnail" class="w-full h-full object-cover">
                                 </div>
                             @endforeach
                         </div>
@@ -117,12 +131,43 @@
                                 </div>
                                 <div class="flex border-b border-gray-200 py-3.5">
                                     <div class="w-1/2 ">Marca</div>
-                                    <div class="w-1/2   text-right">{{ $producto->categoria->name }}</div>
+                                    <div class="h-fit flex justify-end w-full">
+                                        @if(isset($categorias) && isset($producto->marcas))
+                                            @foreach($categorias as $categoria)
+                                                @if(
+                                                        $producto->marcas->contains(function ($marca) use ($categoria) {
+                                                            return $marca->categoria_id === $categoria->id;
+                                                        })
+                                                    )
+                                                    <span
+                                                        class="bg-primary-orange mx-1 inline-block rounded px-2 py-1 text-xs font-semibold text-white">
+                                                        {{ $categoria->name }}
+                                                    </span>
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                    </div>
                                 </div>
                                 <div class="flex border-b border-gray-200 py-3.5">
                                     <div class="w-1/2 ">Modelo</div>
-                                    <div class="w-1/2   text-right">{{ $producto->code }}</div>
+                                    <div class="h-fit grid grid-cols-3 justify-end w-full gap-y-4">
+                                        @if(isset($subcategorias) && isset($producto->modelos))
+                                            @foreach($subcategorias as $subcategoria)
+                                                @if(
+                                                        $producto->modelos->contains(function ($modelo) use ($subcategoria) {
+                                                            return $modelo->sub_categoria_id === $subcategoria->id;
+                                                        })
+                                                    )
+                                                    <span
+                                                        class="bg-primary-orange mx-1 inline-block rounded px-2 py-1 text-xs font-semibold text-white h-fit">
+                                                        {{ $subcategoria->name }}
+                                                    </span>
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                    </div>
                                 </div>
+
                                 <div class="flex border-b border-gray-200 py-3.5">
                                     <div class="w-1/2 ">Código OEM</div>
                                     <div class="w-1/2   text-right">{{ $producto->code_oem }}</div>
@@ -133,23 +178,14 @@
                                 </div>
                             </div>
                         </div>
-                        @if ($producto->ficha)
-                            <div class="flex items-center justify-center gap-6 mt-6">
-                                <a href="{{ asset('storage/' . $producto->ficha) }}" download="{{ basename($producto->ficha) }}"
-                                    class="btn-secondary-home">
-                                    Ficha técnica
-                                </a>
-                                <a href="{{ route('contacto') }}" class="btn-primary-home">
-                                    CONSULTAR
-                                </a>
-                            </div>
-                        @else
-                            <div class="flex items-center justify-center gap-6 mt-8">
-                                <a href="{{ route('contacto') }}" class="btn-primary-home-largo w-full">
-                                    CONSULTAR
-                                </a>
-                            </div>
-                        @endif
+
+
+                        <a href="{{ route('contacto', ['mensaje' => $producto->name]) }}"
+                            class="w-full flex justify-center items-center bg-primary-orange text-white font-bold h-[41px]">
+                            Consultar
+                        </a>
+
+
                     </div>
                 </div>
                 <!-- Productos relacionados -->
@@ -158,32 +194,33 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         @forelse($productosRelacionados as $prodRelacionado)
-                            <div
-                                class="border border-gray-200 overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-lg duration-300 h-[396px]">
-                                <a {{--
-                                    href="{{ route('producto', ['id' => $prodRelacionado->categoria->id, 'producto' => $prodRelacionado->id]) }}"
-                                    --}}>
-                                    @if ($prodRelacionado->imagenes->count() > 0)
-                                        <img src="{{ asset('storage/' . $prodRelacionado->imagenes->first()->path) }}"
-                                            alt="{{ $prodRelacionado->titulo }}"
-                                            class="bg-gray-100 w-full h-72 object-cover transition-transform duration-500 hover:scale-105">
+                            <a href="{{ "/" . $producto->code }}" {{-- route('producto', ['codigo'=> $producto->code]) --}}
+                                class=" border-gray-200 transition transform hover:-translate-y-1 hover:shadow-lg duration-300
+                                h-[349px] flex flex-col">
+                                <div class="h-full flex flex-col">
+                                    @if ($producto->imagenes->count() > 0)
+                                        <img src="{{ $producto->imagenes->first()->image }}" alt="{{ $producto->name }}"
+                                            class="bg-gray-100 w-full min-h-[243px] object-cover ">
                                     @else
                                         <div
-                                            class="w-full h-72 bg-gray-100 flex items-center justify-center text-gray-500 transition-colors duration-300 hover:text-gray-700">
+                                            class="w-full min-h-[243px] bg-gray-100 flex items-center justify-center text-gray-500 ">
                                             <span>Sin imagen</span>
                                         </div>
                                     @endif
-                                    <div class="py-4 px-6 transition-colors duration-300 hover:bg-gray-50">
+                                    <div class="  flex flex-col justify-center h-full">
                                         <h3
-                                            class="text-green-600 font-bold group-hover:text-green-700 transition-colors duration-300">
-                                            {{ $prodRelacionado->codigo }}
+                                            class="text-primary-orange  group-hover:text-green-700 text-[16px] transition-colors duration-300">
+                                            {{ $producto->code }}
                                         </h3>
-                                        <p class="text-gray-800 mt-2 transition-colors duration-300 line-clamp-2">
-                                            {{ $prodRelacionado->titulo }}
+                                        <p class="text-gray-800 transition-colors duration-300 ">
+                                            {{ $producto->marcas->first()->name ?? 'Marca no disponible' }}
+                                        </p>
+                                        <p class="text-gray-800 text-[20px] font-semibold transition-colors duration-300 ">
+                                            {{ $producto->name }}
                                         </p>
                                     </div>
-                                </a>
-                            </div>
+                                </div>
+                            </a>
                         @empty
                             <div class="col-span-3 py-8 text-center text-gray-500">
                                 No hay productos relacionados disponibles.

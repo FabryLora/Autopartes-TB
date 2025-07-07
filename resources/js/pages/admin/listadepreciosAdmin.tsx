@@ -46,7 +46,7 @@ export default function ListaDePreciosAdmin() {
                         >
                             <form onSubmit={handleSubmit} method="POST" className="text-black">
                                 <div className="w-[500px] rounded-md bg-white p-4">
-                                    <h2 className="mb-4 text-2xl font-semibold">Cargar archivo</h2>
+                                    <h2 className="mb-4 text-2xl font-semibold">Cargar lista</h2>
                                     <div className="flex flex-col gap-4">
                                         <label htmlFor="nombree">
                                             Nombre <span className="text-red-500">*</span>
@@ -58,19 +58,6 @@ export default function ListaDePreciosAdmin() {
                                             id="nombree"
                                             onChange={(e) => setData('name', e.target.value)}
                                         />
-                                        <label htmlFor="">Lista</label>
-
-                                        <select
-                                            className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
-                                            onChange={(e) => setData('lista', e.target.value)}
-                                            name=""
-                                            id=""
-                                        >
-                                            <option value="">Seleccionar lista</option>
-                                            <option value="1">Lista 1</option>
-                                            <option value="2">Lista 2</option>
-                                            <option value="3">Lista 3</option>
-                                        </select>
 
                                         <label htmlFor="archivo">Archivo</label>
 
@@ -119,7 +106,7 @@ export default function ListaDePreciosAdmin() {
                             onClick={() => setCreateView(true)}
                             className="bg-primary-orange w-[200px] rounded px-4 py-1 font-bold text-white hover:bg-orange-400"
                         >
-                            Cargar Archivo
+                            Cargar lista
                         </button>
                     </div>
 
@@ -127,9 +114,10 @@ export default function ListaDePreciosAdmin() {
                         <table className="w-full border text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
                             <thead className="bg-gray-300 text-sm font-medium text-black uppercase">
                                 <tr>
-                                    <td className="pl-4 text-center">NOMBRE</td>
-                                    <td className="w-[400px] px-3 py-2 text-center">LISTA</td>
+                                    <td className="w-[400px] px-3 py-2 text-center">CODIGO</td>
+                                    <td className="text-center">NOMBRE</td>
                                     <td className="text-center">ARCHIVO</td>
+
                                     <td className="text-center">EDITAR</td>
                                 </tr>
                             </thead>

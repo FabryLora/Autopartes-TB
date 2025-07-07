@@ -2,17 +2,16 @@
 
 namespace App\Jobs;
 
-use App\Models\Categoria;
-use App\Models\GrupoDeProductos;
-use App\Models\ImageGrupo;
-use App\Models\Productos;
-use App\Models\SubProducto;
+
+use App\Models\ListaProductos;
+use App\Models\Producto;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ActualizarPreciosJob implements ShouldQueue
@@ -20,37 +19,65 @@ class ActualizarPreciosJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $archivoPath;
+    protected $lista_id;
 
-    public function __construct($archivoPath)
+    public function __construct($archivoPath, $lista_id)
     {
         $this->archivoPath = $archivoPath;
+        $this->lista_id = $lista_id;
     }
 
     public function handle()
     {
-        $filePath = Storage::path($this->archivoPath);
+        $filePath = Storage::disk('public')->path($this->archivoPath);
         $spreadsheet = IOFactory::load($filePath);
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray(null, true, true, true);
 
+        Log::info('=== INICIO DEBUG EXCEL ===');
+        Log::info('Total de filas: ' . count($rows));
+        Log::info('Lista ID: ' . $this->lista_id);
+
         foreach ($rows as $index => $row) {
+            Log::info("Fila {$index}: " . json_encode($row));
 
-            if ($index === 0) continue;
-
-            $codigo = trim($row[0]);
-            $price_mayorista = trim($row[3]);
-            $price_minorista = trim($row[4]);
-            $price_dist = trim($row[5]);
-
-            $subproducto = SubProducto::where('code', $codigo)->first();
-
-            if ($subproducto) {
-                $subproducto->update([
-                    'price_mayorista' => $price_mayorista,
-                    'price_minorista' => $price_minorista,
-                    'price_dist' => $price_dist,
-                ]);
+            if ($index === 0) {
+                Log::info('Saltando encabezado');
+                continue;
             }
+
+            if (empty($row) || !isset($row['A']) || !isset($row['B'])) {
+                Log::info("Fila {$index} vacía o incompleta");
+                continue;
+            }
+
+            $codigo = trim($row['A']);
+            $precio = trim($row['B']);
+
+            Log::info("Procesando - Código: '{$codigo}', Precio: '{$precio}'");
+
+            $producto = Producto::where('code', $codigo)->first();
+
+            if (!$producto) {
+                Log::warning("Producto no encontrado con código: {$codigo}");
+                continue;
+            }
+
+            Log::info("Producto encontrado - ID: {$producto->id}, Código: {$producto->codigo}");
+
+            $result = ListaProductos::updateOrCreate(
+                [
+                    'lista_de_precios_id' => $this->lista_id,
+                    'producto_id' => $producto->id
+                ],
+                [
+                    'precio' => $precio
+                ]
+            );
+
+            Log::info("Registro creado/actualizado - ID: {$result->id}");
         }
+
+        Log::info('=== FIN DEBUG EXCEL ===');
     }
 }

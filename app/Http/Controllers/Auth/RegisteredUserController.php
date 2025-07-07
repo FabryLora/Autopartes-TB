@@ -39,7 +39,10 @@ class RegisteredUserController extends Controller
             'provincia' => 'nullable|string|max:255',
             'localidad' => 'nullable|string|max:255',
             'telefono' => 'nullable|string|max:20',
-            'lista' => 'nullable|string|max:255',
+            'descuento_uno' => 'nullable|sometimes|integer|min:0|max:100',
+            'descuento_dos' => 'nullable|sometimes|integer|min:0|max:100',
+            'descuento_tres' => 'nullable|sometimes|integer|min:0|max:100',
+            'lista_de_precios_id' => 'nullable|sometimes|exists:lista_de_precios,id',
             'autorizado' => 'nullable|boolean'
         ]);
 
@@ -51,8 +54,8 @@ class RegisteredUserController extends Controller
             'provincia' => $request->provincia,
             'localidad' => $request->localidad,
             'telefono' => $request->telefono,
-            'autorizado' => $request->autorizado,
-            'lista' => $request->lista,
+            'autorizado' => $request->autorizado || false,
+            'lista_de_precios_id' => $request->lista_de_precios_id,
             'password' => Hash::make($request->password),
         ]);
 

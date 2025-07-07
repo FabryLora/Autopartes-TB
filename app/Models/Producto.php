@@ -40,4 +40,10 @@ class Producto extends Model
     {
         return url("storage/" . $value);
     }
+
+    public function precio()
+    {
+        return $this->hasOne(ListaProductos::class, 'producto_id')
+            ->where('lista_de_precios_id', auth()->user()->listaDePrecio->id ?? null);
+    }
 }

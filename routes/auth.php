@@ -8,12 +8,13 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ListaDePreciosController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\PedidoProductoController;
 use App\Http\Controllers\PrivadaController;
+use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\SendPedidoController;
-use App\Http\Controllers\SubProductoController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -61,14 +62,17 @@ Route::middleware('auth')->group(function () {
         ->name('logout');
 
     Route::middleware('privada')->group(function () {
-        Route::get('privada/productos', [SubProductoController::class, 'indexPrivada'])->name('index.privada.subproductos');
+        Route::get('privada/productos', [ProductoController::class, 'indexPrivada'])->name('index.privada.productos');
         Route::get('privada/carrito', [PrivadaController::class, 'carrito']);
         Route::get('privada/margenes', function () {
             return inertia('privada/margenes');
         })->name('margenes');
+        Route::get('privada/informacion-de-pagos', function () {
+            return inertia('privada/informacion');
+        })->name('informacion.pagos');
 
         Route::get('privada/mispedidos', [PedidoController::class, 'misPedidos']);
-        Route::get('privada/listadeprecios', [ListaDePreciosController::class, 'index']);
+        Route::get('privada/lista-de-precios', [ListaDePreciosController::class, 'index']);
     });
 
 
@@ -81,4 +85,15 @@ Route::middleware('auth')->group(function () {
 
     Route::post('pedidoProducto', [PedidoProductoController::class, 'store'])
         ->name('pedidoProducto.store');
+
+    Route::post('addtocart', [CartController::class, 'addtocart'])
+        ->name('addtocart');
+    Route::post('remove', [CartController::class, 'remove'])
+        ->name('remove');
+    Route::post('update', [CartController::class, 'update'])
+        ->name('update');
+    Route::post('destroy', [CartController::class, 'destroy'])
+        ->name('destroy');
+
+    Route::post('compraRapida', [CartController::class, 'compraRapida'])->name('compraRapida');
 });

@@ -28,14 +28,22 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request)
     {
-
-        $credentials = $request->validate([
-            'name' => 'required',
+        $request->validate([
+            'name' => 'required', // Campo que puede ser name o email
             'password' => 'required',
         ]);
 
-        // Agregar el campo autorizado a las credenciales
+        $login = $request->input('name');
+        $password = $request->input('password');
 
+        // Determinar si es email o name
+        $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
+
+        $credentials = [
+            $fieldType => $login,
+            'password' => $password,
+            'autorizado' => true, // Solo usuarios autorizados pueden entrar
+        ];
 
         if (Auth::guard()->attempt($credentials)) {
             $request->session()->regenerate();
@@ -43,7 +51,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         return back()->withErrors([
-            'name' => 'Las credenciales proporcionadas no son correctas o la cuenta no está autorizada.',
+            'login' => 'Las credenciales proporcionadas no son correctas o la cuenta no está autorizada.',
         ]);
     }
 

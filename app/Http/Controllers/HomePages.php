@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\ArchivoCalidad;
 use App\Models\BannerPortada;
 use App\Models\Calidad;
+use App\Models\Categoria;
 use App\Models\Contacto;
 use App\Models\Nosotros;
 use App\Models\Novedades;
 use App\Models\Slider;
+use App\Models\SubCategoria;
 use App\Models\Valores;
 use Illuminate\Http\Request;
 
@@ -16,6 +18,8 @@ class HomePages extends Controller
 {
     public function home()
     {
+        $categorias = Categoria::orderBy('order', 'asc')->get();
+        $subcategorias = SubCategoria::orderBy('order', 'asc')->get();
         $sliders = Slider::orderBy('order', 'asc')->get();
         $bannerPortada = BannerPortada::first();
         $novedades = Novedades::where('featured', true)->orderBy('order', 'asc')->get();
@@ -23,6 +27,8 @@ class HomePages extends Controller
             'sliders' => $sliders,
             'bannerPortada' => $bannerPortada,
             'novedades' => $novedades,
+            'categorias' => $categorias,
+            'subcategorias' => $subcategorias,
         ]);
     }
 
@@ -56,11 +62,12 @@ class HomePages extends Controller
         ]);
     }
 
-    public function contacto()
+    public function contacto(Request $request)
     {
         $contacto = Contacto::first();
         return view('contacto', [
             'contacto' => $contacto,
+            'mensaje' => $request->mensaje ?? null,
         ]);
     }
 }

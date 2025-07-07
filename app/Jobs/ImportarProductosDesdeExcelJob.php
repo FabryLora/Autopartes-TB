@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\Categoria;
 use App\Models\Producto;
+use App\Models\SubCategoria;
 use App\Models\SubProducto;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,32 +36,19 @@ class ImportarProductosDesdeExcelJob implements ShouldQueue
         foreach ($rows as $index => $row) {
             if ($index === 0) continue; // Saltar encabezado
 
-            $supercodigo = trim($row[0]);
-            $codigo = trim($row[1]);
-            $name = trim($row[2]);
+            $modelo = trim($row[1]);
+            $marca = trim($row[3]);
 
 
-            $subproducto = SubProducto::where('code', $codigo)->first();
+            $marcas = Categoria::firstOrCreate(
+                ['name' => $marca],
+                ['name' => $marca]
+            );
 
-            if ($subproducto) {
-                $producto = Producto::firstOrCreate(
-                    ['code' => $supercodigo],
-                    [
-                        'name' => $name,
-                        'code' => $supercodigo,
-                        //parabolico 1, convensional 2, repuestos 3
-                        'categoria_id' => 1
-                    ]
-                );
-            }
-
-            if ($subproducto) {
-                $subproducto->update(
-                    [
-                        'producto_id' => $producto->id,
-                    ]
-                );
-            }
+            SubCategoria::firstOrCreate(
+                ['name' => $modelo],
+                ['name' => $modelo, 'categoria_id' => $marcas->id]
+            );
         }
 
         Log::info("Importación de productos y subproductos desde CSV completada.");

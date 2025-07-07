@@ -355,7 +355,7 @@ export default function ProductosAdmin() {
                                         type="submit"
                                         className="hover:text-primary-orange rounded-md px-2 py-1 text-white outline outline-white transition duration-300 hover:bg-white"
                                     >
-                                        Actualizar
+                                        Guardar
                                     </button>
                                 </div>
                             </form>

@@ -9,13 +9,14 @@ class ImportController extends Controller
 {
     public function importar(Request $request)
     {
-        $request->validate([
-            'archivo' => 'required|mimes:xlsx,xls'
-        ]);
+
         // Guardar archivo en almacenamiento temporal
-        $archivoPath = $request->file('archivo')->store('importaciones');
+        $archivoPath = str_replace('/storage/', '', parse_url($request->path, PHP_URL_PATH));
+
+        $lista_id = $request->lista_id;
+
 
         // Encolar el Job
-        ActualizarPreciosJob::dispatch($archivoPath);
+        ActualizarPreciosJob::dispatch($archivoPath, $lista_id);
     }
 }

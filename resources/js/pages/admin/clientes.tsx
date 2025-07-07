@@ -21,6 +21,10 @@ export default function Clientes() {
         provincia: '',
         localidad: '',
         telefono: '',
+        descuento_uno: 0,
+        descuento_dos: 0,
+        descuento_tres: 0,
+        lista_de_precios_id: '',
         autorizado: 1,
     });
 
@@ -168,19 +172,46 @@ export default function Clientes() {
 
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="lista">Lista</label>
-                                        <select
+                                        <input
                                             className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            onChange={(e) => signupForm.setData('lista', e.target.value)}
+                                            onChange={(e) => signupForm.setData('lista_de_precios_id', e.target.value)}
+                                            type="number"
                                             name=""
                                             id="lista"
-                                        >
-                                            <option disabled selected value="">
-                                                Selecciona una lista
-                                            </option>
-                                            <option value="1">Lista 1</option>
-                                            <option value="2">Lista 2</option>
-                                            <option value="3">Lista 3</option>
-                                        </select>
+                                        />
+                                    </div>
+
+                                    <div className="col-span-2 grid grid-cols-3 gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label htmlFor="descuento_uno">Descuento 1</label>
+                                            <input
+                                                className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                                onChange={(e) => signupForm.setData('descuento_uno', e.target.value)}
+                                                type="number"
+                                                name=""
+                                                id="descuento_uno"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label htmlFor="descuento_dos">Descuento 2</label>
+                                            <input
+                                                className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                                onChange={(e) => signupForm.setData('descuento_dos', e.target.value)}
+                                                type="number"
+                                                name=""
+                                                id="descuento_dos"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label htmlFor="descuento_tres">Descuento 3</label>
+                                            <input
+                                                className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                                onChange={(e) => signupForm.setData('descuento_tres', e.target.value)}
+                                                type="number"
+                                                name=""
+                                                id="descuento_tres"
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="flex flex-col gap-2">

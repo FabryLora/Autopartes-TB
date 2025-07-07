@@ -27,7 +27,8 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('*', function ($view) {
             $view->with([
-                'provincias' => Provincia::orderBy('name', 'asc')->get(),
+                'provincias' => Provincia::orderBy('name', 'asc')->with('localidades')->get(),
+
                 'contacto' => Contacto::first(),
                 'logos' => Logos::first()
             ]);

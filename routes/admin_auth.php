@@ -34,8 +34,8 @@ use Inertia\Inertia;
 
 Route::middleware('guest:admin')->group(function () {});
 
-Route::get('/adm', [AdminAuthController::class, 'login'])->name('admin.login');
-Route::post('/adm', [AdminAuthController::class, 'authenticate']);
+Route::get('/adm/login', [AdminAuthController::class, 'login'])->name('admin.login');
+Route::post('/adm/login', [AdminAuthController::class, 'authenticate'])->name('admin.authenticate');
 
 Route::middleware('auth:admin')->group(function () {
     Route::post('admin-logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
@@ -58,7 +58,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('admin/categorias', [CategoriaController::class, 'index'])->name('admin.categorias');
     Route::post('admin/categorias', [CategoriaController::class, 'store'])->name('admin.categorias.store');
     Route::post('admin/categorias/update', [CategoriaController::class, 'update'])->name('admin.categorias.update');
-    Route::delete('admin/categorias/destroy/{id}', [CategoriaController::class, 'destroy'])->name('admin.categorias.destroy');
+    Route::delete('admin/categorias/destroy', [CategoriaController::class, 'destroy'])->name('admin.categorias.destroy');
 
     # Subcategorias
     Route::get('admin/subcategorias', [SubCategoriaController::class, 'index'])->name('admin.subcategorias');
@@ -123,6 +123,8 @@ Route::middleware('auth:admin')->group(function () {
         $informacion->update($data);
     })->name('admin.informacion.update');
 
+
+
     Route::get('admin/listadeprecios', [ListaDePreciosController::class, 'indexAdmin'])->name('admin.listadeprecios');
     Route::post('admin/listadeprecios', [ListaDePreciosController::class, 'store'])->name('admin.listadeprecios.store');
     Route::post('admin/listadeprecios/update', [ListaDePreciosController::class, 'update'])->name('admin.listadeprecios.update');
@@ -145,6 +147,8 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('admin/slider/update', [SliderController::class, 'update'])->name('admin.slider.update');
     Route::delete('admin/slider/destroy', [SliderController::class, 'destroy'])->name('admin.slider.destroy');
     Route::post('admin/slider/store', [SliderController::class, 'store'])->name('admin.slider.store');
+
+    Route::post('cambiarPrecios', [ImportController::class, 'importar'])->name('cambiarPrecios');
 
     Route::get('/admin/dashboard', function () {
         if (!Auth::guard('admin')->check()) {

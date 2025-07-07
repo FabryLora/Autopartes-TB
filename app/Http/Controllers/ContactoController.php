@@ -26,27 +26,9 @@ class ContactoController extends Controller
 
     public function sendContact(Request $request)
     {
-        // Validar los campos del formulario
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email',
-            'celular' => 'required|string',
-            'empresa' => 'required|string',
-            'mensaje' => 'required|string',
-            'recaptcha_token' => 'required',  // El token generado por reCAPTCHA v3
-        ]);
 
-        // Verificar el token de reCAPTCHA con la API de Google
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => env('RECAPTCHA_SECRET_KEY'),
-            'response' => $request->input('recaptcha_token'),
-            'remoteip' => $request->ip(),
-        ]);
 
-        // Si la validación del reCAPTCHA falla
-        if (!$response->json()['success']) {
-            return redirect()->back()->withErrors(['recaptcha_token' => 'Verificación de reCAPTCHA fallida.']);
-        }
+
         $data = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
