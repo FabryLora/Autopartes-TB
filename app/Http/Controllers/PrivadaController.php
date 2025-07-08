@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PedidoMail;
 use App\Models\Categoria;
 use App\Models\Contacto;
 use App\Models\InformacionImportante;
+use App\Models\Pedido;
+use App\Models\PedidoProducto;
 use App\Models\Producto;
 use App\Models\SubCategoria;
 use App\Models\User;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+
 
 class   PrivadaController extends Controller
 {
@@ -68,6 +73,8 @@ class   PrivadaController extends Controller
 
         $total = $subtotal_descuento + $iva;
 
+        $descuento = $subtotalTotal - $subtotal_descuento;
+
         $categorias = Categoria::orderBy('order', 'asc')->get();
         $subcategorias = SubCategoria::orderBy('order', 'asc')->get();
 
@@ -85,6 +92,7 @@ class   PrivadaController extends Controller
             'categorias' => $categorias,
             'subcategorias' => $subcategorias,
             'total' => $total,
+            'descuento' => $descuento,
         ]);
     }
 
@@ -96,6 +104,41 @@ class   PrivadaController extends Controller
 
         session([
             'cliente_seleccionado' => $cliente,
+        ]);
+    }
+
+    public function hacerPedido(Request $request)
+    {
+
+        $pedido = Pedido::create(
+            [
+                'user_id' => auth()->id(),
+                'tipo_entrega' => $request->tipo_entrega,
+                'mensaje' => $request->mensaje,
+                'forma_pago' => $request->forma_pago,
+                'subtotal' => $request->subtotal,
+                'iva' => $request->iva,
+                'total' => $request->total,
+            ]
+        );
+
+        foreach (Cart::content() as $item) {
+            PedidoProducto::create([
+                'pedido_id' => $pedido->id,
+                'producto_id' => $item->id,
+                'cantidad' => $item->qty,
+                'precio_unitario' => $item->price,
+            ]);
+        }
+
+        // Enviar correo al administrador (o a la dirección que desees)
+        /* Mail::to(Contacto::first()->mail)->send(new PedidoMail($data)); */
+
+        Cart::destroy();
+
+        // Devolver mensaje de éxito al usuario
+        session([
+            'pedido_id' => $pedido->id,
         ]);
     }
 

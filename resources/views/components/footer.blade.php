@@ -126,7 +126,7 @@
         class="flex min-h-[67px] w-full flex-col items-center justify-center bg-[#4D565D] px-4 py-4 text-[14px] text-white/80 sm:flex-row sm:justify-between sm:px-6 lg:px-0">
         <div
             class="mx-auto flex w-full max-w-[1200px] flex-col items-center justify-center gap-2 text-center sm:flex-row sm:justify-between sm:gap-0 sm:text-left">
-            <p>© Copyright {{ date('Y') }} SR Repuestos. Todos los derechos reservados</p>
+            <p>© Copyright {{ date('Y') }} Autopartes TB. Todos los derechos reservados</p>
             <a target="_blank" rel="noopener noreferrer" href="https://osole.com.ar/" class="mt-2 sm:mt-0">
                 By <span class="font-bold">Osole</span>
             </a>

@@ -6,11 +6,6 @@ use App\Http\Controllers\HomePages;
 use App\Http\Controllers\NovedadesController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\SendContactInfoController;
-use App\Models\ArchivoCalidad;
-use App\Models\Calidad;
-use App\Models\Metadatos;
-use App\Models\Novedades;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 

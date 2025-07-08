@@ -1,7 +1,7 @@
 import { default as ProductosPrivadaRow } from '@/components/productosPrivadaRow';
-import { Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useCart } from 'react-use-cart';
 import DefaultLayout from '../defaultLayout';
 
@@ -18,17 +18,18 @@ export default function Carrito({
     descuento_uno,
     descuento_dos,
     descuento_tres,
+    descuento,
     subtotal_descuento,
     total,
 }) {
     const { user } = auth;
     const { items, emptyCart } = useCart();
 
-    const [selected, setSelected] = useState('efe');
-    const [tipo_entrega, setTipo_entrega] = useState('retiro cliente');
+    const [selected, setSelected] = useState('Efectivo');
+    const [tipo_entrega, setTipo_entrega] = useState('Efectivo');
 
-    const [selectedEnvio, setSelectedEnvio] = useState('Efectivo');
-    const [tipo_entrega_envio, setTipo_entrega_envio] = useState('Efectivo');
+    const [selectedEnvio, setSelectedEnvio] = useState('retiro');
+    const [tipo_entrega_envio, setTipo_entrega_envio] = useState('retiro');
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(false);
@@ -36,25 +37,38 @@ export default function Carrito({
     const [succID, setSuccID] = useState();
 
     const pedidoForm = useForm({
-        tipo_entrega: tipo_entrega,
+        tipo_entrega: tipo_entrega_envio,
+        forma_pago: tipo_entrega,
         subtotal: subtotal,
+        descuento: descuento,
         iva: iva,
+        total: total,
         user_id: user?.id,
     });
 
-    // Actualizar los valores del formulario cuando cambien
-    useEffect(() => {
-        pedidoForm.setData({
-            tipo_entrega: tipo_entrega,
-            subtotal: subtotal,
-            iva: iva,
+    const hacerPedido = () => {
+        pedidoForm.post(route('hacerPedido'), {
+            onSuccess: (response) => {
+                console.log('Pedido realizado con éxito:', response);
 
-            user_id: user?.id,
+                setSucc(true);
+                setSuccID(response.props.flash.pedido_id);
+                setIsSubmitting(false);
+                emptyCart();
+            },
+            onError: (error) => {
+                setError(true);
+                setIsSubmitting(false);
+                console.error('Error al hacer el pedido:', error);
+            },
         });
-    }, [tipo_entrega, subtotal, iva, user]);
+    };
 
     return (
         <DefaultLayout>
+            <Head>
+                <title>Carrito</title>
+            </Head>
             <div className="mx-auto grid w-[1200px] grid-cols-2 gap-10 py-20 max-sm:px-4">
                 <AnimatePresence>
                     {error && (
@@ -78,12 +92,12 @@ export default function Carrito({
                                         Su pedido #{succID} está en proceso y te avisaremos por email cuando esté listo. Si tienes alguna pregunta, no
                                         dudes en contactarnos.
                                     </p>
-                                    <Link
-                                        href={'/privada/productos'}
+                                    <button
+                                        onClick={() => setSucc(false)}
                                         className="bg-primary-orange flex h-[47px] w-[253px] items-center justify-center text-white"
                                     >
                                         VOLVER A PRODUCTOS
-                                    </Link>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -92,13 +106,12 @@ export default function Carrito({
 
                 <div className="col-span-2 grid w-full items-start">
                     <div className="w-full">
-                        <div className="grid h-[52px] grid-cols-12 items-center bg-[#ECECEC] text-[16px] font-semibold">
+                        <div className="grid h-[52px] grid-cols-9 items-center bg-[#ECECEC] text-[16px] font-semibold">
                             <p></p>
                             <p>Código</p>
                             <p>Código OEM</p>
                             <p>Descripción</p>
-                            <p>Marca</p>
-                            <p className="col-span-2">Modelo</p>
+
                             <p>Precio</p>
                             <p>Cantidad</p>
                             <p>Subtotal</p>
@@ -336,6 +349,7 @@ export default function Carrito({
                                 ${' '}
                                 {Number(subtotal)?.toLocaleString('es-AR', {
                                     minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
                                 })}
                             </p>
                         </div>
@@ -348,8 +362,9 @@ export default function Carrito({
                                 </p>
                                 <p>
                                     ${' '}
-                                    {Number(subtotal_descuento)?.toLocaleString('es-AR', {
+                                    {Number(descuento)?.toLocaleString('es-AR', {
                                         minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
                                     })}
                                 </p>
                             </div>
@@ -361,6 +376,7 @@ export default function Carrito({
                                 ${' '}
                                 {Number(iva)?.toLocaleString('es-AR', {
                                     minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
                                 })}
                             </p>
                         </div>
@@ -373,6 +389,7 @@ export default function Carrito({
                             ${' '}
                             {Number(total)?.toLocaleString('es-AR', {
                                 minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
                             })}
                         </p>
                     </div>
@@ -389,7 +406,7 @@ export default function Carrito({
                         Cancelar pedido
                     </Link>
                     <button
-                        /* onClick={handleSubmit} */
+                        onClick={hacerPedido}
                         className={`h-[47px] w-full text-white transition-transform hover:scale-95 ${isSubmitting ? 'bg-gray-400' : 'bg-primary-orange'}`}
                     >
                         {isSubmitting ? 'Enviando pedido...' : 'Realizar pedido'}

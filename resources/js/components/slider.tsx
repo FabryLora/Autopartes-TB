@@ -15,7 +15,7 @@ const Slider = ({
     if (!slides.length) return null;
 
     return (
-        <div className="relative mx-auto min-h-[232px] w-full">
+        <div className="relative mx-auto h-[232px] w-full">
             <div className="relative overflow-hidden shadow-lg">
                 <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
                     {slides.map((slide, index) => (

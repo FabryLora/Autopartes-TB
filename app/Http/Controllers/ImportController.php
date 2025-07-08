@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Console\Commands\ImportarExcelProductos;
 use App\Jobs\ActualizarPreciosJob;
+use App\Jobs\ImportarProductosDesdeExcelJob;
 use Illuminate\Http\Request;
 
 class ImportController extends Controller
@@ -18,5 +20,17 @@ class ImportController extends Controller
 
         // Encolar el Job
         ActualizarPreciosJob::dispatch($archivoPath, $lista_id);
+    }
+
+    public function importarProductos(Request $request)
+    {
+        $request->validate([
+            'archivo' => 'required|mimes:xlsx,xls'
+        ]);
+        // Guardar archivo en almacenamiento temporal
+        $archivoPath = $request->file('archivo')->store('importaciones');
+
+        // Encolar el Job
+        ImportarProductosDesdeExcelJob::dispatch($archivoPath);
     }
 }

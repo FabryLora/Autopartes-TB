@@ -63,8 +63,8 @@
                     @foreach ($categorias as $cat)
                         <div class="border-b border-gray-200"
                             x-data="{ 
-                                                                                                                                                                                                            open: {{ $modelo_id && $cat->subCategorias && $cat->subCategorias->where('id', $modelo_id ?? null)->count() > 0 ? 'true' : 'false' }} 
-                                                                                                                                                                                                         }">
+                                                                                                                                                                                                                    open: {{ $modelo_id && $cat->subCategorias && $cat->subCategorias->where('id', $modelo_id ?? null)->count() > 0 ? 'true' : 'false' }} 
+                                                                                                                                                                                                                 }">
                             <div
                                 class="flex flex-row justify-between items-center py-3 px-2 transition-all duration-300 ease-in-out text-lg {{ $categoria && $cat->id == $categoria->id ? 'font-semibold' : '' }}">
                                 <a href="{{ route('productos', ['id' => $cat->id]) }}" class="block flex-1">
@@ -118,7 +118,7 @@
             <div class="w-full ">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     @forelse($productos as $producto)
-                        <a href="{{ "/" . $producto->code }}" {{-- route('producto', ['codigo'=> $producto->code]) --}}
+                        <a href="{{ "/p/" . $producto->code }}" {{-- route('producto', ['codigo'=> $producto->code]) --}}
                             class=" border-gray-200 transition transform hover:-translate-y-1 hover:shadow-lg duration-300
                             h-[349px] flex flex-col">
                             <div class="h-full flex flex-col">

@@ -88,7 +88,7 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
         });
     };
     return (
-        <div className="grid h-fit grid-cols-12 items-center border-b border-gray-200 py-2 text-[15px] text-[#74716A]">
+        <div className="grid h-fit grid-cols-9 items-center border-b border-gray-200 py-2 text-[15px] text-[#74716A]">
             <div className="h-[85px] w-[85px]">
                 <img src={producto?.imagenes[0]?.image} className="h-full w-full object-contain" alt="" />
             </div>
@@ -96,37 +96,6 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
             <p className="">{producto?.code_oem}</p>
             <p className="">{producto?.name}</p>
 
-            {/* Columna de categorías con scroll y wrap mejorado */}
-            <div className="h-fit overflow-y-auto pr-1">
-                <div className="flex h-fit flex-wrap gap-1">
-                    {categorias
-                        ?.filter((categoria) => producto.marcas?.some((marca) => marca.categoria_id === categoria.id))
-                        .map((categoria) => (
-                            <span
-                                key={categoria.id}
-                                className="bg-primary-orange mx-1 inline-block rounded px-2 py-1 text-xs font-semibold text-white lowercase"
-                            >
-                                {categoria.name}
-                            </span>
-                        ))}
-                </div>
-            </div>
-
-            {/* Columna de subcategorías con scroll y wrap mejorado */}
-            <div className="col-span-2 h-[90px] h-fit pr-1">
-                <div className="flex h-fit flex-wrap gap-1">
-                    {subcategorias
-                        ?.filter((subcategoria) => producto.modelos?.some((modelo) => modelo.sub_categoria_id === subcategoria.id))
-                        .map((subcategoria) => (
-                            <span
-                                key={subcategoria.id}
-                                className="bg-primary-orange mx-1 inline-block rounded px-2 py-1 text-xs font-semibold text-white lowercase"
-                            >
-                                {subcategoria.name}
-                            </span>
-                        ))}
-                </div>
-            </div>
             {margenSwitch ? (
                 <div className="relative">
                     <p>

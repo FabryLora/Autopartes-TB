@@ -89,7 +89,11 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                                 ))}
                             </select>
                             <div className="flex w-full justify-between gap-5 text-[16px]">
-                                <button className="text-primary-orange border-primary-orange hover:bg-primary-orange h-[41px] w-full border transition duration-300 hover:text-white">
+                                <button
+                                    type="button"
+                                    onClick={() => setVendedorScreen(false)}
+                                    className="text-primary-orange border-primary-orange hover:bg-primary-orange h-[41px] w-full border transition duration-300 hover:text-white"
+                                >
                                     Cancelar
                                 </button>
                                 <button
@@ -209,16 +213,14 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                         </div>
                     </div>
                     <div className="w-full">
-                        <div className="grid h-[52px] grid-cols-12 items-center bg-[#F5F5F5]">
+                        <div className="grid h-[52px] grid-cols-9 items-center bg-[#F5F5F5]">
                             <p></p>
                             <p>Código</p>
                             <p>Codigo OEM</p>
                             <p>Descripcion</p>
-                            <p>Marca</p>
-                            <p className="col-span-2">Modelo</p>
                             <p className="">Precio</p>
                             <p className="text-center">Cantidad</p>
-                            <p>Subtotal</p>
+                            <p className="">Subtotal</p>
                             <p className="text-center">Stock</p>
                             <p></p>
                         </div>

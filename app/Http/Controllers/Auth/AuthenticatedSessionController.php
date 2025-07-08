@@ -17,10 +17,7 @@ class AuthenticatedSessionController extends Controller
     public function create(Request $request)
     {
 
-        return Inertia::render('auth/login', [
-            'canResetPassword' => Route::has('password.request'),
-            'status' => $request->session()->get('status'),
-        ]);
+        return redirect('/');
     }
 
     /**
@@ -60,8 +57,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request)
     {
+        session()->forget('cliente_seleccionado');
         Auth::guard('web')->logout();
-
-        return redirect()->route('home');
     }
 }

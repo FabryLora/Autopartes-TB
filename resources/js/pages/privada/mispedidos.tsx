@@ -1,5 +1,5 @@
 import MispedidosRow from '@/components/mispedidosRow';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import DefaultLayout from '../defaultLayout';
 
 export default function Mispedidos() {
@@ -7,6 +7,9 @@ export default function Mispedidos() {
 
     return (
         <DefaultLayout>
+            <Head>
+                <title>Pedidos</title>
+            </Head>
             <div className="mx-auto w-[1200px] py-20">
                 <div className="col-span-2 grid w-full items-start">
                     <div className="w-full">

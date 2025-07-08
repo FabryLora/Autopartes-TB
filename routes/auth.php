@@ -71,11 +71,17 @@ Route::middleware('auth')->group(function () {
             return inertia('privada/informacion');
         })->name('informacion.pagos');
 
-        Route::get('privada/mispedidos', [PedidoController::class, 'misPedidos']);
+        Route::get('privada/pedidos', [PedidoController::class, 'misPedidos']);
         Route::get('privada/lista-de-precios', [ListaDePreciosController::class, 'index']);
 
         Route::post('seleccionarCliente', [PrivadaController::class, 'seleccionarCliente'])
             ->name('seleccionarCliente');
+
+        Route::post('hacerPedido', [PrivadaController::class, 'hacerPedido'])
+            ->name('hacerPedido');
+
+        Route::post('recomprar', [PedidoController::class, 'recomprar'])
+            ->name('recomprar');
     });
 
 

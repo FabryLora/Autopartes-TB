@@ -140,6 +140,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::delete('admin/marcasProducto/destroy', [MarcaProductoController::class, 'destroy'])->name('admin.marcasProducto.destroy');
 
     Route::post('/importar-excel', [ImportController::class, 'importar'])->name('importar.excel');
+    Route::post('/importar-excel/productos', [ImportController::class, 'importarProductos'])->name('importarProductos');
 
     Route::get('admin/slider', [SliderController::class, 'index'])->name('admin.slider');
     Route::post('admin/slider/update', [SliderController::class, 'update'])->name('admin.slider.update');

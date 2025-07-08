@@ -29,6 +29,8 @@ export default function ProductosAdmin() {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [createView, setCreateView] = useState(false);
+    const [subirProductos, setSubirProductos] = useState(false);
+    const [archivo, setArchivo] = useState();
 
     const [modeloSelected, setModeloSelected] = useState([]);
     const [marcaSelected, setMarcaSelected] = useState([]);
@@ -93,6 +95,28 @@ export default function ProductosAdmin() {
                 console.log(errors);
             },
         });
+    };
+
+    const importarProductos = (e) => {
+        e.preventDefault();
+
+        router.post(
+            route('importarProductos'),
+            {
+                archivo: archivo,
+            },
+            {
+                onSuccess: () => {
+                    toast.success('Productos importados correctamente');
+                    reset();
+                    setSubirProductos(false);
+                },
+                onError: (errors) => {
+                    toast.error('Error al importar productos');
+                    console.log(errors);
+                },
+            },
+        );
     };
 
     // Manejadores para la paginación del backend
@@ -362,6 +386,65 @@ export default function ProductosAdmin() {
                         </motion.div>
                     )}
                 </AnimatePresence>
+                <AnimatePresence>
+                    {subirProductos && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-black/50 text-left"
+                        >
+                            <form onSubmit={importarProductos} method="POST" className="relative rounded-lg bg-white text-black">
+                                <div className="bg-primary-orange sticky top-0 flex flex-row items-center gap-2 rounded-t-lg p-4">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="28"
+                                        height="28"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="#ffffff"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        className="lucide lucide-plus-icon lucide-plus"
+                                    >
+                                        <path d="M5 12h14" />
+                                        <path d="M12 5v14" />
+                                    </svg>
+                                    <h2 className="text-2xl font-semibold text-white">Subir Producto</h2>
+                                </div>
+
+                                <div className="max-h-[60vh] w-[500px] overflow-y-auto rounded-md bg-white p-4">
+                                    <div className="flex flex-col gap-4">
+                                        <label htmlFor="archivo">Archivo</label>
+                                        <input
+                                            className="file:bg-primary-orange rounded-md p-2 file:cursor-pointer file:rounded-full file:px-4 file:py-2 file:text-white"
+                                            type="file"
+                                            name="archivo"
+                                            id="archivo"
+                                            onChange={(e) => setArchivo(e.target.files[0])}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="bg-primary-orange sticky bottom-0 flex justify-end gap-4 rounded-b-md p-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setSubirProductos(false)}
+                                        className="rounded-md border border-red-500 bg-red-500 px-2 py-1 text-white transition duration-300"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="hover:text-primary-orange rounded-md px-2 py-1 text-white outline outline-white transition duration-300 hover:bg-white"
+                                    >
+                                        Subir
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
                 <div className="mx-auto flex w-full flex-col gap-3">
                     <h2 className="border-primary-orange text-primary-orange text-bold w-full border-b-2 text-2xl">Productos</h2>
                     <div className="flex h-fit w-full flex-row gap-5">
@@ -380,9 +463,15 @@ export default function ProductosAdmin() {
                         </button>
                         <button
                             onClick={() => setCreateView(true)}
-                            className="bg-primary-orange w-[200px] rounded px-4 py-1 font-bold text-white hover:bg-orange-400"
+                            className="bg-primary-orange w-[300px] rounded px-4 py-1 font-bold text-white hover:bg-orange-400"
                         >
                             Crear Producto
+                        </button>
+                        <button
+                            onClick={() => setSubirProductos(true)}
+                            className="bg-primary-orange w-[300px] rounded px-4 py-1 font-bold text-white hover:bg-orange-400"
+                        >
+                            Subir productos
                         </button>
                     </div>
                     <div className="flex w-full justify-center">

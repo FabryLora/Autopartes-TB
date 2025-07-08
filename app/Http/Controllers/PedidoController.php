@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pedido;
+use App\Models\PedidoProducto;
+use App\Models\Producto;
 use App\Models\SubProducto;
+use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 
 class PedidoController extends Controller
@@ -71,6 +74,23 @@ class PedidoController extends Controller
             'pedidos' => $pedidos,
             'subproductos' => $subproductos,
         ]);
+    }
+
+    public function recomprar(Request $request)
+    {
+        $productos_pedidos = PedidoProducto::where('pedido_id', $request->pedido_id)
+            ->get();
+
+        foreach ($productos_pedidos as $producto_pedido) {
+            $producto = Producto::find($producto_pedido->producto_id);
+            Cart::add(
+                $producto->id,
+                $producto->name,
+                $producto_pedido->cantidad,
+                $producto->precio->precio,
+                0,
+            );
+        }
     }
 
     public function misPedidosAdmin(Request $request)

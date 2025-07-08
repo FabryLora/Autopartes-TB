@@ -27,8 +27,6 @@ class ContactoController extends Controller
     public function sendContact(Request $request)
     {
 
-
-
         $data = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
