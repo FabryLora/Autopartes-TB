@@ -120,6 +120,7 @@ export default function Dashboard({ children }) {
             href: '#',
             subHref: [
                 { title: 'Clientes', href: 'clientes' },
+                { title: 'Vendedores', href: 'vendedores' },
                 { title: 'Carrito', href: 'carrito' },
                 { title: 'Mis Pedidos', href: 'pedidos' },
                 { title: 'Informacion importante', href: 'informacion' },

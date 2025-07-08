@@ -6,27 +6,28 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import UserSwitch from './switch';
 
-export default function ClientesAdminRow({ cliente }) {
+export default function VendedoresAdminRow({ vendedor }) {
     const [edit, setEdit] = useState(false);
 
     const { provincias } = usePage().props;
 
     const updateForm = useForm({
-        name: cliente?.name,
+        name: vendedor?.name,
         password: '',
         password_confirmation: '',
-        email: cliente?.email,
-        cuit: cliente?.cuit,
-        direccion: cliente?.direccion,
-        telefono: cliente?.telefono,
-        lista_de_precios_id: cliente?.lista_de_precios_id,
-        descuento_uno: cliente?.descuento_uno,
-        descuento_dos: cliente?.descuento_dos,
-        descuento_tres: cliente?.descuento_tres,
-        provincia: cliente?.provincia,
-        localidad: cliente?.localidad,
-        autorizado: cliente?.autorizado,
-        id: cliente?.id,
+        email: vendedor?.email,
+        cuit: vendedor?.cuit,
+        direccion: vendedor?.direccion,
+        telefono: vendedor?.telefono,
+        lista_de_precios_id: vendedor?.lista_de_precios_id,
+        descuento_uno: vendedor?.descuento_uno,
+        descuento_dos: vendedor?.descuento_dos,
+        descuento_tres: vendedor?.descuento_tres,
+        rol: 'vendedor',
+        provincia: vendedor?.provincia,
+        localidad: vendedor?.localidad,
+        autorizado: vendedor?.autorizado,
+        id: vendedor?.id,
     });
 
     const update = (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,11 +36,11 @@ export default function ClientesAdminRow({ cliente }) {
         updateForm.post(route('admin.clientes.update'), {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success('Cliente actualizado correctamente');
+                toast.success('Vendedor actualizado correctamente');
                 setEdit(false);
             },
             onError: (errors) => {
-                toast.error('Error al actualizar cliente');
+                toast.error('Error al actualizar vendedor');
                 console.log(errors);
             },
         });
@@ -50,10 +51,10 @@ export default function ClientesAdminRow({ cliente }) {
             updateForm.delete(route('admin.clientes.destroy'), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    toast.success('Cliente eliminada correctamente');
+                    toast.success('Vendedor eliminado correctamente');
                 },
                 onError: (errors) => {
-                    toast.error('Error al eliminar cliente');
+                    toast.error('Error al eliminar vendedor');
                     console.log(errors);
                 },
             });
@@ -62,14 +63,11 @@ export default function ClientesAdminRow({ cliente }) {
 
     return (
         <tr className={`border text-black odd:bg-gray-100 even:bg-white`}>
-            <td className="pl-5 text-left">{cliente?.name}</td>
-            <td className="text-left">{cliente?.email}</td>
-            <td className="text-left">{cliente?.provincia}</td>
-            <td className="text-left">{cliente?.localidad}</td>
-            <td className="text-left">{cliente?.vendedor?.name}</td>
-            <td className="h-[90px] text-center">{cliente?.lista_de_precios_id}</td>
-            <td className="flex h-[90px] items-center justify-center">
-                <UserSwitch routeName="admin.clientes.autorizar" id={cliente?.id} status={cliente?.autorizado == 1} />
+            <td className="pl-5 text-left">{vendedor?.name}</td>
+            <td className="text-left">{vendedor?.email}</td>
+
+            <td className="h-[90px]">
+                <UserSwitch routeName="admin.clientes.autorizar" id={vendedor?.id} status={vendedor?.autorizado == 1} />
             </td>
 
             <td className="w-[140px] text-center">
@@ -91,14 +89,14 @@ export default function ClientesAdminRow({ cliente }) {
                         className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-black/50 text-left"
                     >
                         <form onSubmit={update} className="flex h-fit w-[600px] flex-col gap-6 bg-white p-5 shadow-md">
-                            <h2 className="text-xl font-bold text-black">Registrar cliente</h2>
+                            <h2 className="text-xl font-bold text-black">Registrar Vendedor</h2>
                             <div className="grid w-full grid-cols-2 gap-3 text-[16px]">
                                 <div className="col-span-2 flex flex-col gap-2">
                                     <label htmlFor="name" className="">
                                         Nombre de usuario
                                     </label>
                                     <input
-                                        defaultValue={cliente?.name}
+                                        defaultValue={vendedor?.name}
                                         onChange={(ev) => updateForm.setData('name', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
                                         type="text"
@@ -110,7 +108,7 @@ export default function ClientesAdminRow({ cliente }) {
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="password">Contraseña</label>
                                     <input
-                                        defaultValue={cliente?.password}
+                                        defaultValue={vendedor?.password}
                                         onChange={(ev) => updateForm.setData('password', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
                                         type="password"
@@ -121,7 +119,7 @@ export default function ClientesAdminRow({ cliente }) {
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="password_confirmation">Confirmar contraseña</label>
                                     <input
-                                        defaultValue={cliente?.password_confirmation}
+                                        defaultValue={vendedor?.password_confirmation}
                                         onChange={(ev) => updateForm.setData('password_confirmation', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
                                         type="password"
@@ -132,7 +130,7 @@ export default function ClientesAdminRow({ cliente }) {
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="email">Email</label>
                                     <input
-                                        defaultValue={cliente?.email}
+                                        defaultValue={vendedor?.email}
                                         onChange={(ev) => updateForm.setData('email', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
                                         type="email"
@@ -145,7 +143,7 @@ export default function ClientesAdminRow({ cliente }) {
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="dni">Cuit</label>
                                     <input
-                                        defaultValue={cliente?.cuit}
+                                        defaultValue={vendedor?.cuit}
                                         onChange={(ev) => updateForm.setData('cuit', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
                                         type="text"
@@ -158,7 +156,7 @@ export default function ClientesAdminRow({ cliente }) {
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="telefono">Telefono</label>
                                     <input
-                                        defaultValue={cliente?.telefono}
+                                        defaultValue={vendedor?.telefono}
                                         onChange={(ev) => updateForm.setData('telefono', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
                                         type="text"
@@ -169,57 +167,9 @@ export default function ClientesAdminRow({ cliente }) {
                                 </div>
 
                                 <div className="flex flex-col gap-2">
-                                    <label htmlFor="lista">Lista</label>
-                                    <input
-                                        defaultValue={cliente?.lista}
-                                        className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                        onChange={(e) => updateForm.setData('lista', e.target.value)}
-                                        name=""
-                                        type="number"
-                                        id="lista"
-                                    />
-                                </div>
-
-                                <div className="col-span-2 grid grid-cols-3 gap-4">
-                                    <div className="flex flex-col gap-2">
-                                        <label htmlFor="descuento_uno">Descuento 1</label>
-                                        <input
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            defaultValue={cliente?.descuento_uno}
-                                            onChange={(e) => updateForm.setData('descuento_uno', e.target.value)}
-                                            type="number"
-                                            name=""
-                                            id="descuento_uno"
-                                        />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label htmlFor="descuento_dos">Descuento 2</label>
-                                        <input
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            defaultValue={cliente?.descuento_dos}
-                                            onChange={(e) => updateForm.setData('descuento_dos', e.target.value)}
-                                            type="number"
-                                            name=""
-                                            id="descuento_dos"
-                                        />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label htmlFor="descuento_tres">Descuento 3</label>
-                                        <input
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            defaultValue={cliente?.descuento_tres}
-                                            onChange={(e) => updateForm.setData('descuento_tres', e.target.value)}
-                                            type="number"
-                                            name=""
-                                            id="descuento_tres"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="col-span-2 flex flex-col gap-2">
                                     <label htmlFor="direccion">Dirección</label>
                                     <input
-                                        defaultValue={cliente?.direccion}
+                                        defaultValue={vendedor?.direccion}
                                         onChange={(ev) => updateForm.setData('direccion', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
                                         type="text"
@@ -232,7 +182,7 @@ export default function ClientesAdminRow({ cliente }) {
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="provincia">Provincia</label>
                                     <select
-                                        defaultValue={cliente?.provincia}
+                                        defaultValue={vendedor?.provincia}
                                         required
                                         onChange={(ev) => updateForm.setData('provincia', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
@@ -253,7 +203,7 @@ export default function ClientesAdminRow({ cliente }) {
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="localidad">Localidad</label>
                                     <select
-                                        defaultValue={cliente?.localidad}
+                                        defaultValue={vendedor?.localidad}
                                         required
                                         onChange={(ev) => updateForm.setData('localidad', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
@@ -282,7 +232,7 @@ export default function ClientesAdminRow({ cliente }) {
                                 >
                                     Cancelar
                                 </button>
-                                <button className="bg-primary-orange col-span-2 h-[43px] w-full text-white">Actualizar cliente</button>
+                                <button className="bg-primary-orange col-span-2 h-[43px] w-full text-white">Actualizar vendedor</button>
                             </div>
                         </form>
                     </motion.div>

@@ -18,11 +18,12 @@
                 <div class="absolute inset-0 flex z-20 lg:max-w-[1200px] lg:mx-auto">
                     <div class="relative flex flex-col gap-4 sm:gap-6 lg:gap-19 w-full justify-end pb-30">
                         <div class="max-w-[320px] sm:max-w-[400px] lg:max-w-[480px] text-white flex flex-col gap-5">
-                            <h1
-                                class="text-[32px] font-medium sm:text-xl md:text-3xl lg:text-5xl  leading-tight sm:leading-normal lg:leading-14">
+                            <h1 class="text-[32px] font-medium w-[727px]">
                                 {{ $slider->title }}
                             </h1>
-                            <button class="w-[163px] h-[41px] bg-primary-orange text-[16px]">Ver productos</button>
+                            <a href="{{ $slider->link}}"
+                                class="flex justify-center items-center w-[163px] h-[41px] bg-primary-orange text-[16px]">Ver
+                                productos</a>
                         </div>
                         {{-- <a href="{{ route('categorias') }}"
                             class="border border-white w-[180px] sm:w-[200px] lg:w-[230px] text-center py-2 sm:py-2.5 text-sm sm:text-base rounded-full hover:bg-white hover:text-black transition duration-300">Ver

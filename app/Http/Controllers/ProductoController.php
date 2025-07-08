@@ -93,7 +93,7 @@ class ProductoController extends Controller
         $productos = $query->get();
 
         if ($productos->count() === 1) {
-            return redirect('/' . $productos->first()->code);
+            return redirect('/p/' . $productos->first()->code);
         }
 
         // Cargar datos adicionales para la vista
@@ -175,9 +175,7 @@ class ProductoController extends Controller
             }
         }
 
-        if (!$producto) {
-            return redirect()->route('admin.authenticate');
-        }
+
 
         return view('producto', [
             'producto' => $producto,
@@ -252,6 +250,7 @@ class ProductoController extends Controller
 
             return $producto;
         });
+        # si el usuario es vendedor
 
         $categorias = Categoria::orderBy('order', 'asc')->get();
         $subcategorias = SubCategoria::orderBy('order', 'asc')->get();

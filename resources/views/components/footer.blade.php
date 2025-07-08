@@ -1,7 +1,7 @@
 {{-- resources/views/components/footer.blade.php --}}
 <div class="flex h-fit w-full flex-col bg-[#4D565D]">
     <div
-        class="mx-auto flex h-full w-full max-w-[1200px] flex-col items-center justify-between gap-10 px-4 py-10 lg:flex-row lg:items-start lg:gap-0 lg:px-0 lg:py-26">
+        class="mx-auto flex h-full w-full max-w-[1200px] flex-col items-center justify-between gap-20 px-4 py-10 lg:flex-row lg:items-start  lg:px-0 lg:py-26">
         {{-- Logo y redes sociales --}}
         <div class="flex h-full flex-col items-center gap-4">
             <a href="/">
@@ -70,7 +70,8 @@
             <div class="flex flex-col justify-center gap-4">
                 @if(!empty($contacto->location))
                     <a href="https://maps.google.com/?q={{ urlencode($contacto->location) }}" target="_blank"
-                        rel="noopener noreferrer" class="flex items-center gap-3 transition-opacity hover:opacity-80">
+                        rel="noopener noreferrer"
+                        class="flex items-center gap-3 transition-opacity hover:opacity-80 max-w-[326px]">
                         <div class="shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 16 20" fill="none">
                                 <path

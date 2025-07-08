@@ -6,9 +6,12 @@ import toast from 'react-hot-toast';
 import DefaultLayout from '../defaultLayout';
 
 export default function ProductosPrivada({ categorias, subcategorias }) {
-    const { productos } = usePage().props;
+    const { productos, auth, clienteSeleccionado } = usePage().props;
+    const user = auth.user;
 
     const [margenSwitch, setMargenSwitch] = useState(false);
+    const [vendedorScreen, setVendedorScreen] = useState(user?.rol == 'vendedor' && clienteSeleccionado == null);
+    const [selectedUserId, setSelectedUserId] = useState(null);
 
     useEffect(() => {
         localStorage.setItem('margenSwitch', JSON.stringify(margenSwitch));
@@ -47,11 +50,59 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
         );
     };
 
+    const seleccionarCliente = (e) => {
+        e.preventDefault();
+
+        router.post(
+            route('seleccionarCliente'),
+            { cliente_id: selectedUserId },
+            {
+                onSuccess: () => {
+                    setVendedorScreen(false);
+                    toast.success('Cliente seleccionado correctamente');
+                },
+            },
+        );
+    };
+
     return (
         <DefaultLayout>
             <Head>
                 <title>Productos</title>
             </Head>
+            {vendedorScreen && (
+                <div className="fixed z-[100] flex h-screen w-screen items-center justify-center bg-black/50">
+                    <div className="flex h-[218px] w-[476px] items-center justify-center bg-white">
+                        <form onSubmit={seleccionarCliente} className="flex w-[350px] flex-col items-center gap-6">
+                            <h2 className="text-[16px] font-semibold">Seleccionar cliente</h2>
+                            <select
+                                onChange={(e) => setSelectedUserId(e.target.value)}
+                                className="h-[48px] w-full border px-2"
+                                name="cliente_id"
+                                id=""
+                            >
+                                <option value="">Seleccione un cliente</option>
+                                {user?.clientes?.map((cliente) => (
+                                    <option key={cliente.id} value={cliente.id}>
+                                        {cliente.name}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="flex w-full justify-between gap-5 text-[16px]">
+                                <button className="text-primary-orange border-primary-orange hover:bg-primary-orange h-[41px] w-full border transition duration-300 hover:text-white">
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={seleccionarCliente}
+                                    className="bg-primary-orange hover:bg-opacity-80 hover:text-primary-orange hover:border-primary-orange h-[41px] w-full text-white transition duration-300 hover:border hover:bg-transparent"
+                                >
+                                    Confirmar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             <div className="mb-10 flex flex-col gap-10">
                 <Slider />

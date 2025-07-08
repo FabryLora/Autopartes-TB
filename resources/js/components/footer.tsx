@@ -24,7 +24,7 @@ export default function Footer() {
 
     return (
         <div className="flex h-fit w-full flex-col bg-[#4D565D]">
-            <div className="mx-auto flex h-full w-full max-w-[1200px] flex-col items-center justify-between gap-10 px-4 py-10 lg:flex-row lg:items-start lg:gap-0 lg:px-0 lg:py-26">
+            <div className="mx-auto flex h-full w-full max-w-[1200px] flex-col items-center justify-between gap-10 px-4 py-10 lg:flex-row lg:items-start lg:gap-10 lg:px-0 lg:py-26">
                 <div className="flex h-full flex-col items-center gap-4">
                     <a href="/">
                         <img src={logos?.logo_principal} alt="Logo secundario" className="max-w-[200px] sm:max-w-full" />
@@ -117,7 +117,7 @@ export default function Footer() {
                                     </svg>
                                 </div>
 
-                                <p className="text-base break-words text-white/80">{contacto?.location}</p>
+                                <p className="max-w-[326px] text-base break-words text-white/80">{contacto?.location}</p>
                             </a>
                         )}
 

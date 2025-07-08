@@ -27,7 +27,7 @@ Route::get('/lanzamientos/{id}', [NovedadesController::class, 'novedadesShow'])-
 Route::post('/contacto/sendemail', [ContactoController::class, 'sendContact'])->name('send.contact');
 
 Route::get('/productos', [ProductoController::class, 'indexVistaPrevia'])->name('productos');
-Route::get('/{codigo}', [ProductoController::class, 'show'])->name('producto');
+Route::get('/p/{codigo}', [ProductoController::class, 'show'])->name('producto');
 
 Route::get('/busqueda', [ProductoController::class, 'SearchProducts'])->name('searchproducts');
 

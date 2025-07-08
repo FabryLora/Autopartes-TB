@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ListaDePrecios;
 use App\Models\Provincia;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class UserController extends Controller
 
         $perPage = $request->input('per_page', 10);
 
-        $query = User::query()->orderBy('name', 'asc');
+        $query = User::query()->where('rol', 'cliente')->with('vendedor')->orderBy('name', 'asc');
 
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = $request->search;
@@ -21,13 +22,17 @@ class UserController extends Controller
         }
 
         $users = $query->paginate($perPage);
-
+        $listas = ListaDePrecios::select('id', 'name')->orderBy('name', 'asc')->get();
         $provincias = Provincia::orderBy('name', 'asc')->with('localidades')->get();
+
+        $vendedores = User::where('rol', 'vendedor')->orderBy('name', 'asc')->get();
 
 
         return inertia('admin/clientes', [
             'clientes' => $users,
             'provincias' => $provincias,
+            'vendedores' => $vendedores,
+            'listas' => $listas,
         ]);
     }
 
@@ -35,6 +40,28 @@ class UserController extends Controller
     {
         $user = User::findOrFail($request->id);
         $user->update(['autorizado' => !$user->autorizado]);
+    }
+
+    public function vendedores(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+
+        $query = User::query()
+            ->where('rol', 'vendedor')
+            ->orderBy('name', 'asc');
+
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            $query->where('name', 'LIKE', '%' . $searchTerm . '%');
+        }
+
+        $vendedores = $query->paginate($perPage);
+        $provincias = Provincia::orderBy('name', 'asc')->with('localidades')->get();
+
+        return inertia('admin/vendedores', [
+            'vendedores' => $vendedores,
+            'provincias' => $provincias,
+        ]);
     }
 
     public function update(Request $request)
@@ -53,9 +80,11 @@ class UserController extends Controller
             'descuento_uno' => 'nullable|integer|min:0|max:100',
             'descuento_dos' => 'nullable|integer|min:0|max:100',
             'descuento_tres' => 'nullable|integer|min:0|max:100',
+            'rol' => 'nullable|string|max:255', // Optional role, default is 'cliente'
             'telefono' => 'nullable|string|max:20',
             'lista_de_precios_id' => 'sometimes|exists:lista_de_precios,id',
-            'autorizado' => 'nullable|boolean'
+            'autorizado' => 'nullable|boolean',
+            'vendedor_id' => 'nullable|sometimes|exists:users,id',
         ]);
 
 

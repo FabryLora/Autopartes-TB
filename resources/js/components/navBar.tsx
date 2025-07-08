@@ -82,7 +82,7 @@ const Navbar = () => {
 
                     {showLogin && <div className="fixed inset-0 bg-black/50 transition-all duration-300" />}
                     {showLogin && (
-                        <div className="absolute top-12 right-0 flex h-fit w-fit flex-col items-center gap-5 border bg-white p-5 transition-all duration-300">
+                        <div className="absolute top-12 right-0 z-50 flex h-fit w-fit flex-col items-center gap-5 border bg-white p-5 transition-all duration-300">
                             <p>Bienvenido, {auth?.user?.name}!</p>
                             <div className="flex flex-col">
                                 <Link

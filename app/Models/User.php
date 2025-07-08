@@ -46,4 +46,15 @@ class User extends Authenticatable
     {
         return $this->hasOne(ListaDePrecios::class, 'lista_de_precios_id');
     }
+
+    public function vendedor()
+    {
+        return $this->belongsTo(User::class, 'vendedor_id');
+    }
+
+    // Vendedor tiene muchos clientes
+    public function clientes()
+    {
+        return $this->hasMany(User::class, 'vendedor_id');
+    }
 }

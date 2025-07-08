@@ -7,10 +7,11 @@ use App\Models\Contacto;
 use App\Models\InformacionImportante;
 use App\Models\Producto;
 use App\Models\SubCategoria;
+use App\Models\User;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 
-class PrivadaController extends Controller
+class   PrivadaController extends Controller
 {
     public function carrito()
     {
@@ -84,6 +85,17 @@ class PrivadaController extends Controller
             'categorias' => $categorias,
             'subcategorias' => $subcategorias,
             'total' => $total,
+        ]);
+    }
+
+    // Cuando el vendedor selecciona el cliente
+    public function seleccionarCliente(Request $request)
+    {
+
+        $cliente = User::find($request->cliente_id);
+
+        session([
+            'cliente_seleccionado' => $cliente,
         ]);
     }
 

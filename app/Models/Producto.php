@@ -46,4 +46,9 @@ class Producto extends Model
         return $this->hasOne(ListaProductos::class, 'producto_id')
             ->where('lista_de_precios_id', auth()->user()->listaDePrecio->id ?? null);
     }
+
+    public function pedidos()
+    {
+        return $this->hasMany(PedidoProducto::class, 'producto_id');
+    }
 }

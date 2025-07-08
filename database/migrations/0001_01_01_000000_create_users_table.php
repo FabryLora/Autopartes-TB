@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string("direccion")->nullable();
             $table->string("provincia")->nullable();
             $table->string("localidad")->nullable();
+            $table->string("rol")->default('cliente'); // Default role is 'cliente'
+            $table->unsignedBigInteger('vendedor_id')->nullable();
+            $table->foreign('vendedor_id')->references('id')->on('users')->nullOnDelete();
             $table->string("telefono")->nullable();
             $table->unsignedInteger("descuento_uno")->default(0);
             $table->unsignedInteger("descuento_dos")->default(0);

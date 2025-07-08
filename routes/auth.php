@@ -73,6 +73,9 @@ Route::middleware('auth')->group(function () {
 
         Route::get('privada/mispedidos', [PedidoController::class, 'misPedidos']);
         Route::get('privada/lista-de-precios', [ListaDePreciosController::class, 'index']);
+
+        Route::post('seleccionarCliente', [PrivadaController::class, 'seleccionarCliente'])
+            ->name('seleccionarCliente');
     });
 
 

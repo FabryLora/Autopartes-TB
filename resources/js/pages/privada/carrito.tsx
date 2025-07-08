@@ -1,10 +1,7 @@
-import PedidoTemplate from '@/components/pedidoTemplate';
 import { default as ProductosPrivadaRow } from '@/components/productosPrivadaRow';
 import { Link, useForm } from '@inertiajs/react';
-import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import ReactDOMServer from 'react-dom/server';
 import { useCart } from 'react-use-cart';
 import DefaultLayout from '../defaultLayout';
 
@@ -27,11 +24,11 @@ export default function Carrito({
     const { user } = auth;
     const { items, emptyCart } = useCart();
 
-    const [selected, setSelected] = useState('retiro');
+    const [selected, setSelected] = useState('efe');
     const [tipo_entrega, setTipo_entrega] = useState('retiro cliente');
 
-    const [selectedEnvio, setSelectedEnvio] = useState('retiro');
-    const [tipo_entrega_envio, setTipo_entrega_envio] = useState('retiro cliente');
+    const [selectedEnvio, setSelectedEnvio] = useState('Efectivo');
+    const [tipo_entrega_envio, setTipo_entrega_envio] = useState('Efectivo');
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(false);
@@ -42,68 +39,8 @@ export default function Carrito({
         tipo_entrega: tipo_entrega,
         subtotal: subtotal,
         iva: iva,
-
         user_id: user?.id,
     });
-
-    const emailForm = useForm({
-        html: '',
-    });
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setError(false);
-
-        try {
-            // Primero, crear el pedido principal
-            const pedidoResponse = pedidoForm.post(route('pedido.store'), {
-                preserveScroll: true,
-                onSuccess: async (response) => {
-                    const pedidoId = response.props.flash.pedido_id; // Asegúrate de que el ID del pedido se retorne correctamente desde el backend
-                    // o donde retornes el ID
-
-                    const productPromises = items.map((prod) => {
-                        return axios.post(route('pedidoProducto.store'), {
-                            pedido_id: Number(pedidoId),
-                            subproducto_id: prod.id,
-                            cantidad: prod.quantity,
-                            subtotal_prod: prod.price,
-                        });
-                    });
-
-                    await Promise.all(productPromises);
-
-                    // Generar y enviar email
-                    const htmlContent = ReactDOMServer.renderToString(
-                        <PedidoTemplate pedido={{ ...pedidoForm.data, id: pedidoId }} user={user} productos={items} />,
-                    );
-
-                    emailForm.setData('html', htmlContent);
-
-                    await axios
-                        .post(route('sendPedido'), {
-                            html: htmlContent,
-                            attachments: pedidoForm.data.archivo,
-                        })
-                        .then(() => {
-                            emptyCart();
-                            setSucc(true);
-                            setSuccID(pedidoId);
-                        });
-                },
-                onError: (errors) => {
-                    setError(true);
-                    console.error(errors);
-                },
-            });
-        } catch (err) {
-            setError(true);
-            console.error(err);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
 
     // Actualizar los valores del formulario cuando cambien
     useEffect(() => {
@@ -452,7 +389,7 @@ export default function Carrito({
                         Cancelar pedido
                     </Link>
                     <button
-                        onClick={handleSubmit}
+                        /* onClick={handleSubmit} */
                         className={`h-[47px] w-full text-white transition-transform hover:scale-95 ${isSubmitting ? 'bg-gray-400' : 'bg-primary-orange'}`}
                     >
                         {isSubmitting ? 'Enviando pedido...' : 'Realizar pedido'}

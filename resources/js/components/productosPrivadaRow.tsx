@@ -9,9 +9,25 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
     const { auth, ziggy, categorias, subcategorias, carrito } = usePage().props;
     const { user } = auth;
 
-    const [cantidad, setCantidad] = useState(producto?.qty || 1);
+    const [cantidad, setCantidad] = useState(producto?.unidad_pack || 1);
 
     useEffect(() => {
+        if (producto?.rowId) {
+            router.post(
+                route('update'),
+                {
+                    qty: cantidad,
+                    rowId: producto?.rowId,
+                },
+                {
+                    preserveScroll: true,
+                },
+            );
+        }
+    }, [cantidad]);
+
+    const handleCantidadChange = (e) => {
+        e.preventDefault();
         if (producto?.rowId) {
             router.post(
                 route('update'),
@@ -34,7 +50,7 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
                 },
             );
         }
-    }, [cantidad]);
+    };
 
     const { post } = useForm({
         id: producto?.id,
@@ -132,11 +148,15 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
                 <div className="flex h-[38px] w-[99px] flex-row items-center border border-[#EEEEEE] px-2">
                     <input value={cantidad} type="text" className="h-full w-full focus:outline-none" />
                     <div className="flex h-full flex-col justify-center">
-                        <button onClick={() => setCantidad(Number(cantidad) + 1)} className="flex items-center">
+                        <button onClick={() => setCantidad(Number(cantidad) + Number(producto?.unidad_pack))} className="flex items-center">
                             <FontAwesomeIcon icon={faChevronUp} size="xs" />
                         </button>
                         <button
-                            onClick={() => setCantidad(Number(cantidad) > 1 ? Number(cantidad) - 1 : Number(cantidad))}
+                            onClick={() =>
+                                setCantidad(
+                                    Number(cantidad) > producto?.unidad_pack ? Number(cantidad) - Number(producto?.unidad_pack) : Number(cantidad),
+                                )
+                            }
                             className="flex items-center"
                         >
                             <FontAwesomeIcon icon={faChevronDown} size="xs" />

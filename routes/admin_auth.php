@@ -9,7 +9,6 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\ImagenProductoController;
 use App\Http\Controllers\ImportController;
-use App\Http\Controllers\InstagramController;
 use App\Http\Controllers\ListaDePreciosController;
 use App\Http\Controllers\LogosController;
 use App\Http\Controllers\MarcaController;
@@ -34,8 +33,8 @@ use Inertia\Inertia;
 
 Route::middleware('guest:admin')->group(function () {});
 
-Route::get('/adm/login', [AdminAuthController::class, 'login'])->name('admin.login');
-Route::post('/adm/login', [AdminAuthController::class, 'authenticate'])->name('admin.authenticate');
+Route::get('/adm', [AdminAuthController::class, 'login'])->name('admin.login');
+Route::post('/adm', [AdminAuthController::class, 'authenticate'])->name('admin.authenticate');
 
 Route::middleware('auth:admin')->group(function () {
     Route::post('admin-logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
@@ -45,10 +44,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::delete('admin/destroy/{id}', [AdminController::class, 'destroy'])->name('admin.destroy');
     Route::get('admin/bannerportada', [BannerPortadaController::class, 'index'])->name('admin.bannerportada');
     Route::post('admin/bannerportada', [BannerPortadaController::class, 'update'])->name('admin.bannerportada.update');
-    Route::get('admin/instagram', [InstagramController::class, 'index'])->name('admin.instagram');
-    Route::post('admin/instagram', [InstagramController::class, 'store'])->name('admin.instagram.store');
-    Route::post('admin/instagram/update', [InstagramController::class, 'update'])->name('admin.instagram.update');
-    Route::delete('admin/instagram/destroy', [InstagramController::class, 'destroy'])->name('admin.instagram.destroy');
+
     Route::get('admin/nosotros', [NosotrosController::class, 'index'])->name('admin.nosotros');
     Route::post('admin/nosotros/update', [NosotrosController::class, 'update'])->name('admin.nosotros.update');
     Route::get('admin/valores', [ValoresController::class, 'index'])->name('admin.valores');
@@ -107,6 +103,8 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('admin/clientes/update', [UserController::class, 'update'])->name('admin.clientes.update');
     Route::delete('admin/clientes/destroy', [UserController::class, 'destroy'])->name('admin.clientes.destroy');
     Route::post('admin/clientes/autorizar', [UserController::class, 'changeStatus'])->name('admin.clientes.autorizar');
+
+    Route::get('admin/vendedores', [UserController::class, 'vendedores'])->name('admin.vendedores');
 
     Route::get('admin/carrito', [PrivadaController::class, 'carritoAdmin'])->name('admin.carrito');
 
