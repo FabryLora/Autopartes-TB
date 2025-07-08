@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('familia')->nullable();
             $table->unsignedBigInteger('stock')->default(0);
             $table->unsignedInteger('descuento_oferta')->default(0);
+            $table->boolean('destacado')->default(false);
             $table->timestamps();
         });
     }

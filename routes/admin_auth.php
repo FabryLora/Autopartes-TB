@@ -88,6 +88,8 @@ Route::middleware('auth:admin')->group(function () {
     Route::delete('admin/novedades/destroy', [NovedadesController::class, 'destroy'])->name('admin.novedades.destroy');
     Route::post('admin/novedades/featured', [NovedadesController::class, 'changeFeatured'])->name('admin.novedades.changeFeatured');
 
+    Route::post('cambiarDestacado', [ProductoController::class, 'cambiarDestacado'])->name('cambiarDestacado');
+
 
 
     Route::get('admin/contacto', [ContactoController::class, 'index'])->name('admin.contacto');

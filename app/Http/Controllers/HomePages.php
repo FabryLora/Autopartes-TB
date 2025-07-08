@@ -9,6 +9,7 @@ use App\Models\Categoria;
 use App\Models\Contacto;
 use App\Models\Nosotros;
 use App\Models\Novedades;
+use App\Models\Producto;
 use App\Models\Slider;
 use App\Models\SubCategoria;
 use App\Models\Valores;
@@ -23,12 +24,17 @@ class HomePages extends Controller
         $sliders = Slider::orderBy('order', 'asc')->get();
         $bannerPortada = BannerPortada::first();
         $novedades = Novedades::where('featured', true)->orderBy('order', 'asc')->get();
+        $productos = Producto::where('destacado', true)
+            ->orderBy('order', 'asc')
+            ->with(['imagenes', 'marcas', 'modelos', 'precio'])
+            ->get();
         return view('home', [
             'sliders' => $sliders,
             'bannerPortada' => $bannerPortada,
             'novedades' => $novedades,
             'categorias' => $categorias,
             'subcategorias' => $subcategorias,
+            'productos' => $productos,
         ]);
     }
 

@@ -114,6 +114,7 @@ class   PrivadaController extends Controller
             [
                 'user_id' => auth()->id(),
                 'tipo_entrega' => $request->tipo_entrega,
+                'descuento' => $request->descuento,
                 'mensaje' => $request->mensaje,
                 'forma_pago' => $request->forma_pago,
                 'subtotal' => $request->subtotal,

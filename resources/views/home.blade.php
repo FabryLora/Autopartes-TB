@@ -41,7 +41,46 @@
             </button>
         </form>
     </div>
-    <x-productos-destacados />
+    <div class="mx-auto flex w-[1200px] flex-col gap-5 my-10">
+        <div class="flex flex-row items-center justify-between">
+            <h2 class="text-[32px] font-semibold">Productos destacados</h2>
+            <a href="{{ url('/productos') }}"
+                class="text-primary-orange border-primary-orange hover:bg-primary-orange flex h-[41px] w-[127px] items-center justify-center border text-base font-semibold transition duration-300 hover:text-white">
+                Ver todos
+            </a>
+        </div>
+
+        <div class="flex flex-row gap-5">
+            @foreach ($productos as $producto)
+                <a href="{{ "/p/" . $producto->code }}" {{-- route('producto', ['codigo'=> $producto->code]) --}}
+                    class=" border-gray-200 transition transform hover:-translate-y-1 hover:shadow-lg duration-300
+                    h-[349px] flex flex-col min-w-[288px]">
+                    <div class="h-full flex flex-col">
+                        @if ($producto->imagenes->count() > 0)
+                            <img src="{{ $producto->imagenes->first()->image }}" alt="{{ $producto->name }}"
+                                class="bg-gray-100 w-full min-h-[243px] object-cover ">
+                        @else
+                            <div class="w-full min-h-[243px] bg-gray-100 flex items-center justify-center text-gray-500 ">
+                                <span>Sin imagen</span>
+                            </div>
+                        @endif
+                        <div class="  flex flex-col justify-center h-full">
+                            <h3
+                                class="text-primary-orange  group-hover:text-green-700 text-[16px] transition-colors duration-300">
+                                {{ $producto->code }}
+                            </h3>
+                            <p class="text-gray-800 transition-colors duration-300 ">
+                                {{ $producto->marcas->first()->name ?? 'Marca no disponible' }}
+                            </p>
+                            <p class="text-gray-800 text-[20px] font-semibold transition-colors duration-300 ">
+                                {{ $producto->name }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </div>
     <x-banner-portada :bannerPortada="$bannerPortada" />
     <x-novedades-inicio :novedades="$novedades" />
 

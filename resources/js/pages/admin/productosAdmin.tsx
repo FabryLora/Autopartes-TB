@@ -484,6 +484,7 @@ export default function ProductosAdmin() {
                                     <td className="text-center">CODIGO OEM</td>
                                     <td className="text-center">MARCAS</td>
                                     <td className="py-2 text-center">MODELOS</td>
+                                    <td className="text-center">DESTACADO</td>
                                     <td className="text-center">EDITAR</td>
                                 </tr>
                             </thead>

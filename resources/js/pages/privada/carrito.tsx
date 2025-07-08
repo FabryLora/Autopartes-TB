@@ -1,7 +1,7 @@
 import { default as ProductosPrivadaRow } from '@/components/productosPrivadaRow';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCart } from 'react-use-cart';
 import DefaultLayout from '../defaultLayout';
 
@@ -45,6 +45,19 @@ export default function Carrito({
         total: total,
         user_id: user?.id,
     });
+
+    useEffect(() => {
+        // Reset form data when component mounts
+        pedidoForm.setData({
+            tipo_entrega: tipo_entrega_envio,
+            forma_pago: tipo_entrega,
+            subtotal: subtotal,
+            descuento: descuento,
+            iva: iva,
+            total: total,
+            user_id: user?.id,
+        });
+    }, [tipo_entrega_envio, tipo_entrega, subtotal, descuento, iva, total, user?.id]);
 
     const hacerPedido = () => {
         pedidoForm.post(route('hacerPedido'), {

@@ -12,9 +12,6 @@ use Illuminate\Http\Request;
 class PedidoController extends Controller
 {
 
-
-
-
     /**
      * Store a newly created resource in storage.
      */

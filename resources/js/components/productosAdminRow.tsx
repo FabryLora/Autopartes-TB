@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
+import Switch from './Switch';
 
 export default function ProductosAdminRow({ producto }) {
     const [edit, setEdit] = useState(false);
@@ -151,6 +152,10 @@ export default function ProductosAdminRow({ producto }) {
                             {subcategoria.name}
                         </span>
                     ))}
+            </td>
+
+            <td className="flex h-[90px] items-center justify-center">
+                <Switch routeName="cambiarDestacado" id={producto?.id} status={producto?.destacado == 1} />
             </td>
 
             <td className="w-[140px] text-center">

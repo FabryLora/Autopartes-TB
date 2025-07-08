@@ -123,7 +123,6 @@ export default function Dashboard({ children }) {
                 { title: 'Vendedores', href: 'vendedores' },
                 { title: 'Carrito', href: 'carrito' },
                 { title: 'Mis Pedidos', href: 'pedidos' },
-                { title: 'Informacion importante', href: 'informacion' },
             ],
         },
         {

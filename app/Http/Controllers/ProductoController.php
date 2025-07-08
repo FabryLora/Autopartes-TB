@@ -413,6 +413,7 @@ class ProductoController extends Controller
             'descuento_oferta' => 'nullable|integer',
             'modelos' => 'nullable|array',
             'modelos.*' => 'integer|exists:sub_categorias,id', // Cada elemento debe ser un ID válido
+            'destacado' => 'nullable|sometimes|boolean',
             'marcas' => 'nullable|array',
             'marcas.*' => 'integer|exists:categorias,id',
             // Validaciones de las imágenes (opcionales)
@@ -430,6 +431,7 @@ class ProductoController extends Controller
                     'code_competitor' => $data['code_competitor'],
                     'desc_visible' => $data['desc_visible'],
                     'desc_invisible' => $data['desc_invisible'],
+                    'destacado' => $data['destacado'] ?? false,
                     'unidad_pack' => $data['unidad_pack'],
                     'familia' => $data['familia'],
                     'stock' => $data['stock'],
@@ -502,6 +504,7 @@ class ProductoController extends Controller
             'modelos.*' => 'integer|exists:sub_categorias,id',
             'marcas' => 'nullable|array',
             'marcas.*' => 'integer|exists:categorias,id',
+            'destacado' => 'nullable|sometimes|boolean',
             // Validaciones de las imágenes (opcionales)
             'images' => 'nullable|array|min:1',
             'images.*' => 'required|file|image',
@@ -523,6 +526,7 @@ class ProductoController extends Controller
                     'code_competitor' => $data['code_competitor'],
                     'desc_visible' => $data['desc_visible'],
                     'desc_invisible' => $data['desc_invisible'],
+                    'destacado' => $data['destacado'] ?? false,
                     'unidad_pack' => $data['unidad_pack'],
                     'familia' => $data['familia'],
                     'stock' => $data['stock'],
@@ -662,5 +666,13 @@ class ProductoController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+
+    public function cambiarDestacado(Request $request)
+    {
+        $producto = Producto::findOrFail($request->id);
+        $producto->destacado = !$producto->destacado; // Cambiar el estado de destacado
+        $producto->save();
     }
 }
