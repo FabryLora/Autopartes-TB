@@ -1,24 +1,45 @@
+import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
-const Slider = ({
-    slides = [
-        { title: '5% de descuento en soporte', buttonText: 'Test' },
-        { title: 'test', buttonText: 'Test' },
-    ],
-}) => {
+const Slider = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
+
+    const { productosOferta } = usePage().props;
 
     const goToSlide = (index) => {
         setCurrentSlide(index);
     };
 
-    if (!slides.length) return null;
+    if (!productosOferta.length) return null;
+
+    const addtocart = (producto) => {
+        console.log(producto);
+
+        router.post(
+            route('addtocart'),
+            {
+                id: producto.id,
+                name: producto.name,
+                qty: 1,
+                price: producto?.precio?.precio,
+            },
+            {
+                onSuccess: () => {
+                    toast.success('Producto agregado al carrito');
+                },
+                onError: () => {
+                    toast.error('Error al agregar el producto al carrito');
+                },
+            },
+        );
+    };
 
     return (
         <div className="relative mx-auto h-[232px] w-full">
             <div className="relative overflow-hidden shadow-lg">
                 <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
-                    {slides.map((slide, index) => (
+                    {productosOferta.map((slide, index) => (
                         <div
                             key={index}
                             className="relative w-full flex-shrink-0"
@@ -48,18 +69,17 @@ const Slider = ({
                             <div className="relative z-10 mx-auto flex h-full w-[1200px] items-center justify-between">
                                 <div className="flex h-full flex-col justify-between pt-6 pb-4 text-white">
                                     <div>
-                                        <h2 className="mb-6 max-w-md text-[32px] font-medium">{slide.title}</h2>
-                                        <button
-                                            onClick={() => slide.action && slide.action()}
-                                            className="h-[41px] w-[163px] border border-white text-white"
-                                        >
-                                            {slide.buttonText}
+                                        <h2 className="mb-6 max-w-md text-[32px] font-medium">
+                                            <span className="">{slide?.descuento_oferta}% </span>de descuento en {slide.name}
+                                        </h2>
+                                        <button onClick={() => addtocart(slide)} className="h-[41px] w-[163px] border border-white text-white">
+                                            Agregar a carrito
                                         </button>
                                     </div>
 
                                     {/* Dots Indicator - Inside container */}
                                     <div className="flex space-x-2">
-                                        {slides.map((_, index) => (
+                                        {productosOferta.map((_, index) => (
                                             <button
                                                 key={index}
                                                 onClick={() => goToSlide(index)}
@@ -73,7 +93,11 @@ const Slider = ({
 
                                 <div className="ml-8 flex-shrink-0">
                                     <div className="flex h-32 w-32 items-center justify-center">
-                                        <img src={slide.image} alt={slide.title} className="h-full w-full object-contain drop-shadow-lg" />
+                                        <img
+                                            src={slide?.imagenes[0]?.image}
+                                            alt={slide.name}
+                                            className="h-full w-full object-contain drop-shadow-lg"
+                                        />
                                     </div>
                                 </div>
                             </div>

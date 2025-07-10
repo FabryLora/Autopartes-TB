@@ -34,6 +34,8 @@ export default function Carrito({
     const [succ, setSucc] = useState(false);
     const [succID, setSuccID] = useState();
 
+    console.log(productos);
+
     const pedidoForm = useForm({
         tipo_entrega: tipo_entrega_envio,
         forma_pago: tipo_entrega,

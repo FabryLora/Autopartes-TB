@@ -90,6 +90,9 @@ Route::middleware('auth:admin')->group(function () {
 
     Route::post('cambiarDestacado', [ProductoController::class, 'cambiarDestacado'])->name('cambiarDestacado');
 
+    Route::post('cambiarOferta', [ProductoController::class, 'cambiarOferta'])->name('cambiarOferta');
+
+
 
 
     Route::get('admin/contacto', [ContactoController::class, 'index'])->name('admin.contacto');
@@ -151,6 +154,8 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('admin/slider/store', [SliderController::class, 'store'])->name('admin.slider.store');
 
     Route::post('cambiarPrecios', [ImportController::class, 'importar'])->name('cambiarPrecios');
+
+    Route::get('admin/productos-zonaprivada', [ProductoController::class, 'productoszonaprivada'])->name('admin.productos.productoszonaprivada');
 
     Route::get('/admin/dashboard', function () {
         if (!Auth::guard('admin')->check()) {

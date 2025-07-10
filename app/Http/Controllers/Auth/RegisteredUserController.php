@@ -40,7 +40,7 @@ class RegisteredUserController extends Controller
             'descuento_uno' => 'nullable|sometimes|integer|min:0|max:100',
             'descuento_dos' => 'nullable|sometimes|integer|min:0|max:100',
             'descuento_tres' => 'nullable|sometimes|integer|min:0|max:100',
-            'rol' => 'nullable|string|max:255', // Optional role, default is 'cliente'
+            'rol' => 'sometimes|nullable|string|max:255', // Optional role, default is 'cliente'
             'lista_de_precios_id' => 'nullable|sometimes|exists:lista_de_precios,id',
             'vendedor_id' => 'nullable|sometimes|exists:users,id',
             'autorizado' => 'nullable|boolean'
@@ -57,10 +57,10 @@ class RegisteredUserController extends Controller
             'descuento_uno' => $request->descuento_uno || 0,
             'descuento_dos' => $request->descuento_dos || 0,
             'descuento_tres' => $request->descuento_tres || 0,
-            'rol' => $request->rol,
+            'rol' => $request->rol ?? 'cliente',
             'vendedor_id' => $request->vendedor_id,
             'autorizado' => $request->autorizado || false,
-            'lista_de_precios_id' => $request->lista_de_precios_id,
+            'lista_de_precios_id' => $request->lista_de_precios_id ?? null,
             'password' => Hash::make($request->password),
         ]);
     }

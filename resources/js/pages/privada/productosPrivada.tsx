@@ -19,7 +19,7 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
 
     const handlePageChange = (page) => {
         router.get(
-            route('index.privada.subproductos'),
+            route('index.privada.productos'),
             {
                 page: page,
             },
@@ -218,11 +218,11 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                             <p>Código</p>
                             <p>Codigo OEM</p>
                             <p>Descripcion</p>
-                            <p className="">Precio</p>
-                            <p className="text-center">Cantidad</p>
-                            <p className="">Subtotal</p>
+                            <p className="text-right">Precio</p>
+                            <p className="text-right">Cantidad</p>
+                            <p className="text-right">Subtotal</p>
                             <p className="text-center">Stock</p>
-                            <p></p>
+                            <p className=""></p>
                         </div>
                         {productos?.data?.map((producto, index) => (
                             <ProductosPrivadaRow

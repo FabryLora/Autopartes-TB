@@ -73,6 +73,7 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
             'cuit' => 'required|string|max:20',
             'direccion' => 'nullable|string|max:255',
             'provincia' => 'nullable|string|max:255',
@@ -80,7 +81,7 @@ class UserController extends Controller
             'descuento_uno' => 'nullable|integer|min:0|max:100',
             'descuento_dos' => 'nullable|integer|min:0|max:100',
             'descuento_tres' => 'nullable|integer|min:0|max:100',
-            'rol' => 'nullable|string|max:255', // Optional role, default is 'cliente'
+            'rol' => 'nullable|string|max:255',
             'telefono' => 'nullable|string|max:20',
             'lista_de_precios_id' => 'sometimes|exists:lista_de_precios,id',
             'autorizado' => 'nullable|boolean',

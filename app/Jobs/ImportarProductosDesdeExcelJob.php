@@ -166,7 +166,7 @@ class ImportarProductosDesdeExcelJob implements ShouldQueue
                     'name' => $nombre,
                     'desc_visible' => $descripcion_visible,
                     'desc_invisible' => $desc_invisible,
-                    'unidad_pack' => $unidad_pack,
+                    'unidad_pack' => $unidad_pack ?? null,
                     'familia' => $familia,
                     'code_oem' => $codigo_oem,
                     'code_competitor' => $codigo_competidor,

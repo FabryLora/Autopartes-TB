@@ -154,8 +154,12 @@ export default function ProductosAdminRow({ producto }) {
                     ))}
             </td>
 
-            <td className="flex h-[90px] items-center justify-center">
+            <td className="flex h-[90px] flex-row items-center justify-center">
                 <Switch routeName="cambiarDestacado" id={producto?.id} status={producto?.destacado == 1} />
+            </td>
+
+            <td className="pl-3">
+                <Switch routeName="cambiarOferta" id={producto?.id} status={producto?.oferta == 1} />
             </td>
 
             <td className="w-[140px] text-center">

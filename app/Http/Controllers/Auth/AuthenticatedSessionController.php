@@ -26,11 +26,11 @@ class AuthenticatedSessionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required', // Campo que puede ser name o email
+            'usuario' => 'required', // Campo que puede ser name o email
             'password' => 'required',
         ]);
 
-        $login = $request->input('name');
+        $login = $request->input('usuario');
         $password = $request->input('password');
 
         // Determinar si es email o name

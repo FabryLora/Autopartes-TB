@@ -6,10 +6,10 @@ import toast from 'react-hot-toast';
 /* import defaultPhoto from '../../images/defaultPhoto.png'; */
 
 export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) {
-    const { auth, ziggy, categorias, subcategorias, carrito } = usePage().props;
+    const { auth, ziggy } = usePage().props;
     const { user } = auth;
 
-    const [cantidad, setCantidad] = useState(producto?.unidad_pack || 1);
+    const [cantidad, setCantidad] = useState(producto?.qty != 1 ? producto?.qty : producto?.unidad_pack);
 
     useEffect(() => {
         if (producto?.rowId) {
@@ -88,12 +88,19 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
         });
     };
     return (
-        <div className="grid h-fit grid-cols-9 items-center border-b border-gray-200 py-2 text-[15px] text-[#74716A]">
+        <div className="grid h-fit grid-cols-9 items-center border-b border-gray-200 py-2 text-[15px] text-black">
             <div className="h-[85px] w-[85px]">
                 <img src={producto?.imagenes[0]?.image} className="h-full w-full object-contain" alt="" />
             </div>
             <p className="">{producto?.code}</p>
-            <p className="">{producto?.code_oem}</p>
+            {/* mostrar uno debajo del otro */}
+            <p className="">
+                {producto?.code_oem?.split('/').map((item) => (
+                    <span key={item} className="block">
+                        {item}
+                    </span>
+                ))}
+            </p>
             <p className="">{producto?.name}</p>
 
             {margenSwitch ? (
@@ -110,10 +117,12 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
                     </p>
                 </div>
             ) : (
-                <p>$ {Number(producto?.precio?.precio)?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</p>
+                <p className="text-right">
+                    $ {Number(producto?.precio?.precio)?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                </p>
             )}
 
-            <p className="flex justify-center">
+            <p className="flex justify-end">
                 <div className="flex h-[38px] w-[99px] flex-row items-center border border-[#EEEEEE] px-2">
                     <input value={cantidad} type="text" className="h-full w-full focus:outline-none" />
                     <div className="flex h-full flex-col justify-center">
@@ -148,7 +157,9 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
                     </p>
                 </div>
             ) : (
-                <p>$ {Number(producto?.subtotal)?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</p>
+                <p className="text-right">
+                    $ {Number(producto?.subtotal)?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                </p>
             )}
             <p className="flex justify-center">
                 <div className="h-[12px] w-[12px] rounded-full bg-gray-200"></div>

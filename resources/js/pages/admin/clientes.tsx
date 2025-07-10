@@ -25,7 +25,7 @@ export default function Clientes() {
         descuento_dos: 0,
         descuento_tres: 0,
         lista_de_precios_id: '',
-        rol: 'cliente', // Cambiado a 'cliente' por defecto
+        rol: 'cliente',
         autorizado: 1,
     });
 

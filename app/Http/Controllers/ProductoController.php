@@ -260,10 +260,16 @@ class ProductoController extends Controller
         $categorias = Categoria::orderBy('order', 'asc')->get();
         $subcategorias = SubCategoria::orderBy('order', 'asc')->get();
 
+        $productosOferta = Producto::where('oferta', true)
+            ->with(['imagenes', 'marcas', 'modelos', 'precio'])
+            ->orderBy('order', 'asc')
+            ->get();
+
         return inertia('privada/productosPrivada', [
             'productos' => $productos,
             'categorias' => $categorias,
             'subcategorias' => $subcategorias,
+            'productosOferta' => $productosOferta,
         ]);
     }
 
@@ -419,6 +425,7 @@ class ProductoController extends Controller
             'modelos' => 'nullable|array',
             'modelos.*' => 'integer|exists:sub_categorias,id', // Cada elemento debe ser un ID válido
             'destacado' => 'nullable|sometimes|boolean',
+            'oferta' => 'nullable|sometimes|boolean',
             'marcas' => 'nullable|array',
             'marcas.*' => 'integer|exists:categorias,id',
             // Validaciones de las imágenes (opcionales)
@@ -437,6 +444,7 @@ class ProductoController extends Controller
                     'desc_visible' => $data['desc_visible'],
                     'desc_invisible' => $data['desc_invisible'],
                     'destacado' => $data['destacado'] ?? false,
+                    'oferta' => $data['oferta'] ?? false,
                     'unidad_pack' => $data['unidad_pack'],
                     'familia' => $data['familia'],
                     'stock' => $data['stock'],
@@ -510,6 +518,7 @@ class ProductoController extends Controller
             'marcas' => 'nullable|array',
             'marcas.*' => 'integer|exists:categorias,id',
             'destacado' => 'nullable|sometimes|boolean',
+            'oferta' => 'nullable|sometimes|boolean',
             // Validaciones de las imágenes (opcionales)
             'images' => 'nullable|array|min:1',
             'images.*' => 'required|file|image',
@@ -525,6 +534,7 @@ class ProductoController extends Controller
 
                 // Actualizar los datos del producto
                 $producto->update([
+                    'order' => $data['order'],
                     'name' => $data['name'],
                     'code' => $data['code'],
                     'code_oem' => $data['code_oem'],
@@ -532,6 +542,7 @@ class ProductoController extends Controller
                     'desc_visible' => $data['desc_visible'],
                     'desc_invisible' => $data['desc_invisible'],
                     'destacado' => $data['destacado'] ?? false,
+                    'oferta' => $data['oferta'] ?? false,
                     'unidad_pack' => $data['unidad_pack'],
                     'familia' => $data['familia'],
                     'stock' => $data['stock'],
@@ -557,7 +568,6 @@ class ProductoController extends Controller
                         ImagenProducto::create([
                             'producto_id' => $producto->id,
                             'image' => $path,
-
                         ]);
                     }
                 }
@@ -678,6 +688,18 @@ class ProductoController extends Controller
     {
         $producto = Producto::findOrFail($request->id);
         $producto->destacado = !$producto->destacado; // Cambiar el estado de destacado
+        $producto->save();
+    }
+
+    public function productoszonaprivada(Request $request)
+    {
+        return inertia('admin/zonaprivadaProductosAdmin');
+    }
+
+    public function cambiarOferta(Request $request)
+    {
+        $producto = Producto::findOrFail($request->id);
+        $producto->oferta = !$producto->oferta;
         $producto->save();
     }
 }

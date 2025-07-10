@@ -26,7 +26,6 @@ export default function Vendedores() {
         descuento_dos: 0,
         descuento_tres: 0,
         rol: 'vendedor',
-        lista_de_precios_id: '',
         autorizado: 1,
     });
 

@@ -21,6 +21,9 @@ class CustomAuthMiddleware
             return redirect('/');
         }
 
+        // Verificar si el usuario está autorizado
+
+
         return $next($request);
     }
 }

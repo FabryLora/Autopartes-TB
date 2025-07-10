@@ -68,7 +68,7 @@
                             <p class="text-gray-800 transition-colors duration-300 ">
                                 {{ $producto->marcas->first()->name ?? 'Marca no disponible' }}
                             </p>
-                            <p class="text-gray-800 text-[20px] font-semibold transition-colors duration-300 ">
+                            <p class="text-gray-800 text-[15px] font-semibold transition-colors duration-300 ">
                                 {{ $producto->name }}
                             </p>
                         </div>

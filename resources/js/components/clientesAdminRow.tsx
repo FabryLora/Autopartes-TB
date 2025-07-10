@@ -9,12 +9,10 @@ import UserSwitch from './switch';
 export default function ClientesAdminRow({ cliente }) {
     const [edit, setEdit] = useState(false);
 
-    const { provincias, listas } = usePage().props;
+    const { provincias, listas, vendedores } = usePage().props;
 
     const updateForm = useForm({
         name: cliente?.name,
-        password: '',
-        password_confirmation: '',
         email: cliente?.email,
         cuit: cliente?.cuit,
         direccion: cliente?.direccion,
@@ -26,6 +24,7 @@ export default function ClientesAdminRow({ cliente }) {
         provincia: cliente?.provincia,
         localidad: cliente?.localidad,
         autorizado: cliente?.autorizado,
+        vendedor_id: cliente?.vendedor_id,
         id: cliente?.id,
     });
 
@@ -110,7 +109,6 @@ export default function ClientesAdminRow({ cliente }) {
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="password">Contraseña</label>
                                     <input
-                                        defaultValue={cliente?.password}
                                         onChange={(ev) => updateForm.setData('password', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
                                         type="password"
@@ -121,7 +119,6 @@ export default function ClientesAdminRow({ cliente }) {
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="password_confirmation">Confirmar contraseña</label>
                                     <input
-                                        defaultValue={cliente?.password_confirmation}
                                         onChange={(ev) => updateForm.setData('password_confirmation', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
                                         type="password"
@@ -151,6 +148,19 @@ export default function ClientesAdminRow({ cliente }) {
                                         type="text"
                                         name="dni"
                                         id="dni"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <label htmlFor="direccion">Dirección</label>
+                                    <input
+                                        defaultValue={cliente?.direccion}
+                                        onChange={(ev) => updateForm.setData('direccion', ev.target.value)}
+                                        className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                        type="text"
+                                        name="direccion"
+                                        id="direccion"
                                         required
                                     />
                                 </div>
@@ -190,6 +200,26 @@ export default function ClientesAdminRow({ cliente }) {
                                     </select>
                                 </div>
 
+                                <div className="flex flex-col gap-2">
+                                    <label htmlFor="vendedor">Vendedor</label>
+                                    <select
+                                        onChange={(ev) => updateForm.setData('vendedor_id', ev.target.value)}
+                                        className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                        name="vendedor_id"
+                                        id="vendedor_id"
+                                    >
+                                        <option disabled selected value="">
+                                            Selecciona un vendedor
+                                        </option>
+
+                                        {vendedores?.map((vendedor) => (
+                                            <option key={vendedor.id} value={vendedor.id}>
+                                                {vendedor.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
                                 <div className="col-span-2 grid grid-cols-3 gap-4">
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="descuento_uno">Descuento 1</label>
@@ -224,19 +254,6 @@ export default function ClientesAdminRow({ cliente }) {
                                             id="descuento_tres"
                                         />
                                     </div>
-                                </div>
-
-                                <div className="col-span-2 flex flex-col gap-2">
-                                    <label htmlFor="direccion">Dirección</label>
-                                    <input
-                                        defaultValue={cliente?.direccion}
-                                        onChange={(ev) => updateForm.setData('direccion', ev.target.value)}
-                                        className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                        type="text"
-                                        name="direccion"
-                                        id="direccion"
-                                        required
-                                    />
                                 </div>
 
                                 <div className="flex flex-col gap-2">

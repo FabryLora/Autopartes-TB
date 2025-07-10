@@ -14,11 +14,15 @@ use App\Models\Slider;
 use App\Models\SubCategoria;
 use App\Models\Valores;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomePages extends Controller
 {
     public function home()
     {
+        if (Auth::check()) {
+            return redirect('/privada/productos');
+        }
         $categorias = Categoria::orderBy('order', 'asc')->get();
         $subcategorias = SubCategoria::orderBy('order', 'asc')->get();
         $sliders = Slider::orderBy('order', 'asc')->get();

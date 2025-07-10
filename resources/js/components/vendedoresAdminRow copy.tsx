@@ -13,13 +13,11 @@ export default function VendedoresAdminRow({ vendedor }) {
 
     const updateForm = useForm({
         name: vendedor?.name,
-        password: '',
-        password_confirmation: '',
+
         email: vendedor?.email,
         cuit: vendedor?.cuit,
         direccion: vendedor?.direccion,
         telefono: vendedor?.telefono,
-        lista_de_precios_id: vendedor?.lista_de_precios_id,
         descuento_uno: vendedor?.descuento_uno,
         descuento_dos: vendedor?.descuento_dos,
         descuento_tres: vendedor?.descuento_tres,

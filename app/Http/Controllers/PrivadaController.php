@@ -35,6 +35,8 @@ class   PrivadaController extends Controller
             // Buscar el item del carrito que corresponde a este producto
             $itemCarrito = $carrito->where('id', $producto->id)->first();
 
+
+
             // Agregar el rowId al producto
             $producto->rowId = $itemCarrito ? $itemCarrito->rowId : null;
             $producto->qty = $itemCarrito ? $itemCarrito->qty : null;

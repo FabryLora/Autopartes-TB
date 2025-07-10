@@ -5,6 +5,7 @@ use App\Http\Controllers\DescargarArchivo;
 use App\Http\Controllers\HomePages;
 use App\Http\Controllers\NovedadesController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SendContactInfoController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,6 +29,14 @@ Route::get('/busqueda', [ProductoController::class, 'SearchProducts'])->name('se
 
 
 # ------------------------------------------------------------------- #
+// Ruta para la API de búsqueda (AJAX)
+Route::post('/api/search', [SearchController::class, 'search'])
+    ->name('api.search');
+
+// Ruta para la página de resultados completos
+Route::get('/buscar', [SearchController::class, 'searchPage'])
+    ->name('search.results');
+
 
 
 
