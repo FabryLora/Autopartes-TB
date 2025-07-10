@@ -39,7 +39,7 @@ Route::get('/fix-images', [ProductoController::class, 'fixImagePath'])->name('fi
 Route::get('/imagenes-prod', [ProductoController::class, 'imagenesProducto']);
 Route::get('/agregar-marca', [ProductoController::class, 'agregarMarca']);
 
-Route::post('/sendcontact', [SendContactInfoController::class, 'sendReactEmail'])->name('send.contact');
+
 
 // routes/web.php
 Route::get('/descargar/archivo/{id}', [DescargarArchivo::class, 'descargarArchivo'])

@@ -81,6 +81,10 @@ class ProductoController extends Controller
             $query->where('code_oem', 'LIKE', '%' . $request->code_oem . '%');
         }
 
+        if ($request->filled('medida')) {
+            $query->where('medida', 'LIKE', '%' . $request->medida . '%');
+        }
+
         // Filtro por descripción visible
         if ($request->filled('desc_visible')) {
             $query->where('desc_visible', 'LIKE', '%' . $request->desc . '%')->orWhere('desc_invisible', 'LIKE', '%' . $request->desc . '%');
@@ -111,6 +115,7 @@ class ProductoController extends Controller
             'code' => $request->code,
             'code_oem' => $request->code_oem,
             'desc_visible' => $request->desc_visible,
+            'medida' => $request->medida,
 
         ]);
     }

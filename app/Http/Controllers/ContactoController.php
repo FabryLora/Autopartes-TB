@@ -28,11 +28,11 @@ class ContactoController extends Controller
     {
 
         $data = [
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'celular' => $request->input('celular'),
-            'empresa' => $request->input('empresa'),
-            'mensaje' => $request->input('mensaje'),
+            'name' => $request->name,
+            'email' => $request->email,
+            'celular' => $request->celular,
+            'empresa' => $request->empresa,
+            'mensaje' => $request->mensaje,
         ];
 
         // Enviar correo al administrador (o a la dirección que desees)

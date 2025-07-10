@@ -1,15 +1,8 @@
-import { router, usePage } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useCart } from 'react-use-cart';
 
 export default function MispedidosRow({ pedido }) {
-    const { addItem } = useCart();
-    const { subproductos, auth } = usePage().props;
-    const [pedidoView, setPedidoView] = useState(false);
-
-    const { user } = auth;
-
     const [detalleView, setDetalleView] = useState(false);
 
     const recomprar = () => {
@@ -80,20 +73,44 @@ export default function MispedidosRow({ pedido }) {
                                         <div className="space-y-2">
                                             <div className="flex justify-between">
                                                 <span className="text-gray-600">Subtotal:</span>
-                                                <span className="font-medium">${pedido?.subtotal}</span>
+                                                <span className="font-medium">
+                                                    $
+                                                    {Number(pedido?.subtotal).toLocaleString('es-AR', {
+                                                        minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2,
+                                                    })}
+                                                </span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-gray-600">Descuento:</span>
-                                                <span className="font-medium text-green-600">-${pedido.descuento}</span>
+                                                <span className="font-medium text-green-600">
+                                                    -$
+                                                    {Number(pedido?.descuento).toLocaleString('es-AR', {
+                                                        minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2,
+                                                    })}
+                                                </span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-gray-600">IVA:</span>
-                                                <span className="font-medium">${pedido.iva}</span>
+                                                <span className="font-medium">
+                                                    $
+                                                    {Number(pedido?.iva).toLocaleString('es-AR', {
+                                                        minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2,
+                                                    })}
+                                                </span>
                                             </div>
                                             <div className="border-t pt-2">
                                                 <div className="flex justify-between">
                                                     <span className="text-lg font-semibold text-gray-900">Total:</span>
-                                                    <span className="text-lg font-semibold text-gray-900">${pedido.total}</span>
+                                                    <span className="text-lg font-semibold text-gray-900">
+                                                        $
+                                                        {Number(pedido?.total).toLocaleString('es-AR', {
+                                                            minimumFractionDigits: 2,
+                                                            maximumFractionDigits: 2,
+                                                        })}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -124,27 +141,29 @@ export default function MispedidosRow({ pedido }) {
                                                     </th>
                                                 </tr>
                                             </thead>
-                                            {/*  <tbody className="divide-y divide-gray-200">
-                                    {order.productos.map((producto, index) => (
-                                        <tr key={index} className="hover:bg-gray-50">
-                                            <td className="px-4 py-3 text-sm text-gray-900">
-                                                {producto.codigo}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm text-gray-900">
-                                                {producto.nombre}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm text-gray-900 text-center">
-                                                {producto.cantidad}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm text-gray-900 text-right">
-                                                ${producto.precio}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm text-gray-900 text-right font-medium">
-                                                ${(producto.cantidad * producto.precio)}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody> */}
+                                            <tbody className="divide-y divide-gray-200">
+                                                {pedido.productos.map((producto, index) => (
+                                                    <tr key={index} className="hover:bg-gray-50">
+                                                        <td className="px-4 py-3 text-sm text-gray-900">{producto?.producto?.code}</td>
+                                                        <td className="px-4 py-3 text-sm text-gray-900">{producto?.producto?.name}</td>
+                                                        <td className="px-4 py-3 text-center text-sm text-gray-900">{producto.cantidad}</td>
+                                                        <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                                            $
+                                                            {Number(producto.precio_unitario).toLocaleString('es-AR', {
+                                                                minimumFractionDigits: 2,
+                                                                maximumFractionDigits: 2,
+                                                            })}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-right text-sm font-medium text-gray-900">
+                                                            $
+                                                            {Number(producto.cantidad * producto.precio_unitario).toLocaleString('es-AR', {
+                                                                minimumFractionDigits: 2,
+                                                                maximumFractionDigits: 2,
+                                                            })}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -180,7 +199,7 @@ export default function MispedidosRow({ pedido }) {
                 </div>
                 <div className="flex items-center">{pedido?.id}</div>
                 <div className="flex items-center">{pedido?.created_at}</div>
-                <div className="flex items-center font-bold">{pedido?.entregado == 1 ? 'Entregado' : 'Pendiente'}</div>
+                <div className="flex items-center font-bold">{pedido?.estado}</div>
                 <div className="flex items-center">
                     $ {Number(pedido?.total).toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                 </div>

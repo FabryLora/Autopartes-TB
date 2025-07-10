@@ -86,8 +86,8 @@
             @foreach(($isPrivate ? $privateLinks : $defaultLinks) as $link)
                 <a href="{{ $link['href'] }}" :class="scrolled ? 'text-black' : 'text-white'"
                     class="text-sm hover:text-primary-orange transition-colors duration-300 
-                                                                                                                                                                                    {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold' : '' }} 
-                                                                                                                                                                                        ">
+                                                                                                                                                                                        {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold' : '' }} 
+                                                                                                                                                                                            ">
                     {{ $link['title'] }}
                 </a>
             @endforeach
@@ -133,7 +133,7 @@
                 </div>
 
                 <button type="submit"
-                    class="w-full bg-primary-orange text-white py-2 px-4 rounded-md hover:bg-orange-600 transition-colors">
+                    class="w-full bg-primary-orange text-white py-2 px-4 rounded-md hover:bg-primary-orange/80 transition-colors">
                     Iniciar Sesión
                 </button>
             </div>

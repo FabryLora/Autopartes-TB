@@ -148,48 +148,54 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Nuevo Mensaje de Contacto</h1>
+            <h1>Nuevo Mensaje de Informacion de pago</h1>
         </div>
 
         <div class="content">
-            <p class="message-intro">Se ha recibido un nuevo mensaje a través del formulario de contacto de la página
+            <p class="message-intro">Se ha recibido un nuevo mensaje a través del formulario de Informacion de pago de
+                la página
                 web.</p>
 
             <div class="contact-data">
-                <h2>Datos de Contacto</h2>
+                <h2>Datos</h2>
 
                 <div class="data-row">
-                    <div class="data-label">Nombre:</div>
-                    <div class="data-value">{{ $data['name'] }}</div>
+                    <div class="data-label">Fecha:</div>
+                    <div class="data-value">{{ $data['fecha'] }}</div>
                 </div>
 
                 <div class="data-row">
-                    <div class="data-label">Email:</div>
-                    <div class="data-value">{{ $data['email'] }}</div>
+                    <div class="data-label">Importe:</div>
+                    <div class="data-value">{{ $data['importe'] }}</div>
                 </div>
 
                 <div class="data-row">
-                    <div class="data-label">Teléfono:</div>
-                    <div class="data-value">{{ $data['celular'] }}</div>
+                    <div class="data-label">Banco:</div>
+                    <div class="data-value">{{ $data['banco'] }}</div>
                 </div>
 
-                @if (!empty($data['empresa']))
+                @if (!empty($data['sucursal']))
                     <div class="data-row">
-                        <div class="data-label">Empresa:</div>
-                        <div class="data-value">{{ $data['empresa'] }}</div>
+                        <div class="data-label">Sucursal:</div>
+                        <div class="data-value">{{ $data['sucursal'] }}</div>
                     </div>
                 @endif
+
+                <div class="data-row">
+                    <div class="data-label">Facturas canceladas:</div>
+                    <div class="data-value">{{ $data['facturas'] }}</div>
+                </div>
             </div>
 
             <div class="message-container">
-                <h2>Mensaje</h2>
-                <div class="message-text">{{ $data['mensaje'] }}</div>
+                <h2>Observaciones</h2>
+                <div class="message-text">{{ $data['observaciones'] }}</div>
             </div>
         </div>
 
         <div class="footer">
             <p>© {{ date('Y') }} Autopartes TB. Todos los derechos reservados.</p>
-            <p>Este es un correo automático, por favor no responda a este mensaje.</p>
+
         </div>
     </div>
 </body>

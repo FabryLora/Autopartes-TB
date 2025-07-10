@@ -7,18 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Pedido extends Model
 {
 
-    protected $fillable = [
-        'user_id',
-        'tipo_entrega',
-        'mensaje',
-        'archivo',
-        'entregado',
-        'subtotal',
-        'iibb',
-        'iva',
-        'total',
-
-    ];
+    protected $guarded = [];
 
     public function user()
     {

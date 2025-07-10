@@ -33,20 +33,8 @@ export default function Dashboard({ children }) {
     const finalPath = cleanPathname.join('/');
     const currentPath = cleanPathname[0]; // Para identificar la ruta actual
 
-    // Usar localStorage para persistir el estado del sidebar
-    const [sidebar, setSidebar] = useState(() => {
-        // Verificar si estamos en el navegador antes de acceder a localStorage
-        if (typeof window !== 'undefined') {
-            const savedSidebar = localStorage.getItem('sidebarOpen');
-            return savedSidebar !== null ? JSON.parse(savedSidebar) : true;
-        }
-        return true;
-    });
-
-    // Guardar el estado del sidebar en localStorage cuando cambie
-    useEffect(() => {
-        localStorage.setItem('sidebarOpen', JSON.stringify(sidebar));
-    }, [sidebar]);
+    // Estado del sidebar sin localStorage
+    const [sidebar, setSidebar] = useState(true);
 
     // Estructura inicial de los dropdowns
     const initialDropdowns = [
@@ -122,7 +110,7 @@ export default function Dashboard({ children }) {
                 { title: 'Clientes', href: 'clientes' },
                 { title: 'Vendedores', href: 'vendedores' },
                 { title: 'Carrito', href: 'carrito' },
-                { title: 'Mis Pedidos', href: 'pedidos' },
+                { title: 'Pedidos', href: 'pedidos' },
             ],
         },
         {
@@ -152,20 +140,8 @@ export default function Dashboard({ children }) {
         },
     ];
 
-    // Estado para los dropdowns - con persistencia
-    const [dropdowns, setDropdowns] = useState(() => {
-        // Verificar si estamos en el navegador antes de acceder a localStorage
-        if (typeof window !== 'undefined') {
-            const savedDropdowns = localStorage.getItem('dropdownsState');
-            return savedDropdowns !== null ? JSON.parse(savedDropdowns) : initialDropdowns;
-        }
-        return initialDropdowns;
-    });
-
-    // Efecto para actualizar el localStorage cuando cambian los dropdowns
-    useEffect(() => {
-        localStorage.setItem('dropdownsState', JSON.stringify(dropdowns));
-    }, [dropdowns]);
+    // Estado para los dropdowns sin localStorage
+    const [dropdowns, setDropdowns] = useState(initialDropdowns);
 
     // Efecto para mantener abierto el dropdown correspondiente a la ruta actual
     useEffect(() => {
@@ -293,11 +269,10 @@ export default function Dashboard({ children }) {
             </div>
             <div className="flex h-screen w-full flex-col overflow-y-auto bg-[#f5f5f5]">
                 <div className="sticky top-0 z-50 flex flex-row items-center justify-between bg-white px-6 py-3 shadow-md">
-                    <div className="flex flex-row gap-3">
+                    <div className="flex flex-row gap-3 py-1">
                         <button onClick={() => setSidebar(!sidebar)}>
                             <FontAwesomeIcon icon={faBars} size="lg" color="#000" />
                         </button>
-                        <h1 className="text-2xl">{finalPath.charAt(0).toUpperCase() + finalPath.slice(1) || 'Bienvenido al Dashboard'}</h1>
                     </div>
 
                     <div className="flex flex-row gap-3">

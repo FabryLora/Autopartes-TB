@@ -46,31 +46,25 @@ class PedidoController extends Controller
     public function misPedidos()
     {
         $pedidos = Pedido::where('user_id', auth()->user()->id)
-            ->with('productos')
+            ->with(['productos.producto']) // Ajusta los campos según necesites
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Get all subproducto_ids from all pedidos
-        $subproductoIds = [];
-        foreach ($pedidos as $pedido) {
-            foreach ($pedido->productos as $producto) {
-                if (isset($producto->subproducto_id)) {
-                    $subproductoIds[] = $producto->subproducto_id;
-                }
-            }
-        }
 
-        // Get subproductos using the collected ids
-        $subproductos = SubProducto::whereIn('id', $subproductoIds)
-            ->with(['producto' => function ($query) {
-                $query->select('id', 'name', 'marca_id')->with('marca');
-            }])
-            ->get();
 
         return inertia('privada/mispedidos', [
             'pedidos' => $pedidos,
-            'subproductos' => $subproductos,
         ]);
+    }
+
+    public function cambiarEstado(Request $request)
+    {
+        $pedido = Pedido::find($request->id);
+
+
+        // Cambiar el estado del pedido
+        $pedido->estado = $request->estado;
+        $pedido->save();
     }
 
     public function recomprar(Request $request)
@@ -94,7 +88,7 @@ class PedidoController extends Controller
     {
         $perPage = $request->input('per_page', 10);
 
-        $query = Pedido::query()->with(['productos', 'user'])
+        $query = Pedido::query()->with(['productos.producto', 'user'])
             ->orderBy('created_at', 'desc');
 
         if ($request->has('search') && !empty($request->search)) {

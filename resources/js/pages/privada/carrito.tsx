@@ -2,7 +2,6 @@ import { default as ProductosPrivadaRow } from '@/components/productosPrivadaRow
 import { Head, Link, useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { useCart } from 'react-use-cart';
 import DefaultLayout from '../defaultLayout';
 
 //import PedidoTemplate from "../components/PedidoTemplate";
@@ -23,7 +22,6 @@ export default function Carrito({
     total,
 }) {
     const { user } = auth;
-    const { items, emptyCart } = useCart();
 
     const [selected, setSelected] = useState('Efectivo');
     const [tipo_entrega, setTipo_entrega] = useState('Efectivo');
@@ -61,13 +59,13 @@ export default function Carrito({
 
     const hacerPedido = () => {
         pedidoForm.post(route('hacerPedido'), {
+            forceFormData: true,
             onSuccess: (response) => {
                 console.log('Pedido realizado con éxito:', response);
 
                 setSucc(true);
                 setSuccID(response.props.flash.pedido_id);
                 setIsSubmitting(false);
-                emptyCart();
             },
             onError: (error) => {
                 setError(true);
@@ -105,12 +103,12 @@ export default function Carrito({
                                         Su pedido #{succID} está en proceso y te avisaremos por email cuando esté listo. Si tienes alguna pregunta, no
                                         dudes en contactarnos.
                                     </p>
-                                    <button
-                                        onClick={() => setSucc(false)}
+                                    <Link
+                                        href={'/privada/productos'}
                                         className="bg-primary-orange flex h-[47px] w-[253px] items-center justify-center text-white"
                                     >
                                         VOLVER A PRODUCTOS
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -138,7 +136,7 @@ export default function Carrito({
                 <div className="col-span-2">
                     <div className="">
                         <Link
-                            href={'/privado/productos'}
+                            href={'/privada/productos'}
                             className="border-primary-orange text-primary-orange hover:bg-primary-orange h-[47px] border px-5 py-2 font-semibold transition duration-300 hover:text-white"
                         >
                             Agregar productos
@@ -413,16 +411,16 @@ export default function Carrito({
                     <Link
                         href={route('destroy')}
                         method="post"
-                        onClick={emptyCart}
                         className="border-primary-orange text-primary-orange flex h-[47px] w-full items-center justify-center border transition-transform hover:scale-95"
                     >
                         Cancelar pedido
                     </Link>
                     <button
+                        disabled={pedidoForm.processing}
                         onClick={hacerPedido}
-                        className={`h-[47px] w-full text-white transition-transform hover:scale-95 ${isSubmitting ? 'bg-gray-400' : 'bg-primary-orange'}`}
+                        className={`h-[47px] w-full text-white transition-transform hover:scale-95 ${pedidoForm.processing ? 'bg-gray-400' : 'bg-primary-orange'}`}
                     >
-                        {isSubmitting ? 'Enviando pedido...' : 'Realizar pedido'}
+                        {pedidoForm.processing ? 'Enviando pedido...' : 'Realizar pedido'}
                     </button>
                 </div>
             </div>

@@ -21,19 +21,15 @@
                 @endforeach
             </select>
 
-            <select name="medida" class="h-[47px] border bg-white w-full">
-                <option value="">Medida</option>
-                {{-- @foreach($medidas as $medida)
-                <option value="{{ $medida }}">{{ $medida }}</option>
-                @endforeach --}}
-            </select>
+            <input type="text" value="{{ request('medida') }}" name="medida" placeholder="Medida"
+                class="h-[47px] pl-2 border bg-white w-full placeholder:text-black" />
 
             <input type="text" value="{{ request('code') }}" name="code" placeholder="Código"
-                class="h-[47px] pl-2 border bg-white w-full" />
+                class="h-[47px] pl-2 border bg-white w-full placeholder:text-black" />
             <input type="text" value="{{ request('code_oem') }}" name="code_oem" placeholder="Cód. OEM"
-                class="h-[47px] pl-2 border bg-white w-full" />
+                class="h-[47px] pl-2 border bg-white w-full placeholder:text-black" />
             <input type="text" value="{{ request('desc') }}" name="desc" placeholder="Descripción"
-                class="h-[47px] pl-2 border bg-white w-full" />
+                class="h-[47px] pl-2 border bg-white w-full placeholder:text-black" />
 
             <button type="submit"
                 class="border border-white text-white h-[47px] w-full hover:bg-white hover:text-black transition duration-300">
@@ -54,7 +50,7 @@
             @foreach ($productos as $producto)
                 <a href="{{ "/p/" . $producto->code }}" {{-- route('producto', ['codigo'=> $producto->code]) --}}
                     class=" border-gray-200 transition transform hover:-translate-y-1 hover:shadow-lg duration-300
-                    h-[349px] flex flex-col min-w-[288px]">
+                    h-[349px] flex flex-col w-[288px]">
                     <div class="h-full flex flex-col">
                         @if ($producto->imagenes->count() > 0)
                             <img src="{{ $producto->imagenes->first()->image }}" alt="{{ $producto->name }}"

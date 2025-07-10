@@ -3,41 +3,32 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-
 use Illuminate\Mail\Mailable;
-
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Attachment;
 
-class PedidoMail extends Mailable
+
+class InformacionDePagoMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public $pedido;
+    public $data;
     public $archivo;
 
-    public function __construct($pedido, $archivo = null)
+    /**
+     * Get the message envelope.
+     */
+    public function __construct($data, $archivo = null)
     {
-        $this->pedido = $pedido;
+        $this->data = $data;
         $this->archivo = $archivo; // Archivo adjunto opcional
     }
 
-
-    /**
-     * Get the message content definition.
-     */
     public function build()
     {
-        return $this->subject('Nueva pedido realizado')
-            ->view('emails.pedido_form') // Vista del correo
-            ->with(
-                [
-                    'pedido' => $this->pedido,
-                ]
-            );
+        return $this->subject('Nueva Consulta desde el Formulario de Informacion de Pago')
+            ->view('emails.informacion_form') // Vista del correo
+            ->with('data', $this->data);
     }
 
     /**

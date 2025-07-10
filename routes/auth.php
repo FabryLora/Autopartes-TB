@@ -89,6 +89,9 @@ Route::middleware('auth')->group(function () {
     Route::post('sendPedido', [SendPedidoController::class, 'sendReactEmail'])
         ->name('sendPedido');
 
+    Route::post('sendInformacion', [PrivadaController::class, 'sendInformacion'])
+        ->name('sendInformacion');
+
     Route::post('pedido', [PedidoController::class, 'store'])
         ->name('pedido.store');
 

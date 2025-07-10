@@ -135,6 +135,7 @@ Route::middleware('auth:admin')->group(function () {
 
     Route::get('admin/pedidos', [PedidoController::class, 'misPedidosAdmin'])->name('admin.pedidos');
     Route::post('admin/pedidos/update', [PedidoController::class, 'update'])->name('admin.pedidos.update');
+    Route::post('cambiarEstado', [PedidoController::class, 'cambiarEstado'])->name('cambiarEstado');
 
     Route::get('admin/marcasProducto', [MarcaProductoController::class, 'index'])->name('admin.marcasProducto');
     Route::post('admin/marcasProducto', [MarcaProductoController::class, 'store'])->name('admin.marcasProducto.store');

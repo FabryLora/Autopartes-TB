@@ -59,5 +59,7 @@ class AuthenticatedSessionController extends Controller
     {
         session()->forget('cliente_seleccionado');
         Auth::guard('web')->logout();
+
+        return Inertia::location('/');
     }
 }

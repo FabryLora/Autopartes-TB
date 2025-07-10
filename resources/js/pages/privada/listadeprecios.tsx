@@ -1,5 +1,5 @@
 import ListaDePreciosRow from '@/components/listadepreciosRow';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import DefaultLayout from '../defaultLayout';
 
 export default function ListaDePrecios() {
@@ -7,6 +7,9 @@ export default function ListaDePrecios() {
 
     return (
         <DefaultLayout>
+            <Head>
+                <title>Lista de precios</title>
+            </Head>
             <div className="mx-auto min-h-[50vh] w-[1200px] py-20">
                 <div className="col-span-2 grid w-full items-start">
                     <div className="w-full">

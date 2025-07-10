@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\InformacionDePagoMail;
 use App\Mail\PedidoMail;
 use App\Models\Categoria;
 use App\Models\Contacto;
@@ -132,8 +133,10 @@ class   PrivadaController extends Controller
             ]);
         }
 
+
+
         // Enviar correo al administrador (o a la dirección que desees)
-        /* Mail::to(Contacto::first()->mail)->send(new PedidoMail($data)); */
+        Mail::to(Contacto::first()->mail)->send(new PedidoMail($pedido, $request->file('archivo')));
 
         Cart::destroy();
 
@@ -141,6 +144,27 @@ class   PrivadaController extends Controller
         session([
             'pedido_id' => $pedido->id,
         ]);
+    }
+
+    public function sendInformacion(Request $request)
+    {
+
+
+
+        $data = [
+            'fecha' => $request->fecha,
+            'importe' => $request->importe,
+            'banco' => $request->banco,
+            'sucursal' => $request->sucursal,
+            'facturas' => $request->facturas,
+            'observaciones' => $request->observaciones,
+        ];
+
+        // Enviar correo al administrador (o a la dirección que desees)
+        Mail::to(Contacto::first()->mail)->send(new InformacionDePagoMail($data, $request->file('archivo')));
+
+        // Devolver mensaje de éxito al usuario
+        return redirect()->back()->with('success', 'Tu mensaje ha sido enviado con éxito.');
     }
 
 
