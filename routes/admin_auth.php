@@ -156,6 +156,6 @@ Route::middleware('auth:admin')->group(function () {
         if (!Auth::guard('admin')->check()) {
             return redirect()->route('/adm');
         }
-        return Inertia::render('admin/dashboard');
+        return inertia('admin/dashboard');
     })->name('admin.dashboard');
 });

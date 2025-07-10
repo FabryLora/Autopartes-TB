@@ -9,7 +9,7 @@ import UserSwitch from './switch';
 export default function ClientesAdminRow({ cliente }) {
     const [edit, setEdit] = useState(false);
 
-    const { provincias } = usePage().props;
+    const { provincias, listas } = usePage().props;
 
     const updateForm = useForm({
         name: cliente?.name,
@@ -170,14 +170,24 @@ export default function ClientesAdminRow({ cliente }) {
 
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="lista">Lista</label>
-                                    <input
-                                        defaultValue={cliente?.lista}
+                                    <select
+                                        required
+                                        value={updateForm?.data?.lista_de_precios_id}
+                                        onChange={(ev) => updateForm.setData('lista_de_precios_id', ev.target.value)}
                                         className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                        onChange={(e) => updateForm.setData('lista', e.target.value)}
-                                        name=""
-                                        type="number"
-                                        id="lista"
-                                    />
+                                        name="lista_de_precios_id"
+                                        id="lista_de_precios_id"
+                                    >
+                                        <option disabled selected value="">
+                                            Selecciona una lista
+                                        </option>
+
+                                        {listas?.map((lista) => (
+                                            <option key={lista.id} value={lista.id}>
+                                                {lista.name}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 <div className="col-span-2 grid grid-cols-3 gap-4">

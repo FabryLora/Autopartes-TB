@@ -195,7 +195,6 @@ export default function Clientes() {
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="vendedor">Vendedor</label>
                                         <select
-                                            required
                                             onChange={(ev) => signupForm.setData('vendedor_id', ev.target.value)}
                                             className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
                                             name="vendedor_id"
