@@ -15,6 +15,6 @@ class ProductoMarca extends Model
 
     public function marca()
     {
-        return $this->belongsTo(MarcaProducto::class)->orderBy('order', 'asc');
+        return $this->belongsTo(Categoria::class, 'categoria_id')->orderBy('order', 'asc');
     }
 }

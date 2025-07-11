@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import DefaultLayout from '../defaultLayout';
 
 export default function ProductosPrivada({ categorias, subcategorias }) {
-    const { productos, auth, clienteSeleccionado } = usePage().props;
+    const { productos, auth, clienteSeleccionado, id, modelo_id, code, code_oem, desc_visible } = usePage().props;
     const user = auth.user;
 
     const [margenSwitch, setMargenSwitch] = useState(false);
@@ -118,13 +118,13 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                                 name="code"
                                 placeholder="Codigo"
                                 type="text"
-                                className="focus:outline-primary-orange col-span-2 bg-white pl-2 transition duration-300 outline-none"
+                                className="focus:outline-primary-orange col-span-2 bg-white pl-2 transition duration-300 outline-none placeholder:text-black"
                             />
                             <input
                                 name="qty"
                                 placeholder="Cantidad"
                                 type="number"
-                                className="focus:outline-primary-orange col-span-2 bg-white pl-2 transition duration-300 outline-none"
+                                className="focus:outline-primary-orange col-span-2 bg-white pl-2 transition duration-300 outline-none placeholder:text-black"
                             />
                             <button className="border text-white transition duration-300 hover:bg-white hover:text-black">Añadir</button>
                         </form>
@@ -137,56 +137,59 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                         className="mx-auto flex h-fit w-[1200px] flex-row items-center gap-4"
                     >
                         <select
-                            name="marca"
+                            defaultValue={id || ''}
+                            name="id"
                             className="focus:outline-primary-orange h-[47px] w-full border bg-white outline-0 transition duration-300 focus:outline"
                         >
                             <option value="">Marca</option>
                             {categorias?.map((categoria) => (
-                                <option key={categoria.id} value={categoria.name}>
+                                <option key={categoria.id} value={categoria.id}>
                                     {categoria.name}
                                 </option>
                             ))}
                         </select>
 
                         <select
-                            name="modelo"
+                            defaultValue={modelo_id || ''}
+                            name="modelo_id"
                             className="focus:outline-primary-orange h-[47px] w-full border bg-white outline-0 transition duration-300 focus:outline"
                         >
                             <option value="">Modelo</option>
                             {subcategorias?.map((subcategoria) => (
-                                <option key={subcategoria.id} value={subcategoria.name}>
+                                <option key={subcategoria.id} value={subcategoria.id}>
                                     {subcategoria.name}
                                 </option>
                             ))}
                         </select>
 
-                        <select
+                        <input
+                            defaultValue={desc_visible || ''}
+                            type="text"
                             name="medida"
-                            className="focus:outline-primary-orange h-[47px] w-full border bg-white outline-0 transition duration-300 focus:outline"
-                        >
-                            <option value="">Medida</option>
-                            {/* {{-- @foreach($medidas as $medida)
-            <option value="{{ $medida }}">{{ $medida }}</option>
-            @endforeach --}} */}
-                        </select>
+                            placeholder="Medida"
+                            className="focus:outline-primary-orange h-[47px] w-full border bg-white pl-2 outline-0 transition duration-300 placeholder:text-black focus:outline"
+                        />
 
                         <input
+                            defaultValue={code || ''}
                             type="text"
                             name="code"
                             placeholder="Código"
-                            className="focus:outline-primary-orange h-[47px] w-full border bg-white pl-2 outline-0 transition duration-300 focus:outline"
+                            className="focus:outline-primary-orange h-[47px] w-full border bg-white pl-2 outline-0 transition duration-300 placeholder:text-black focus:outline"
                         />
                         <input
+                            defaultValue={code_oem || ''}
                             type="text"
                             name="code_oem"
                             placeholder="Cód. OEM"
-                            className="focus:outline-primary-orange h-[47px] w-full border bg-white pl-2 outline-0 transition duration-300 focus:outline"
+                            className="focus:outline-primary-orange h-[47px] w-full border bg-white pl-2 outline-0 transition duration-300 placeholder:text-black focus:outline"
                         />
                         <input
+                            defaultValue={desc_visible || ''}
                             type="text"
                             name="descripcion"
-                            placeholder="Cód. equivalente"
-                            className="focus:outline-primary-orange h-[47px] w-full border bg-white pl-2 outline-0 transition duration-300 focus:outline"
+                            placeholder="Descripcion"
+                            className="focus:outline-primary-orange h-[47px] w-full border bg-white pl-2 outline-0 transition duration-300 placeholder:text-black focus:outline"
                         />
 
                         <button
@@ -198,8 +201,7 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                     </form>
                 </div>
                 <div className="mx-auto flex w-[1200px] flex-col gap-2">
-                    <div className="flex flex-row justify-between">
-                        <p className="text-[16px] font-bold">Llevando 10 o más productos y obtené un 5% de descuento</p>
+                    <div className="flex flex-row justify-end">
                         <div className="flex flex-row items-center gap-2">
                             <p className="text-[16px]">Vista mostrador</p>
                             <button

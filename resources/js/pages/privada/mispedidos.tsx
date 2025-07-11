@@ -10,7 +10,7 @@ export default function Mispedidos() {
             <Head>
                 <title>Pedidos</title>
             </Head>
-            <div className="mx-auto w-[1200px] py-20">
+            <div className="mx-auto min-h-[40vh] w-[1200px] py-20">
                 <div className="col-span-2 grid w-full items-start">
                     <div className="w-full">
                         <div className="grid h-[52px] grid-cols-7 items-center bg-[#F5F5F5]">

@@ -94,7 +94,10 @@ class ProductoController extends Controller
         $query->orderBy('order', 'asc');
 
         // Ejecutar query
-        $productos = $query->get();
+
+
+        $productos = $query->with(['marcas.marca', 'modelos.modelo'])->get();
+
 
         if ($productos->count() === 1) {
             return redirect('/p/' . $productos->first()->code);
@@ -122,65 +125,32 @@ class ProductoController extends Controller
 
     public function show($codigo, Request $request)
     {
-        $producto = Producto::with(['categoria:id,name', 'imagenes', 'marcas', 'modelos'])->where('code', $codigo)->first();
+        $producto = Producto::with(['categoria:id,name', 'imagenes', 'marcas.marca', 'modelos.modelo'])->where('code', $codigo)->first();
 
         $subcategorias = SubCategoria::orderBy('order', 'asc')->get();
 
         $categorias = Categoria::select('id', 'name', 'order')->orderBy('order', 'asc')->get();
 
-        // Obtener productos relacionados que compartan marcas y modelos
+        // Obtener 3 productos aleatorios que compartan marca y modelo
         $productosRelacionados = collect();
 
         if ($producto) {
             // Obtener IDs de marcas y modelos del producto actual
-            $marcaIds = $producto->marcas->pluck('id')->toArray();
+
             $modeloIds = $producto->modelos->pluck('id')->toArray();
 
-            if (!empty($marcaIds) || !empty($modeloIds)) {
-                $query = Producto::with(['imagenes'])
-                    ->where('id', '!=', $producto->id); // Cambiar a comparar por ID
+            if (!empty($modeloIds)) {
+                $productosRelacionados = Producto::with(['imagenes'])
+                    ->where('id', '!=', $producto->id)
 
-                // Filtrar por marcas y modelos usando whereHas
-                if (!empty($marcaIds) && !empty($modeloIds)) {
-                    // Productos que compartan marcas O modelos
-                    $query->where(function ($q) use ($marcaIds, $modeloIds) {
-                        $q->whereHas('marcas', function ($subQuery) use ($marcaIds) {
-                            $subQuery->whereIn('id', $marcaIds);
-                        })->orWhereHas('modelos', function ($subQuery) use ($modeloIds) {
-                            $subQuery->whereIn('id', $modeloIds);
-                        });
-                    });
-                } elseif (!empty($marcaIds)) {
-                    // Solo filtrar por marcas
-                    $query->whereHas('marcas', function ($subQuery) use ($marcaIds) {
-                        $subQuery->whereIn('id', $marcaIds);
-                    });
-                } elseif (!empty($modeloIds)) {
-                    // Solo filtrar por modelos
-                    $query->whereHas('modelos', function ($subQuery) use ($modeloIds) {
-                        $subQuery->whereIn('id', $modeloIds);
-                    });
-                }
-
-                $productosRelacionados = $query->inRandomOrder()->limit(3)->get();
-            }
-
-            // Si no se encontraron suficientes productos relacionados, completar con productos aleatorios
-            if ($productosRelacionados->count() < 3) {
-                $idsExcluir = $productosRelacionados->pluck('id')->toArray();
-                $idsExcluir[] = $producto->id; // Agregar el ID del producto actual
-
-                $productosAleatorios = Producto::with(['imagenes'])
-                    ->whereNotIn('id', $idsExcluir)
+                    ->whereHas('modelos', function ($query) use ($modeloIds) {
+                        $query->whereIn('id', $modeloIds);
+                    })
                     ->inRandomOrder()
-                    ->limit(3 - $productosRelacionados->count())
+                    ->limit(3)
                     ->get();
-
-                $productosRelacionados = $productosRelacionados->merge($productosAleatorios);
             }
         }
-
-
 
         return view('producto', [
             'producto' => $producto,
@@ -203,31 +173,36 @@ class ProductoController extends Controller
 
         // Filtrar por código del subproducto
 
+        if ($request->filled('id')) {
+            $query->whereHas('marcas', function ($q) use ($request) {
+                $q->where('categoria_id', $request->id);
+            });
+        }
+
+        // Filtro por modelo/subcategoría
+        if ($request->filled('modelo_id')) {
+            $query->whereHas('modelos', function ($q) use ($request) {
+                $q->where('sub_categoria_id', $request->modelo_id);
+            });
+        }
+
+        // Filtro por código
         if ($request->filled('code')) {
-            $query->where('code', 'like', "%{$request->code}%");
-        }
-        // Filtrar por categoría del producto
-        if ($request->filled('categoria')) {
-            $query->whereHas('producto', function ($q) use ($request) {
-                $q->where('categoria_id', $request->categoria);
-            });
+            $query->where('code', 'LIKE', '%' . $request->code . '%');
         }
 
-        #subcateogria
-        if ($request->filled('subcategoria')) {
-            $query->whereHas('subproductos', function ($q) use ($request) {
-                $q->where('sub_categoria_id', $request->subcategoria);
-            });
+        // Filtro por código OEM
+        if ($request->filled('code_oem')) {
+            $query->where('code_oem', 'LIKE', '%' . $request->code_oem . '%');
         }
 
-        // Filtrar por código OEM del producto
-        if ($request->filled('codigo_oem')) {
-            $query->where('codigo_oem', 'like', "%{$request->codigo_oem}%");
+        if ($request->filled('medida')) {
+            $query->where('medida', 'LIKE', '%' . $request->medida . '%');
         }
 
-        // Filtrar por descripción visible del producto
-        if ($request->filled('descripcion')) {
-            $query->where('descripcion', 'like', "%{$request->descripcion}%")->orWhere('descripcion_invisible', 'like', "%{$request->descripcion}%");
+        // Filtro por descripción visible
+        if ($request->filled('desc_visible')) {
+            $query->where('desc_visible', 'LIKE', '%' . $request->desc . '%')->orWhere('desc_invisible', 'LIKE', '%' . $request->desc . '%');
         }
 
 
@@ -270,6 +245,12 @@ class ProductoController extends Controller
             'categorias' => $categorias,
             'subcategorias' => $subcategorias,
             'productosOferta' => $productosOferta,
+            'id' => $request->id ?? null,
+            'modelo_id' => $request->modelo_id ?? null,
+            'code' => $request->code ?? null,
+            'code_oem' => $request->code_oem ?? null,
+            'desc_visible' => $request->desc_visible ?? null,
+
         ]);
     }
 
@@ -444,6 +425,7 @@ class ProductoController extends Controller
                     'desc_visible' => $data['desc_visible'],
                     'desc_invisible' => $data['desc_invisible'],
                     'destacado' => $data['destacado'] ?? false,
+                    'descuento_oferta' => $data['descuento_oferta'] ?? 0,
                     'oferta' => $data['oferta'] ?? false,
                     'unidad_pack' => $data['unidad_pack'],
                     'familia' => $data['familia'],
@@ -543,6 +525,7 @@ class ProductoController extends Controller
                     'desc_invisible' => $data['desc_invisible'],
                     'destacado' => $data['destacado'] ?? false,
                     'oferta' => $data['oferta'] ?? false,
+                    'descuento_oferta' => $data['descuento_oferta'] ?? 0,
                     'unidad_pack' => $data['unidad_pack'],
                     'familia' => $data['familia'],
                     'stock' => $data['stock'],
@@ -609,7 +592,7 @@ class ProductoController extends Controller
                 // Actualizar relaciones con modelos
                 if ($request->has('modelos')) {
                     // Eliminar relaciones existentes
-                    ProductoModelo::where('producto_id', $producto->id)->delete();
+
 
                     // Crear nuevas relaciones
                     foreach ($data['modelos'] as $modeloId) {
@@ -623,7 +606,7 @@ class ProductoController extends Controller
                 // Actualizar relaciones con marcas
                 if ($request->has('marcas')) {
                     // Eliminar relaciones existentes
-                    ProductoMarca::where('producto_id', $producto->id)->delete();
+
 
                     // Crear nuevas relaciones
                     foreach ($data['marcas'] as $marcaId) {

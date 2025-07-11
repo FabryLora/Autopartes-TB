@@ -26,8 +26,8 @@
                     @foreach ($categorias as $cat)
                         <div class="border-b border-gray-200"
                             x-data="{ 
-                                                                                                                                                                                                                                                                                                                                                                                                    open: {{ $modelo_id && $cat->subCategorias && $cat->subCategorias->where('id', $modelo_id)->count() > 0 ? 'true' : 'false' }} 
-                                                                                                                                                                                                                                                                                                                                                                                                 }">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            open: {{ $modelo_id && $cat->subCategorias && $cat->subCategorias->where('id', $modelo_id)->count() > 0 ? 'true' : 'false' }} 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }">
                             <div
                                 class="flex flex-row justify-between items-center py-3 px-2 transition-all duration-300 ease-in-out text-lg {{ $categoria && $cat->id == $categoria->id ? 'font-semibold' : '' }}">
                                 <a href="{{ route('productos', ['id' => $cat->id]) }}" class="block flex-1">
@@ -82,7 +82,7 @@
             <div class="w-full md:w-3/4">
                 <div class="flex flex-col md:flex-row gap-5">
                     <!-- Image Gallery -->
-                    <div class="w-full md:w-1/2">
+                    <div class="w-full md:w-1/2 relative">
                         <!-- Main Image -->
                         <div class=" flex items-center justify-center h-[410px]">
                             @if ($producto->imagenes->first())
@@ -99,10 +99,10 @@
 
 
                         <!-- Thumbnails -->
-                        <div class="mt-5 flex lg:justify-start justify-center gap-2 overflow-x-auto">
+                        <div class="absolute -bottom-24 mt-5 flex lg:justify-start justify-center gap-2 overflow-x-auto">
                             @foreach ($producto->imagenes as $imagen)
                                 <div class="border border-gray-200 w-[80px] h-[80px] cursor-pointer hover:border-main-color flex-shrink-0
-                                                                                                                                                                                                                                                                                                                                                                                          {{ $loop->first ? 'border-main-color' : '' }}"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  {{ $loop->first ? 'border-main-color' : '' }}"
                                     onclick="changeMainImage('{{ $imagen->image }}', this)">
                                     <img src="{{ $imagen->image }}" alt="Thumbnail" class="w-full h-full object-cover">
                                 </div>
@@ -111,73 +111,38 @@
                     </div>
 
                     <!-- Product Info -->
-                    <div class="w-full md:w-1/2">
+                    <div class="w-full md:w-1/2 flex flex-col min-h-full justify-between">
+                        <div>
+                            <h1 class="text-[28px] font-semibold leading-[1]">{{ $producto->name }}</h1>
+                            <div class="prose max-w-none py-2 custom-summernote">
+                                {!! $producto->desc_visible !!}
+                            </div>
 
-                        <h1 class="text-[28px] font-semibold leading-[1]">{{ $producto->name }}</h1>
-                        <div class="prose max-w-none py-2 custom-summernote">
-                            {!! $producto->desc_visible !!}
-                        </div>
+                            <!-- Características técnicas -->
+                            <div class="mb-6">
 
-                        <!-- Características técnicas -->
-                        <div class="mb-6">
-
-                            <div class="border-t border-gray-200">
+                                <div class="border-t border-gray-200">
 
 
 
-                                <div class="flex border-b border-gray-200 py-3.5">
-                                    <div class="w-1/2 ">Código</div>
-                                    <div class="w-1/2   text-right">{{ $producto->code }}</div>
-                                </div>
-                                <div class="flex border-b border-gray-200 py-3.5">
-                                    <div class="w-1/2 ">Marca</div>
-                                    <div class="h-fit flex justify-end w-full">
-                                        @if(isset($categorias) && isset($producto->marcas))
-                                            @foreach($categorias as $categoria)
-                                                @if(
-                                                        $producto->marcas->contains(function ($marca) use ($categoria) {
-                                                            return $marca->categoria_id === $categoria->id;
-                                                        })
-                                                    )
-                                                    <span
-                                                        class="bg-primary-orange mx-1 inline-block rounded px-2 py-1 text-xs font-semibold text-white">
-                                                        {{ $categoria->name }}
-                                                    </span>
-                                                @endif
-                                            @endforeach
-                                        @endif
+                                    <div class="flex border-b border-gray-200 py-3.5">
+                                        <div class="w-1/2 ">Código</div>
+                                        <div class="w-1/2   text-right">{{ $producto->code }}</div>
                                     </div>
-                                </div>
-                                <div class="flex border-b border-gray-200 py-3.5">
-                                    <div class="w-1/2 ">Modelo</div>
-                                    <div class="h-fit grid grid-cols-3 justify-end w-full gap-y-4">
-                                        @if(isset($subcategorias) && isset($producto->modelos))
-                                            @foreach($subcategorias as $subcategoria)
-                                                @if(
-                                                        $producto->modelos->contains(function ($modelo) use ($subcategoria) {
-                                                            return $modelo->sub_categoria_id === $subcategoria->id;
-                                                        })
-                                                    )
-                                                    <span
-                                                        class="bg-primary-orange mx-1 inline-block rounded px-2 py-1 text-xs font-semibold text-white h-fit">
-                                                        {{ $subcategoria->name }}
-                                                    </span>
-                                                @endif
-                                            @endforeach
-                                        @endif
-                                    </div>
-                                </div>
 
-                                <div class="flex border-b border-gray-200 py-3.5">
-                                    <div class="w-1/2 ">Código OEM</div>
-                                    <div class="w-1/2   text-right">{{ $producto->code_oem }}</div>
-                                </div>
-                                <div class="flex border-b border-gray-200 py-3.5">
-                                    <div class="w-1/2 ">Medidas</div>
-                                    <div class="w-1/2   text-right">{{ $producto->medida ?? null }}</div>
+
+                                    <div class="flex border-b border-gray-200 py-3.5">
+                                        <div class="w-1/2 ">Código OEM</div>
+                                        <div class="w-1/2   text-right">{{ $producto->code_oem }}</div>
+                                    </div>
+                                    <div class="flex border-b border-gray-200 py-3.5">
+                                        <div class="w-1/2 ">Medidas</div>
+                                        <div class="w-1/2   text-right">{{ $producto->medida ?? null }}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
 
 
                         <a href="{{ route('contacto', ['mensaje' => $producto->name]) }}"
@@ -187,6 +152,30 @@
 
 
                     </div>
+                </div>
+
+                <div class="mt-16 flex flex-col md:mt-30">
+                    <div class="hidden h-[52px] grid-cols-5 items-center bg-[#F5F5F5] px-4 md:grid">
+                        <p>Marca</p>
+                        <p>Modelo</p>
+
+                    </div>
+
+                    @foreach($producto->modelos as $modelo)
+                        <div
+                            class="flex flex-col border-b border-[#E0E0E0] py-3 text-[#74716A] md:grid md:min-h-[52px] md:grid-cols-5 md:items-center md:px-4 md:py-0">
+                            <div class="flex justify-between md:block">
+                                <p class="font-semibold md:hidden md:font-normal">Marca:</p>
+                                <p>{{ $modelo->modelo->categoria->name }}</p>
+                            </div>
+                            <div class="flex justify-between md:block">
+                                <p class="font-semibold md:hidden md:font-normal">Modelo:</p>
+                                {{ $modelo->modelo->name }}
+                            </div>
+
+                        </div>
+                    @endforeach
+
                 </div>
                 <!-- Productos relacionados -->
                 <div class="py-20">

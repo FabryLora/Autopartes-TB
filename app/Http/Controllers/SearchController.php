@@ -25,23 +25,8 @@ class SearchController extends Controller
                     ->orWhere('description', 'LIKE', "%{$query}%")
                     ->orWhere('code', 'LIKE', "%{$query}%");
             })
-                ->select([
-                    'id',
-                    'name',
-                    'description',
-                    'price',
-                    'stock',
-                    'image',
-                    'slug'
-                ])
-                ->orderByRaw("
-                    CASE 
-                        WHEN name LIKE '{$query}%' THEN 1
-                        WHEN code LIKE '%{$query}%' THEN 2
-                        WHEN description LIKE '%{$query}%' THEN 3
-                        ELSE 4
-                    END
-                ")
+
+
                 ->limit($limit)
                 ->get();
 

@@ -34,8 +34,6 @@ export default function Carrito({
     const [succ, setSucc] = useState(false);
     const [succID, setSuccID] = useState();
 
-    console.log(productos);
-
     const pedidoForm = useForm({
         tipo_entrega: tipo_entrega_envio,
         forma_pago: tipo_entrega,
@@ -125,9 +123,9 @@ export default function Carrito({
                             <p>Código OEM</p>
                             <p>Descripción</p>
 
-                            <p>Precio</p>
-                            <p>Cantidad</p>
-                            <p>Subtotal</p>
+                            <p className="text-right">Precio</p>
+                            <p className="text-right">Cantidad</p>
+                            <p className="text-right">Subtotal</p>
                             <p className="text-center">Stock</p>
                             <p></p>
                         </div>
@@ -373,8 +371,8 @@ export default function Carrito({
                                     Descuento {descuento_uno ? descuento_uno + '%' : ''} {descuento_dos ? descuento_dos + '%' : ''} +{' '}
                                     {descuento_tres ? descuento_tres + '%' : ''}
                                 </p>
-                                <p>
-                                    ${' '}
+                                <p className="text-green-500">
+                                    -${' '}
                                     {Number(descuento)?.toLocaleString('es-AR', {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2,

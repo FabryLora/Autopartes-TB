@@ -17,4 +17,9 @@ class ProductoModelo extends Model
     {
         return $this->belongsTo(SubCategoria::class)->orderBy('order', 'asc');
     }
+
+    public function modelo()
+    {
+        return $this->belongsTo(SubCategoria::class, 'sub_categoria_id')->orderBy('order', 'asc');
+    }
 }

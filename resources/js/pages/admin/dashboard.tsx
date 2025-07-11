@@ -109,8 +109,7 @@ export default function Dashboard({ children }) {
             subHref: [
                 { title: 'Clientes', href: 'clientes' },
                 { title: 'Vendedores', href: 'vendedores' },
-                { title: 'Productos', href: 'productos-zonaprivada' },
-                { title: 'Informacion de pagos', href: 'info-pagos' },
+                { title: 'Informacion de pagos', href: 'informacion-de-pago' },
                 { title: 'Pedidos', href: 'pedidos' },
                 { title: 'Carrito', href: 'carrito' },
             ],

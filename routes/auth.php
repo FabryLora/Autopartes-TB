@@ -15,6 +15,7 @@ use App\Http\Controllers\PedidoProductoController;
 use App\Http\Controllers\PrivadaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\SendPedidoController;
+use App\Models\InformacionDePago;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -68,7 +69,10 @@ Route::middleware('auth')->group(function () {
             return inertia('privada/margenes');
         })->name('margenes');
         Route::get('privada/informacion-de-pagos', function () {
-            return inertia('privada/informacion');
+            $informacion = InformacionDePago::first();
+            return inertia('privada/informacion', [
+                'informacion' => $informacion,
+            ]);
         })->name('informacion.pagos');
 
         Route::get('privada/pedidos', [PedidoController::class, 'misPedidos']);

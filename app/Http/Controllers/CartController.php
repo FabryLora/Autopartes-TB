@@ -14,8 +14,10 @@ class CartController extends Controller
     public function __construct()
     {
         // Restaurar carrito al inicializar si hay usuario logueado
-        if (Auth::check()) {
+        if (Auth::check() && !session('cliente_seleccionado')) {
             Cart::restore(Auth::id());
+        } else {
+            Cart::restore(session('cliente_seleccionado')->id);
         }
     }
 
@@ -29,6 +31,13 @@ class CartController extends Controller
     }
     public function addtocart(Request $request)
     {
+
+
+        $producto = Producto::find($request->id)->with('precio')->first();
+
+
+
+
         $request->validate([
             'id' => 'required',
             'name' => 'required|string',
@@ -40,13 +49,16 @@ class CartController extends Controller
             $request->id,
             $request->name,
             $request->qty,
-            $request->price,
+            $producto->oferta == 1 ? $request->price * (1 - $producto->descuento_oferta / 100) : $producto->precio->precio, // Asegurarse de que el precio sea correcto
             0
         );
 
+
         // Guardar en base de datos si hay usuario logueado
-        if (Auth::check()) {
+        if (Auth::check() && !session('cliente_seleccionado')) {
             Cart::store(Auth::id());
+        } else {
+            Cart::store(session('cliente_seleccionado')->id);
         }
     }
 
@@ -62,8 +74,10 @@ class CartController extends Controller
 
 
         // Guardar cambios en base de datos
-        if (Auth::check()) {
+        if (Auth::check() && !session('cliente_seleccionado')) {
             Cart::store(Auth::id());
+        } else {
+            Cart::store(session('cliente_seleccionado')->id);
         }
 
         return redirect()->back()->with('success', 'Carrito actualizado correctamente');
@@ -74,8 +88,10 @@ class CartController extends Controller
         Cart::remove($request->rowId);
 
         // Guardar cambios en base de datos
-        if (Auth::check()) {
+        if (Auth::check() && !session('cliente_seleccionado')) {
             Cart::store(Auth::id());
+        } else {
+            Cart::store(session('cliente_seleccionado')->id);
         }
 
         return redirect()->back()->with('success', 'Producto eliminado del carrito');
@@ -86,8 +102,10 @@ class CartController extends Controller
         Cart::destroy();
 
         // Eliminar de base de datos
-        if (Auth::check()) {
+        if (Auth::check() && !session('cliente_seleccionado')) {
             Cart::erase(Auth::id());
+        } else {
+            Cart::erase(session('cliente_seleccionado')->id);
         }
 
         return redirect()->back()->with('success', 'Carrito vaciado completamente');
@@ -95,13 +113,16 @@ class CartController extends Controller
 
     public function saveCart()
     {
-        if (Auth::check()) {
+        if (Auth::check() && !session('cliente_seleccionado')) {
             Cart::store(Auth::id());
             return response()->json(['success' => true, 'message' => 'Carrito guardado']);
+        } else {
+            Cart::store(session('cliente_seleccionado')->id);
+            return response()->json(['success' => true, 'message' => 'Carrito guardado']);
         }
-
-        return response()->json(['success' => false, 'message' => 'Usuario no autenticado']);
     }
+
+
 
     public function compraRapida(Request $request)
     {
@@ -115,13 +136,15 @@ class CartController extends Controller
             $producto->id,
             $producto->name,
             $request->qty,
-            $producto->precio->precio, // Asegurarse de que el precio sea correcto
+            $producto->oferta ? $producto->precio->precio * (1 - $producto->descuento_oferta / 100) : $producto->precio->precio, // Asegurarse de que el precio sea correcto
             0
         );
 
         // Guardar en base de datos si hay usuario logueado
-        if (Auth::check()) {
+        if (Auth::check() && !session('cliente_seleccionado')) {
             Cart::store(Auth::id());
+        } else {
+            Cart::store(session('cliente_seleccionado')->id);
         }
     }
 }

@@ -1,14 +1,38 @@
 import { router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 const Slider = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
 
     const { productosOferta } = usePage().props;
 
+    // Auto-advance configuration
+    const SLIDE_DURATION = 5000; // 5 segundos por slide
+
     const goToSlide = (index) => {
         setCurrentSlide(index);
+    };
+
+    // Auto-advance effect
+    useEffect(() => {
+        if (!productosOferta.length || isPaused) return;
+
+        const interval = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % productosOferta.length);
+        }, SLIDE_DURATION);
+
+        return () => clearInterval(interval);
+    }, [productosOferta.length, isPaused]);
+
+    // Pause on hover
+    const handleMouseEnter = () => {
+        setIsPaused(true);
+    };
+
+    const handleMouseLeave = () => {
+        setIsPaused(false);
     };
 
     if (!productosOferta.length) return null;
@@ -36,9 +60,12 @@ const Slider = () => {
     };
 
     return (
-        <div className="relative mx-auto h-[232px] w-full">
-            <div className="relative overflow-hidden shadow-lg">
-                <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
+        <div className="relative mx-auto h-[232px] w-full" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <div className="relative flex justify-center overflow-hidden shadow-lg">
+                <div
+                    className="relative flex transition-transform duration-500 ease-in-out"
+                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                >
                     {productosOferta.map((slide, index) => (
                         <div
                             key={index}
@@ -76,19 +103,6 @@ const Slider = () => {
                                             Agregar a carrito
                                         </button>
                                     </div>
-
-                                    {/* Dots Indicator - Inside container */}
-                                    <div className="flex space-x-2">
-                                        {productosOferta.map((_, index) => (
-                                            <button
-                                                key={index}
-                                                onClick={() => goToSlide(index)}
-                                                className={`h-[5px] w-[28px] transition-all duration-300 ${
-                                                    index === currentSlide ? 'bg-white' : 'bg-gray-400 hover:bg-gray-300'
-                                                }`}
-                                            />
-                                        ))}
-                                    </div>
                                 </div>
 
                                 <div className="ml-8 flex-shrink-0">
@@ -102,6 +116,17 @@ const Slider = () => {
                                 </div>
                             </div>
                         </div>
+                    ))}
+                </div>
+                <div className="absolute bottom-0 z-10 mx-auto flex w-[1200px] space-x-2 pb-4">
+                    {productosOferta.map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => goToSlide(index)}
+                            className={`h-[5px] w-[28px] transition-all duration-300 ${
+                                index === currentSlide ? 'bg-white' : 'bg-gray-400 hover:bg-gray-300'
+                            }`}
+                        />
                     ))}
                 </div>
             </div>

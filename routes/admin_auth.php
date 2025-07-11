@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\ImagenProductoController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\InformacionDePagoController;
 use App\Http\Controllers\ListaDePreciosController;
 use App\Http\Controllers\LogosController;
 use App\Http\Controllers\MarcaController;
@@ -156,6 +157,10 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('cambiarPrecios', [ImportController::class, 'importar'])->name('cambiarPrecios');
 
     Route::get('admin/productos-zonaprivada', [ProductoController::class, 'productoszonaprivada'])->name('admin.productos.productoszonaprivada');
+
+
+    Route::get('admin/informacion-de-pago', [InformacionDePagoController::class, 'index'])->name('admin.informacion-de-pago');
+    Route::post('admin/informacion-de-pago', [InformacionDePagoController::class, 'update'])->name('admin.informacion-de-pago.update');
 
     Route::get('/admin/dashboard', function () {
         if (!Auth::guard('admin')->check()) {

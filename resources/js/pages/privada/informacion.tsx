@@ -1,8 +1,10 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import toast from 'react-hot-toast';
 import DefaultLayout from '../defaultLayout';
 
 export default function Informacion() {
+    const { informacion } = usePage().props;
+
     const { setData, post, processing } = useForm({
         fecha: '',
         importe: '',
@@ -44,7 +46,7 @@ export default function Informacion() {
                     <div className="flex flex-row gap-2">
                         <div className="flex w-full flex-col gap-2">
                             <h3 className="text-[16px] font-semibold">Cuentas bancarias para efectuar el depósito:</h3>
-                            <div></div>
+                            <div dangerouslySetInnerHTML={{ __html: informacion?.informacion }} />
                         </div>
                         <div className="h-[568px] w-[808px]">
                             <form onSubmit={sendInformacion} className="grid h-fit w-[808px] grid-cols-4 gap-6 bg-[#ECECEC] p-5">

@@ -31,6 +31,14 @@
     {{-- Footer (opcional) --}}
     @includeIf('components.footer')
 
+    {{-- resources/views/components/whatsapp.blade.php --}}
+    @if(isset($contacto['wp']) && !empty($contacto['wp']))
+        <a target="_blank" rel="noopener noreferrer"
+            href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $contacto['wp']) }}" class="fixed right-0 bottom-0">
+            <img src="{{ asset('images/wpIcon.png') }}" alt="WhatsApp" />
+        </a>
+    @endif
+
     @stack('scripts') {{-- Scripts específicos de cada vista --}}
 </body>
 

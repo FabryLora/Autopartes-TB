@@ -59,8 +59,8 @@
                     @foreach ($categorias as $cat)
                         <div class="border-b border-gray-200"
                             x-data="{ 
-                                                                                                                                                                                                                                                                                    open: {{ $modelo_id && $cat->subCategorias && $cat->subCategorias->where('id', $modelo_id ?? null)->count() > 0 ? 'true' : 'false' }} 
-                                                                                                                                                                                                                                                                                 }">
+                                                                                                                                                                                                                                                                                                                                                                                                                    open: {{ $modelo_id && $cat->subCategorias && $cat->subCategorias->where('id', $modelo_id ?? null)->count() > 0 ? 'true' : 'false' }} 
+                                                                                                                                                                                                                                                                                                                                                                                                                 }">
                             <div
                                 class="flex flex-row justify-between items-center py-3 px-2 transition-all duration-300 ease-in-out text-lg {{ $categoria && $cat->id == $categoria->id ? 'font-semibold' : '' }}">
                                 <a href="{{ route('productos', ['id' => $cat->id]) }}" class="block flex-1">
@@ -131,11 +131,14 @@
                                         class="text-primary-orange  group-hover:text-green-700 text-[16px] transition-colors duration-300">
                                         {{ $producto->code }}
                                     </h3>
-                                    @foreach ($producto->marcas as $marca)
-                                        <p class="text-gray-800 transition-colors duration-300 ">
-                                            {{ $marcas->marca->name ?? 'Marca no disponible' }}
-                                        </p>
-                                    @endforeach
+                                    <div class="flex flex-row gap-2">
+                                        @foreach ($producto->marcas as $marca)
+                                            <p class="text-gray-800 transition-colors duration-300 ">
+                                                {{ $marca->marca->name ?? 'Marca no disponible' }} -
+                                            </p>
+                                        @endforeach
+                                    </div>
+
                                     <p
                                         class="text-gray-800 text-[15px] font-semibold transition-colors duration-300 line-clamp-2 overflow-hidden break-words">
                                         {{ $producto->name }}

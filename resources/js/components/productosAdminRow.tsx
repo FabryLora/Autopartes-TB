@@ -24,7 +24,7 @@ export default function ProductosAdminRow({ producto }) {
         desc_visible: producto?.desc_visible,
         desc_invisible: producto?.desc_invisible,
         unidad_pack: producto?.unidad_pack,
-        familia: producto?.familia,
+        oferta: producto?.oferta,
         stock: producto?.stock,
         descuento_oferta: producto?.descuento_oferta,
         id: producto?.id,
@@ -282,18 +282,6 @@ export default function ProductosAdminRow({ producto }) {
                                         id="medida"
                                         value={data.medida}
                                         onChange={(e) => setData('medida', e.target.value)}
-                                    />
-
-                                    <label htmlFor="familia">
-                                        Familia <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        className="focus:outline-primary-orange rounded-md p-2 outline outline-gray-300 focus:outline"
-                                        type="text"
-                                        name="familia"
-                                        id="familia"
-                                        value={data.familia}
-                                        onChange={(e) => setData('familia', e.target.value)}
                                     />
 
                                     <label htmlFor="unidad">

@@ -52,7 +52,7 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
         }
     };
 
-    const { post } = useForm({
+    const { post, setData } = useForm({
         id: producto?.id,
         name: producto?.code,
         qty: cantidad,
@@ -60,8 +60,19 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
         rowId: producto?.rowId,
     });
 
+    useEffect(() => {
+        setData({
+            id: producto?.id,
+            name: producto?.code,
+            qty: cantidad,
+            price: producto?.precio?.precio,
+            rowId: producto?.rowId,
+        });
+    }, [cantidad, producto]);
+
     const addToCart = (e) => {
         e.preventDefault();
+
         post(route('addtocart'), {
             preserveScroll: true,
             onSuccess: () => {
@@ -87,6 +98,7 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
             },
         });
     };
+
     return (
         <div className="grid h-fit grid-cols-9 items-center border-b border-gray-200 py-2 text-[15px] text-black">
             <div className="h-[85px] w-[85px]">
@@ -105,21 +117,42 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
 
             {margenSwitch ? (
                 <div className="relative">
-                    <p>
+                    {producto?.oferta == 1 && <p className="absolute -top-5 w-full text-right text-xs font-bold text-green-500">OFERTA</p>}
+                    <p className="text-right">
                         ${' '}
-                        {(Number(producto?.precio?.precio) * (1 - Number(margen) / 100))?.toLocaleString('es-AR', {
+                        {(
+                            Number(
+                                producto?.oferta == 1
+                                    ? Number(producto?.precio?.precio) * (1 - Number(producto?.descuento_oferta) / 100)
+                                    : Number(producto?.precio?.precio),
+                            ) *
+                            (1 - Number(margen) / 100)
+                        )?.toLocaleString('es-AR', {
                             maximumFractionDigits: 2,
                             minimumFractionDigits: 2,
                         })}
                     </p>
-                    <p className="absolute text-gray-400 line-through">
-                        $ {Number(producto?.precio?.precio)?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                    <p className="absolute w-full text-right text-gray-400 line-through">
+                        ${' '}
+                        {Number(
+                            producto?.oferta == 1
+                                ? Number(producto?.precio?.precio) * (1 - Number(producto?.descuento_oferta) / 100)
+                                : Number(producto?.precio?.precio),
+                        )?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                     </p>
                 </div>
             ) : (
-                <p className="text-right">
-                    $ {Number(producto?.precio?.precio)?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
-                </p>
+                <div className="relative">
+                    {producto?.oferta == 1 && <p className="absolute -top-5 w-full text-right text-xs font-bold text-green-500">OFERTA</p>}
+                    <p className="text-right">
+                        ${' '}
+                        {Number(
+                            producto?.oferta == 1
+                                ? Number(producto?.precio?.precio) * (1 - Number(producto?.descuento_oferta) / 100)
+                                : producto?.precio?.precio,
+                        )?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                    </p>
+                </div>
             )}
 
             <p className="flex justify-end">
@@ -145,20 +178,37 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
 
             {margenSwitch ? (
                 <div className="relative">
-                    <p>
+                    <p className="text-right">
                         ${' '}
-                        {(Number(producto?.subtotal) * (1 - Number(margen) / 100))?.toLocaleString('es-AR', {
+                        {(
+                            Number(
+                                producto?.oferta == 1
+                                    ? Number(producto?.precio?.precio) * cantidad * (1 - Number(producto?.descuento_oferta) / 100)
+                                    : Number(producto?.precio?.precio) * cantidad,
+                            ) *
+                            (1 - Number(margen) / 100)
+                        )?.toLocaleString('es-AR', {
                             maximumFractionDigits: 2,
                             minimumFractionDigits: 2,
                         })}
                     </p>
-                    <p className="absolute text-gray-400 line-through">
-                        $ {Number(producto?.subtotal)?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                    <p className="absolute w-full text-right text-gray-400 line-through">
+                        ${' '}
+                        {Number(
+                            producto?.oferta == 1
+                                ? Number(producto?.precio?.precio) * cantidad * (1 - Number(producto?.descuento_oferta) / 100)
+                                : producto?.precio?.precio * cantidad,
+                        )?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                     </p>
                 </div>
             ) : (
                 <p className="text-right">
-                    $ {Number(producto?.subtotal)?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                    ${' '}
+                    {Number(
+                        producto?.oferta == 1
+                            ? Number(producto?.precio?.precio) * cantidad * (1 - Number(producto?.descuento_oferta) / 100)
+                            : producto?.precio?.precio * cantidad,
+                    )?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                 </p>
             )}
             <p className="flex justify-center">

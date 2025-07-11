@@ -40,7 +40,7 @@ class   PrivadaController extends Controller
             // Agregar el rowId al producto
             $producto->rowId = $itemCarrito ? $itemCarrito->rowId : null;
             $producto->qty = $itemCarrito ? $itemCarrito->qty : null;
-            $producto->subtotal = $itemCarrito->price * ($itemCarrito->qty ?? 1);
+            $producto->subtotal = $producto->oferta == 1 ? $producto->precio->precio * (1 - $producto->descuento_oferta / 100) * ($itemCarrito->qty ?? 1) : $producto->precio->precio * ($itemCarrito->qty ?? 1);
 
             return $producto;
         });
@@ -115,7 +115,7 @@ class   PrivadaController extends Controller
 
         $pedido = Pedido::create(
             [
-                'user_id' => auth()->id(),
+                'user_id' => session('cliente_seleccionado') ? session('cliente_seleccionado')->id : auth()->id(),
                 'tipo_entrega' => $request->tipo_entrega,
                 'descuento' => $request->descuento,
                 'mensaje' => $request->mensaje,
