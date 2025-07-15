@@ -1,11 +1,13 @@
 import ClientesAdminRow from '@/components/clientesAdminRow';
 import { router, useForm, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import Select from 'react-select';
 import Dashboard from './dashboard';
 
 export default function Clientes() {
-    const { clientes, provincias, vendedores, listas } = usePage().props;
+    const { clientes, provincias, vendedores, listas, sucursales } = usePage().props;
 
     const { data, setData, post, reset } = useForm({
         name: '',
@@ -27,6 +29,7 @@ export default function Clientes() {
         lista_de_precios_id: '',
         rol: 'cliente',
         autorizado: 1,
+        sucursales: [],
     });
 
     const signup = (e: React.FormEvent<HTMLFormElement>) => {
@@ -43,6 +46,16 @@ export default function Clientes() {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [createView, setCreateView] = useState(false);
+    const [subirView, setSubirView] = useState(false);
+    const [archivo, setArchivo] = useState();
+    const [sucursalesSelected, setSucursalesSelected] = useState([]);
+
+    useEffect(() => {
+        signupForm.setData(
+            'sucursales',
+            sucursalesSelected.map((m) => m.value),
+        );
+    }, [sucursalesSelected]);
 
     // Manejadores para la paginación del backend
     const handlePageChange = (page) => {
@@ -74,6 +87,28 @@ export default function Clientes() {
         );
     };
 
+    const importarClientes = (e) => {
+        e.preventDefault();
+
+        router.post(
+            route('importarCLientes'),
+            {
+                archivo: archivo,
+            },
+            {
+                onSuccess: () => {
+                    toast.success('Clientes importados correctamente');
+                    reset();
+                    setSubirView(false);
+                },
+                onError: (errors) => {
+                    toast.error('Error al importar cientes');
+                    console.log(errors);
+                },
+            },
+        );
+    };
+
     return (
         <Dashboard>
             <div className="flex w-full flex-col p-6">
@@ -85,7 +120,10 @@ export default function Clientes() {
                             exit={{ opacity: 0 }}
                             className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-black/50 text-left"
                         >
-                            <form onSubmit={signup} className="flex h-fit w-[600px] flex-col gap-6 bg-white p-5 shadow-md">
+                            <form
+                                onSubmit={signup}
+                                className="flex h-fit max-h-[90vh] w-[600px] flex-col gap-6 overflow-y-auto bg-white p-5 shadow-md"
+                            >
                                 <h2 className="text-xl font-bold text-black">Registrar cliente</h2>
                                 <div className="grid w-full grid-cols-2 gap-3 text-[16px]">
                                     <div className="col-span-2 flex flex-col gap-2">
@@ -131,7 +169,50 @@ export default function Clientes() {
                                             type="email"
                                             name="email"
                                             id="email"
-                                            required
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <label htmlFor="email2">Email 2</label>
+                                        <input
+                                            onChange={(ev) => signupForm.setData('email_dos', ev.target.value)}
+                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                            type="email2"
+                                            name="email2"
+                                            id="email2"
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <label htmlFor="email3">Email 3</label>
+                                        <input
+                                            onChange={(ev) => signupForm.setData('email_tres', ev.target.value)}
+                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                            type="email3"
+                                            name="email3"
+                                            id="email3"
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <label htmlFor="email4">Email 4</label>
+                                        <input
+                                            onChange={(ev) => signupForm.setData('email_cuatro', ev.target.value)}
+                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                            type="email4"
+                                            name="email4"
+                                            id="email4"
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <label htmlFor="razon social">Razon social</label>
+                                        <input
+                                            onChange={(ev) => signupForm.setData('razon_social', ev.target.value)}
+                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                            type="text"
+                                            name="razon social"
+                                            id="razon social"
                                         />
                                     </div>
 
@@ -174,7 +255,6 @@ export default function Clientes() {
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="lista">Lista</label>
                                         <select
-                                            required
                                             onChange={(ev) => signupForm.setData('lista_de_precios_id', ev.target.value)}
                                             className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
                                             name="lista_de_precios_id"
@@ -245,6 +325,21 @@ export default function Clientes() {
                                         </div>
                                     </div>
 
+                                    <div className="col-span-2 flex flex-col gap-2">
+                                        <label htmlFor="sucursal">Sucursales</label>
+                                        <Select
+                                            options={sucursales?.map((sucursal) => ({
+                                                value: sucursal.id,
+                                                label: sucursal.name,
+                                            }))}
+                                            onChange={(options) => setSucursalesSelected(options)}
+                                            className=""
+                                            name="sucursal"
+                                            id="sucursal"
+                                            isMulti
+                                        />
+                                    </div>
+
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="provincia">Provincia</label>
                                         <select
@@ -302,6 +397,65 @@ export default function Clientes() {
                         </motion.div>
                     )}
                 </AnimatePresence>
+                <AnimatePresence>
+                    {subirView && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-black/50 text-left"
+                        >
+                            <form onSubmit={importarClientes} method="POST" className="relative rounded-lg bg-white text-black">
+                                <div className="bg-primary-orange sticky top-0 flex flex-row items-center gap-2 rounded-t-lg p-4">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="28"
+                                        height="28"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="#ffffff"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        className="lucide lucide-plus-icon lucide-plus"
+                                    >
+                                        <path d="M5 12h14" />
+                                        <path d="M12 5v14" />
+                                    </svg>
+                                    <h2 className="text-2xl font-semibold text-white">Subir Clientes</h2>
+                                </div>
+
+                                <div className="max-h-[60vh] w-[500px] overflow-y-auto rounded-md bg-white p-4">
+                                    <div className="flex flex-col gap-4">
+                                        <label htmlFor="archivo">Archivo</label>
+                                        <input
+                                            className="file:bg-primary-orange rounded-md p-2 file:cursor-pointer file:rounded-full file:px-4 file:py-2 file:text-white"
+                                            type="file"
+                                            name="archivo"
+                                            id="archivo"
+                                            onChange={(e) => setArchivo(e.target.files[0])}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="bg-primary-orange sticky bottom-0 flex justify-end gap-4 rounded-b-md p-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setSubirView(false)}
+                                        className="rounded-md border border-red-500 bg-red-500 px-2 py-1 text-white transition duration-300"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="hover:text-primary-orange rounded-md px-2 py-1 text-white outline outline-white transition duration-300 hover:bg-white"
+                                    >
+                                        Subir
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
                 <div className="mx-auto flex w-full flex-col gap-3">
                     <h2 className="border-primary-orange text-primary-orange text-bold w-full border-b-2 text-2xl">Clientes</h2>
                     <div className="flex h-fit w-full flex-row gap-5">
@@ -323,6 +477,12 @@ export default function Clientes() {
                             className="bg-primary-orange w-[400px] rounded px-4 py-1 font-bold text-white hover:bg-orange-400"
                         >
                             Registrar cliente
+                        </button>
+                        <button
+                            onClick={() => setSubirView(true)}
+                            className="bg-primary-orange w-[400px] rounded px-4 py-1 font-bold text-white hover:bg-orange-400"
+                        >
+                            Subir clientes
                         </button>
                     </div>
 

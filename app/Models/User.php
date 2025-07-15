@@ -57,4 +57,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(User::class, 'vendedor_id');
     }
+
+    /**
+     * Get the sucursales associated with the user.
+     */
+    public function sucursales()
+    {
+        return $this->hasMany(SucursalCliente::class, 'user_id');
+    }
 }

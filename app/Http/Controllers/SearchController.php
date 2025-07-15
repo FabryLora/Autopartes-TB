@@ -11,6 +11,7 @@ class SearchController extends Controller
 {
     public function search(Request $request): JsonResponse
     {
+
         $request->validate([
             'query' => 'required|string|min:1|max:100'
         ]);
@@ -20,37 +21,24 @@ class SearchController extends Controller
 
         try {
             // Buscar productos por nombre, descripción o SKU
-            $products = Producto::where(function ($q) use ($query) {
-                $q->where('name', 'LIKE', "%{$query}%")
-                    ->orWhere('description', 'LIKE', "%{$query}%")
-                    ->orWhere('code', 'LIKE', "%{$query}%");
-            })
+            $products = Producto::where('name', 'LIKE', "%{$query}%")
+                ->orWhere('desc_visible', 'LIKE', "%{$query}%")
+                ->orWhere('desc_invisible', 'LIKE', "%{$query}%")
+                ->orWhere('code', 'LIKE', "%{$query}%")
+                ->orWhere('code_oem', 'LIKE', "%{$query}%")
+                ->orWhere('code_competitor', 'LIKE', "%{$query}%")
 
-
+                ->with('imagenes')
                 ->limit($limit)
                 ->get();
 
             // Formatear los resultados
-            $formattedProducts = $products->map(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'description' => $product->description ?
-                        (strlen($product->description) > 100 ?
-                            substr($product->description, 0, 100) . '...' :
-                            $product->description) :
-                        'Sin descripción',
-                    'price' => number_format($product->price, 2),
-                    'stock' => $product->stock,
-                    'image' => $product->image ? asset('storage/' . $product->image) : null,
-                    'url' => route('products.show', $product->slug ?? $product->id)
-                ];
-            });
+
 
             return response()->json([
                 'success' => true,
-                'products' => $formattedProducts,
-                'total' => $formattedProducts->count(),
+                'products' => $products,
+                'total' => $products->count(),
                 'query' => $query
             ]);
         } catch (\Exception $e) {
@@ -65,6 +53,7 @@ class SearchController extends Controller
 
     public function searchPage(Request $request)
     {
+
         $query = $request->input('q', '');
         $perPage = 20;
 

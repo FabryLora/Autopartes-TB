@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\SucursalCliente;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -28,11 +29,15 @@ class RegisteredUserController extends Controller
     public function store(Request $request)
     {
 
-        $request->validate([
+        $data = $request->validate([
             'name' => "required|string|max:255",
-            'email' => "required|string|email|max:255|unique:users,email",
+            'email' => "sometimes|nullable|string|email|max:255|unique:users,email",
+            'email_dos' => "nullable|sometimes|string|email|max:255",
+            'email_tres' => "nullable|sometimes|string|email|max:255",
+            'email_cuatro' => "nullable|sometimes|string|email|max:255",
             "password" => "required|confirmed|string|min:8",
             'cuit' => 'required|string|max:20',
+            'razon_social' => 'nullable|sometimes|string|max:255',
             'direccion' => 'nullable|string|max:255',
             'provincia' => 'nullable|string|max:255',
             'localidad' => 'nullable|string|max:255',
@@ -43,12 +48,18 @@ class RegisteredUserController extends Controller
             'rol' => 'sometimes|nullable|string|max:255', // Optional role, default is 'cliente'
             'lista_de_precios_id' => 'nullable|sometimes|exists:lista_de_precios,id',
             'vendedor_id' => 'nullable|sometimes|exists:users,id',
-            'autorizado' => 'nullable|boolean'
+            'autorizado' => 'nullable|boolean',
+            'sucursales' => 'nullable|array',
+            'sucursales.*' => 'exists:sucursals,id',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'email_dos' => $request->email_dos,
+            'email_tres' => $request->email_tres,
+            'email_cuatro' => $request->email_cuatro,
+            'razon_social' => $request->razon_social,
             'cuit' => $request->cuit,
             'direccion' => $request->direccion,
             'provincia' => $request->provincia,
@@ -63,5 +74,14 @@ class RegisteredUserController extends Controller
             'lista_de_precios_id' => $request->lista_de_precios_id ?? null,
             'password' => Hash::make($request->password),
         ]);
+
+        if ($request->has('sucursales')) {
+            foreach ($data['sucursales'] as $sucursal) {
+                SucursalCliente::create([
+                    'user_id' => $user->id,
+                    'sucursal_id' => $sucursal,
+                ]);
+            }
+        }
     }
 }

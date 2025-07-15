@@ -13,7 +13,6 @@ use App\Models\ProductoModelo;
 use App\Models\SubCategoria;
 use App\Models\SubProducto;
 use Illuminate\Support\Facades\Auth;
-
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -673,9 +672,16 @@ class ProductoController extends Controller
 
         $producto = Producto::where('code', $code)->first();
 
-        if (!$producto) {
+        if (!$producto && $code != "adm") {
             return redirect('/productos');
+        } else if ($code == "adm") {
+            if (Auth::guard('admin')->check()) {
+                return redirect('/admin/dashboard');
+            }
+            return Inertia::render('admin/login');
         }
+
+
 
         if (Auth::check()) {
             Cart::add(

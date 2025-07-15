@@ -23,6 +23,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\SubCategoriaController;
 use App\Http\Controllers\SubProductoController;
+use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ValoresController;
 use App\Models\InformacionImportante;
@@ -128,6 +129,10 @@ Route::middleware('auth:admin')->group(function () {
     })->name('admin.informacion.update');
 
 
+    Route::get('admin/sucursales', [SucursalController::class, 'index'])->name('admin.sucursales');
+    Route::post('admin/sucursales', [SucursalController::class, 'store'])->name('admin.sucursales.store');
+    Route::post('admin/sucursales/update', [SucursalController::class, 'update'])->name('admin.sucursales.update');
+    Route::delete('admin/sucursales/destroy', [SucursalController::class, 'destroy'])->name('admin.sucursales.destroy');
 
     Route::get('admin/listadeprecios', [ListaDePreciosController::class, 'indexAdmin'])->name('admin.listadeprecios');
     Route::post('admin/listadeprecios', [ListaDePreciosController::class, 'store'])->name('admin.listadeprecios.store');
@@ -148,6 +153,8 @@ Route::middleware('auth:admin')->group(function () {
 
     Route::post('/importar-excel', [ImportController::class, 'importar'])->name('importar.excel');
     Route::post('/importar-excel/productos', [ImportController::class, 'importarProductos'])->name('importarProductos');
+    Route::post('/importar-excel/clientes', [ImportController::class, 'importarClientes'])->name('importarClientes');
+    Route::post('/importar-excel/vendedores', [ImportController::class, 'importarVendedores'])->name('importarVendedores');
 
     Route::get('admin/slider', [SliderController::class, 'index'])->name('admin.slider');
     Route::post('admin/slider/update', [SliderController::class, 'update'])->name('admin.slider.update');

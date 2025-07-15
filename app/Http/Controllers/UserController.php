@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\ListaDePrecios;
 use App\Models\Provincia;
+use App\Models\Sucursal;
+use App\Models\SucursalCliente;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -14,12 +16,14 @@ class UserController extends Controller
 
         $perPage = $request->input('per_page', 10);
 
-        $query = User::query()->where('rol', 'cliente')->with('vendedor')->orderBy('name', 'asc');
+        $query = User::query()->where('rol', 'cliente')->with(['vendedor', 'sucursales'])->orderBy('name', 'asc');
 
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = $request->search;
             $query->where('name', 'LIKE', '%' . $searchTerm . '%');
         }
+
+        $sucursales = Sucursal::orderBy('name', 'asc')->get();
 
         $users = $query->paginate($perPage);
         $listas = ListaDePrecios::select('id', 'name')->orderBy('name', 'asc')->get();
@@ -33,6 +37,7 @@ class UserController extends Controller
             'provincias' => $provincias,
             'vendedores' => $vendedores,
             'listas' => $listas,
+            'sucursales' => $sucursales,
         ]);
     }
 
@@ -70,10 +75,21 @@ class UserController extends Controller
 
         $user = User::findOrFail($request->id);
 
+        $datos = $request->validate(
+            [
+                'sucursales' => 'nullable|array',
+                'sucursales.*' => 'exists:sucursals,id',
+            ]
+        );
+
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email_dos' => 'nullable|sometimes|string|email|max:255',
+            'email_tres' => 'nullable|sometimes|string|email|max:255',
+            'email_cuatro' => 'nullable|sometimes|string|email|max:255',
             'password' => 'nullable|string|min:8|confirmed',
+            'razon_social' => 'nullable|sometimes|string|max:255',
             'cuit' => 'required|string|max:20',
             'direccion' => 'nullable|string|max:255',
             'provincia' => 'nullable|string|max:255',
@@ -86,8 +102,18 @@ class UserController extends Controller
             'lista_de_precios_id' => 'sometimes|exists:lista_de_precios,id',
             'autorizado' => 'nullable|boolean',
             'vendedor_id' => 'nullable|sometimes|exists:users,id',
+
         ]);
 
+
+        if ($request->has('sucursales')) {
+            foreach ($datos['sucursales'] as $sucursal) {
+                SucursalCliente::create([
+                    'user_id' => $user->id,
+                    'sucursal_id' => $sucursal,
+                ]);
+            }
+        }
 
         $user->update($data);
     }

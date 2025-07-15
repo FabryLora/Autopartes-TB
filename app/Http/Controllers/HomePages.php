@@ -7,6 +7,7 @@ use App\Models\BannerPortada;
 use App\Models\Calidad;
 use App\Models\Categoria;
 use App\Models\Contacto;
+use App\Models\Metadatos;
 use App\Models\Nosotros;
 use App\Models\Novedades;
 use App\Models\Producto;
@@ -23,6 +24,9 @@ class HomePages extends Controller
         if (Auth::check()) {
             return redirect('/privada/productos');
         }
+
+        $metadatos = Metadatos::where('name', 'home')->first();
+
         $categorias = Categoria::orderBy('order', 'asc')->get();
         $subcategorias = SubCategoria::orderBy('order', 'asc')->get();
         $sliders = Slider::orderBy('order', 'asc')->get();
@@ -39,6 +43,7 @@ class HomePages extends Controller
             'categorias' => $categorias,
             'subcategorias' => $subcategorias,
             'productos' => $productos,
+            'metadatos' => $metadatos,
         ]);
     }
 

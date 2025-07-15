@@ -36,7 +36,7 @@ class ActualizarPreciosJob implements ShouldQueue
 
         Log::info('=== INICIO DEBUG EXCEL ===');
         Log::info('Total de filas: ' . count($rows));
-        Log::info('Lista ID: ' . $this->lista_id);
+        Log::info(message: 'Lista ID: ' . $this->lista_id);
 
         foreach ($rows as $index => $row) {
             Log::info("Fila {$index}: " . json_encode($row));

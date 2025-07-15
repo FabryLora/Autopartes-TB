@@ -97,7 +97,7 @@
                     x-transition:leave="transition ease-in duration-150"
                     x-transition:leave-start="opacity-100 transform scale-100"
                     x-transition:leave-end="opacity-0 transform scale-95"
-                    class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-96 overflow-y-auto max-sm:max-h-60">
+                    class="absolute top-full w-[300px] left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-96 overflow-y-auto max-sm:max-h-60">
 
                     <!-- Loading state -->
                     <div x-show="isLoading" class="p-4 max-sm:p-2 text-center text-gray-500">
@@ -124,24 +124,15 @@
                                 @click="selectProduct(product)">
                                 <div class="flex items-center gap-3 max-sm:gap-2">
                                     <div class="w-12 h-12 max-sm:w-8 max-sm:h-8 bg-gray-200 rounded-md flex-shrink-0">
-                                        <img :src="product.image || '/images/no-image.png'" :alt="product.name"
-                                            class="w-full h-full object-cover rounded-md"
-                                            onerror="this.src='/images/no-image.png'">
+                                        <img :src="product.imagenes[0].image || ''" :alt="product.name"
+                                            class="w-full h-full object-cover rounded-md">
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <h4 class="font-medium text-gray-900 truncate max-sm:text-sm"
                                             x-text="product.name"></h4>
                                         <p class="text-sm max-sm:text-xs text-gray-500 truncate"
-                                            x-text="product.description"></p>
-                                        <div class="flex items-center gap-2 mt-1">
-                                            <span class="text-sm max-sm:text-xs font-semibold text-primary-orange"
-                                                x-text="`$${product.price}`"></span>
-                                            <span x-show="product.stock > 0"
-                                                class="text-xs max-sm:text-[10px] text-green-600">En
-                                                stock</span>
-                                            <span x-show="product.stock === 0"
-                                                class="text-xs max-sm:text-[10px] text-red-600">Agotado</span>
-                                        </div>
+                                            x-text="product.desc_visible"></p>
+
                                     </div>
                                 </div>
                             </div>
@@ -192,7 +183,7 @@
             @foreach(($isPrivate ? $privateLinks : $defaultLinks) as $link)
                 <a href="{{ $link['href'] }}" :class="scrolled ? 'text-black' : 'text-white'"
                     class="text-sm hover:text-primary-orange transition-colors duration-300 
-                                                                                {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold' : '' }}">
+                                                                                                                        {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold' : '' }}">
                     {{ $link['title'] }}
                 </a>
             @endforeach
@@ -211,7 +202,7 @@
             @foreach(($isPrivate ? $privateLinks : $defaultLinks) as $link)
                 <a href="{{ $link['href'] }}"
                     class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-orange transition-colors duration-300
-                                                                                {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold bg-orange-50 text-primary-orange' : '' }}"
+                                                                                                                        {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold bg-orange-50 text-primary-orange' : '' }}"
                     @click="mobileMenuOpen = false">
                     {{ $link['title'] }}
                 </a>
@@ -436,7 +427,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
                         body: JSON.stringify({
                             query: this.searchQuery
@@ -444,22 +435,27 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error('Error en la búsqueda');
+                        throw new Error(`Error ${response.status}: ${response.statusText}`);
                     }
 
                     const data = await response.json();
                     this.results = data.products || [];
+                    console.log('Resultados:', this.results);
+
                 } catch (error) {
                     console.error('Error en la búsqueda:', error);
                     this.results = [];
+                    alert('Error al realizar la búsqueda. Por favor, intenta nuevamente.');
                 } finally {
                     this.isLoading = false;
                 }
             },
 
+
+
             selectProduct(product) {
                 // Redirigir al producto seleccionado
-                window.location.href = `/productos/${product.id}`;
+                window.location.href = `/p/${product.code}`;
             },
 
             viewAllResults() {
