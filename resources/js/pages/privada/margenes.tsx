@@ -11,7 +11,7 @@ export default function Margenes() {
             <Head>
                 <title>Márgenes</title>
             </Head>
-            <div className="mx-auto my-20 min-h-[50vh] w-[1200px]">
+            <div className="mx-auto my-20 min-h-[50vh] w-[1200px] max-sm:w-full max-sm:px-4">
                 <div className="flex flex-col gap-5">
                     <h2 className="text-[44px] font-semibold text-[#1A4791]">Márgenes</h2>
                     <div className="flex flex-col gap-2">

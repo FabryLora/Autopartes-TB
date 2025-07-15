@@ -12,6 +12,8 @@ use App\Models\ProductoMarca;
 use App\Models\ProductoModelo;
 use App\Models\SubCategoria;
 use App\Models\SubProducto;
+use Illuminate\Support\Facades\Auth;
+
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -87,19 +89,20 @@ class ProductoController extends Controller
 
         // Filtro por descripción visible
         if ($request->filled('desc_visible')) {
-            $query->where('desc_visible', 'LIKE', '%' . $request->desc . '%')->orWhere('desc_invisible', 'LIKE', '%' . $request->desc . '%');
+            $query->where('desc_visible', 'LIKE', '%' . $request->desc_visible . '%')
+                ->orWhere('desc_invisible', 'LIKE', '%' . $request->desc_visible . '%');
         }
 
         // Aplicar ordenamiento por defecto
         $query->orderBy('order', 'asc');
 
-        // Ejecutar query
+        // Ejecutar query con paginación
+        $productos = $query->with(['marcas.marca', 'modelos.modelo'])
+            ->paginate(15)
+            ->appends($request->query());
 
-
-        $productos = $query->with(['marcas.marca', 'modelos.modelo'])->get();
-
-
-        if ($productos->count() === 1) {
+        // Si solo hay un producto en total (no en la página actual), redirigir
+        if ($productos->total() === 1) {
             return redirect('/p/' . $productos->first()->code);
         }
 
@@ -119,7 +122,6 @@ class ProductoController extends Controller
             'code_oem' => $request->code_oem,
             'desc_visible' => $request->desc_visible,
             'medida' => $request->medida,
-
         ]);
     }
 
@@ -131,26 +133,8 @@ class ProductoController extends Controller
 
         $categorias = Categoria::select('id', 'name', 'order')->orderBy('order', 'asc')->get();
 
-        // Obtener 3 productos aleatorios que compartan marca y modelo
-        $productosRelacionados = collect();
-
-        if ($producto) {
-            // Obtener IDs de marcas y modelos del producto actual
-
-            $modeloIds = $producto->modelos->pluck('id')->toArray();
-
-            if (!empty($modeloIds)) {
-                $productosRelacionados = Producto::with(['imagenes'])
-                    ->where('id', '!=', $producto->id)
-
-                    ->whereHas('modelos', function ($query) use ($modeloIds) {
-                        $query->whereIn('id', $modeloIds);
-                    })
-                    ->inRandomOrder()
-                    ->limit(3)
-                    ->get();
-            }
-        }
+        // Obtener productos relacionados por marca y modelo
+        $productosRelacionados = Producto::where('id', '!=', $producto->id)->orderBy('order', 'asc')->take(3)->get();
 
         return view('producto', [
             'producto' => $producto,
@@ -161,9 +145,10 @@ class ProductoController extends Controller
             'modelo_id' => $request->modelo_id ?? null
         ]);
     }
-
     public function indexPrivada(Request $request)
     {
+
+
         $perPage = $request->input('per_page', 10);
 
         $qty = $request->input('qty', 1); // Valor por defecto para qty
@@ -394,13 +379,12 @@ class ProductoController extends Controller
             'order' => 'nullable|sometimes|max:255',
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:255',
-            'code_oem' => 'required|string|max:255',
-            'code_competitor' => 'required|string|max:255',
+            'code_oem' => 'nullable|sometimes|string|max:255',
+            'code_competitor' => 'nullable|sometimes|string|max:255',
             'medida' => 'nullable|string|max:255',
             'desc_visible' => 'nullable|string',
             'desc_invisible' => 'nullable|string',
             'unidad_pack' => 'nullable|integer',
-            'familia' => 'nullable|string|max:255',
             'stock' => 'nullable|integer',
             'descuento_oferta' => 'nullable|integer',
             'modelos' => 'nullable|array',
@@ -428,7 +412,7 @@ class ProductoController extends Controller
                     'descuento_oferta' => $data['descuento_oferta'] ?? 0,
                     'oferta' => $data['oferta'] ?? false,
                     'unidad_pack' => $data['unidad_pack'],
-                    'familia' => $data['familia'],
+
                     'stock' => $data['stock'],
                 ]);
 
@@ -486,13 +470,12 @@ class ProductoController extends Controller
             'order' => 'nullable|sometimes|max:255',
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:255',
-            'code_oem' => 'required|string|max:255',
-            'code_competitor' => 'required|string|max:255',
+            'code_oem' => 'nullable|sometimes|string|max:255',
+            'code_competitor' => 'nullable|sometimes|string|max:255',
             'medida' => 'nullable|string|max:255',
             'desc_visible' => 'nullable|string',
             'desc_invisible' => 'nullable|string',
             'unidad_pack' => 'nullable|integer',
-            'familia' => 'nullable|string|max:255',
             'stock' => 'nullable|integer',
             'descuento_oferta' => 'nullable|integer',
             'modelos' => 'nullable|array',
@@ -527,7 +510,6 @@ class ProductoController extends Controller
                     'oferta' => $data['oferta'] ?? false,
                     'descuento_oferta' => $data['descuento_oferta'] ?? 0,
                     'unidad_pack' => $data['unidad_pack'],
-                    'familia' => $data['familia'],
                     'stock' => $data['stock'],
                 ]);
 
@@ -684,5 +666,38 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($request->id);
         $producto->oferta = !$producto->oferta;
         $producto->save();
+    }
+
+    public function handleQR($code)
+    {
+
+        $producto = Producto::where('code', $code)->first();
+
+        if (!$producto) {
+            return redirect('/productos');
+        }
+
+        if (Auth::check()) {
+            Cart::add(
+                $producto->id,
+                $producto->name,
+                $producto->unidad_pack ?? 1,
+                $producto->oferta ? $producto->precio->precio * (1 - $producto->descuento_oferta / 100) : $producto->precio->precio, // Asegurarse de que el precio sea correcto
+                0
+            );
+
+            // Guardar en base de datos si hay usuario logueado
+            if (Auth::check() && !session('cliente_seleccionado')) {
+                if (Cart::count() < 0) {
+                    Cart::store(Auth::id());
+                }
+            } else {
+                Cart::store(session('cliente_seleccionado')->id);
+            }
+
+            return redirect('/privada/carrito');
+        } else {
+            return redirect('/p/' . $producto->code);
+        }
     }
 }

@@ -52,7 +52,7 @@ export default function Dashboard({ children }) {
         {
             id: 'nosotros',
             open: false,
-            title: 'Nosotros',
+            title: 'Empresa',
             icon: faUsers,
             href: 'nosotros',
             subHref: [

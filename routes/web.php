@@ -37,6 +37,10 @@ Route::post('/api/search', [SearchController::class, 'search'])
 Route::get('/buscar', [SearchController::class, 'searchPage'])
     ->name('search.results');
 
+Route::get('/{code}', [ProductoController::class, 'handleQR'])->name(
+    'handleQR'
+);
+
 
 
 

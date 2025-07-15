@@ -110,7 +110,7 @@ export default function SliderRow({ sliderObject }) {
                                     />
                                     <label htmlFor="imagenn">Multimedia</label>
 
-                                    <span className="text-base font-normal">Resolucion recomendada: 501x181px</span>
+                                    <span className="text-base font-normal">Resolucion recomendada: 1366x598px</span>
                                     <div className="flex flex-row">
                                         <input
                                             type="file"

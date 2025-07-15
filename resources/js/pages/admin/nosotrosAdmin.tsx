@@ -63,7 +63,7 @@ export default function NosotrosAdmin() {
                         <label htmlFor="imagenprincipal" className="block font-semibold text-gray-900">
                             Imagen principal:
                             <br />
-                            <span className="text-base font-normal">Resolucion recomendada: 1654x216 px</span>
+                            <span className="text-base font-normal">Resolucion recomendada: 600x476 px</span>
                         </label>
                         <div className="mt-2 flex justify-between rounded-lg border shadow-lg">
                             <div className="h-[200px] w-2/3 bg-[rgba(0,0,0,0.2)]">

@@ -86,7 +86,7 @@ export default function MarcasAdmin() {
                                         <label htmlFor="imagenn">
                                             Multimedia<span className="text-red-500">*</span>
                                         </label>
-                                        <span className="text-base font-normal">Resolucion recomendada: 501x181px</span>
+                                        <span className="text-base font-normal">Resolucion recomendada: 1366x598px</span>
                                         <div className="flex flex-col">
                                             <div className="flex flex-row">
                                                 <input

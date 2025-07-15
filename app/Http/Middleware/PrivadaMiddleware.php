@@ -7,6 +7,7 @@ use App\Models\Contacto;
 use App\Models\Logos;
 use App\Models\Provincia;
 use Closure;
+use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -21,6 +22,7 @@ class PrivadaMiddleware
             'contacto' => fn() => Contacto::first(),
             'logos' => fn() => Logos::first(),
             'provincias' => fn() => Provincia::with('localidades')->orderBy('name', 'asc')->get(),
+            'carrito' => fn() => Cart::content(),
         ]);
 
         return $next($request);

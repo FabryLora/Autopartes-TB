@@ -49,9 +49,9 @@ class   PrivadaController extends Controller
         $subtotalTotal = $productosConRowId->sum('subtotal');
 
         // Obtener los descuentos del usuario logueado
-        $descuento_uno = auth()->user()->descuento_uno ?? 0;
-        $descuento_dos = auth()->user()->descuento_dos ?? 0;
-        $descuento_tres = auth()->user()->descuento_tres ?? 0;
+        $descuento_uno = auth()->user()->rol == "cliente" ? auth()->user()->descuento_uno : session('cliente_seleccionado')->descuento_uno ?? 0;
+        $descuento_dos = auth()->user()->rol == "cliente" ? auth()->user()->descuento_dos : session('cliente_seleccionado')->descuento_dos ?? 0;
+        $descuento_tres = auth()->user()->rol == "cliente" ? auth()->user()->descuento_tres : session('cliente_seleccionado')->descuento_tres ?? 0;
 
         // Calcular subtotal con descuentos aplicados en orden
         $subtotal_descuento = $subtotalTotal;
@@ -99,6 +99,12 @@ class   PrivadaController extends Controller
         ]);
     }
 
+    public function borrarCliente()
+    {
+        session()->forget('cliente_seleccionado');
+        return redirect('/privada/productos');
+    }
+
     // Cuando el vendedor selecciona el cliente
     public function seleccionarCliente(Request $request)
     {
@@ -138,7 +144,7 @@ class   PrivadaController extends Controller
 
 
         // Enviar correo al administrador (o a la dirección que desees)
-        Mail::to(Contacto::first()->mail)->send(new PedidoMail($pedido, $request->file('archivo')));
+        Mail::to(Contacto::first()->mail_pedidos)->send(new PedidoMail($pedido, $request->file('archivo')));
 
         Cart::destroy();
 
@@ -163,7 +169,7 @@ class   PrivadaController extends Controller
         ];
 
         // Enviar correo al administrador (o a la dirección que desees)
-        Mail::to(Contacto::first()->mail)->send(new InformacionDePagoMail($data, $request->file('archivo')));
+        Mail::to(Contacto::first()->mail_info)->send(new InformacionDePagoMail($data, $request->file('archivo')));
 
         // Devolver mensaje de éxito al usuario
         return redirect()->back()->with('success', 'Tu mensaje ha sido enviado con éxito.');

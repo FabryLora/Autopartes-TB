@@ -16,4 +16,9 @@ class Calidad extends Model
     {
         return url("storage/" . $value);
     }
+
+    public function getLogosAttribute($value)
+    {
+        return url("storage/" . $value);
+    }
 }

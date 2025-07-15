@@ -40,17 +40,20 @@ export default function Informacion() {
             <Head>
                 <title>Información de pagos</title>
             </Head>
-            <div className="mx-auto my-20 min-h-[50vh] w-[1200px]">
+            <div className="mx-auto my-20 min-h-[50vh] w-[1200px] max-sm:mx-4 max-sm:my-10 max-sm:w-auto">
                 <div className="flex flex-col gap-5">
-                    <h2 className="text-[44px] font-semibold text-[#1A4791]">Información de pagos</h2>
-                    <div className="flex flex-row gap-2">
+                    <h2 className="text-[44px] font-semibold text-[#1A4791] max-sm:text-[28px]">Información de pagos</h2>
+                    <div className="flex flex-row gap-2 max-sm:flex-col max-sm:gap-4">
                         <div className="flex w-full flex-col gap-2">
-                            <h3 className="text-[16px] font-semibold">Cuentas bancarias para efectuar el depósito:</h3>
+                            <h3 className="text-[16px] font-semibold max-sm:text-[14px]">Cuentas bancarias para efectuar el depósito:</h3>
                             <div dangerouslySetInnerHTML={{ __html: informacion?.informacion }} />
                         </div>
-                        <div className="h-[568px] w-[808px]">
-                            <form onSubmit={sendInformacion} className="grid h-fit w-[808px] grid-cols-4 gap-6 bg-[#ECECEC] p-5">
-                                <div className="col-span-2 flex flex-col gap-2">
+                        <div className="h-[568px] w-[808px] max-sm:h-auto max-sm:w-full">
+                            <form
+                                onSubmit={sendInformacion}
+                                className="grid h-fit w-[808px] grid-cols-4 gap-6 bg-[#ECECEC] p-5 max-sm:w-full max-sm:grid-cols-1 max-sm:gap-4 max-sm:p-4"
+                            >
+                                <div className="col-span-2 flex flex-col gap-2 max-sm:col-span-1">
                                     <label htmlFor="fecha">Fecha</label>
                                     <input
                                         onChange={(e) => setData('fecha', e.target.value)}
@@ -59,7 +62,7 @@ export default function Informacion() {
                                         className="h-[45px] border border-[#4D565D] pl-2"
                                     />
                                 </div>
-                                <div className="col-span-2 flex flex-col gap-2">
+                                <div className="col-span-2 flex flex-col gap-2 max-sm:col-span-1">
                                     <label htmlFor="importe">Importe</label>
                                     <input
                                         onChange={(e) => setData('importe', e.target.value)}
@@ -70,7 +73,7 @@ export default function Informacion() {
                                 </div>
 
                                 {/* Crear un contenedor que ocupe las 4 columnas para los 3 campos */}
-                                <div className="col-span-4 grid grid-cols-3 gap-6">
+                                <div className="col-span-4 grid grid-cols-3 gap-6 max-sm:col-span-1 max-sm:grid-cols-1 max-sm:gap-4">
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="banco">Banco</label>
                                         <input
@@ -99,16 +102,16 @@ export default function Informacion() {
                                         />
                                     </div>
                                 </div>
-                                <div className="col-span-4 flex flex-col gap-2">
+                                <div className="col-span-4 flex flex-col gap-2 max-sm:col-span-1">
                                     <label htmlFor="observaciones">Observaciones</label>
                                     <textarea
                                         onChange={(e) => setData('observaciones', e.target.value)}
                                         rows={6}
                                         id="observaciones"
-                                        className="border border-[#4D565D] pl-2"
+                                        className="max-sm:rows-4 border border-[#4D565D] pl-2"
                                     />
                                 </div>
-                                <div className="col-span-2 flex flex-col justify-center gap-2">
+                                <div className="col-span-2 flex flex-col justify-center gap-2 max-sm:col-span-1">
                                     <label htmlFor="adjunto">Adjuntar archivos</label>
                                     <div className="flex h-[45px] flex-row items-center justify-between border border-[#4D565D] px-2 pl-2">
                                         <input onChange={(e) => setData('archivo', e.target.files[0])} type="file" id="adjunto" className="w-full" />
@@ -120,9 +123,9 @@ export default function Informacion() {
                                                 viewBox="0 0 24 24"
                                                 fill="none"
                                                 stroke="#0072c6"
-                                                stroke-width="2"
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
                                                 className="lucide lucide-upload-icon lucide-upload"
                                             >
                                                 <path d="M12 3v12" />
@@ -132,10 +135,14 @@ export default function Informacion() {
                                         </label>
                                     </div>
                                 </div>
-                                <div className="col-span-2 flex flex-col justify-end gap-2">
-                                    <div className="flex flex-row items-end justify-between">
-                                        <p className="h-fit">*Campos obligatorios</p>
-                                        <button type="submit" disabled={processing} className="bg-primary-orange h-[41px] w-[163px] text-white">
+                                <div className="col-span-2 flex flex-col justify-end gap-2 max-sm:col-span-1 max-sm:justify-start">
+                                    <div className="flex flex-row items-end justify-between max-sm:flex-col max-sm:items-start max-sm:gap-4">
+                                        <p className="h-fit max-sm:text-sm">*Campos obligatorios</p>
+                                        <button
+                                            type="submit"
+                                            disabled={processing}
+                                            className="bg-primary-orange h-[41px] w-[163px] text-white max-sm:w-full"
+                                        >
                                             Enviar
                                         </button>
                                     </div>

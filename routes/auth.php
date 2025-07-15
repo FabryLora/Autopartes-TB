@@ -112,4 +112,7 @@ Route::middleware('auth')->group(function () {
         ->name('destroy');
 
     Route::post('compraRapida', [CartController::class, 'compraRapida'])->name('compraRapida');
+
+    Route::get('borrarCliente', [PrivadaController::class, 'borrarCliente'])
+        ->name('borrarCliente');
 });

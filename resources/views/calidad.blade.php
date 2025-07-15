@@ -9,7 +9,11 @@
         </div>
         <div class="h-full w-full py-4 lg:py-10">
             <div class="flex flex-col gap-4 lg:gap-6">
-                <h2 class="text-2xl font-bold sm:text-3xl">{{ $calidad->title ?? null }}</h2>
+                <div class="flex flex-row justify-between items-center">
+                    <h2 class="text-2xl font-bold sm:text-3xl">{{ $calidad->title ?? null }}</h2>
+                    <img class="h-[68px]" src="{{ $calidad->logos ?? null }}" alt="">
+                </div>
+
                 <div class="" {!! $calidad->text ?? null !!}></div>
             </div>
         </div>

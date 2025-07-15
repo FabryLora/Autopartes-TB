@@ -80,7 +80,7 @@ export default function Carrito({
             <Head>
                 <title>Carrito</title>
             </Head>
-            <div className="mx-auto grid w-[1200px] grid-cols-2 gap-10 py-20 max-sm:px-4">
+            <div className="mx-auto grid w-[1200px] grid-cols-2 gap-10 py-20 max-sm:w-full max-sm:px-4">
                 <AnimatePresence>
                     {error && (
                         <motion.div
@@ -117,7 +117,7 @@ export default function Carrito({
 
                 <div className="col-span-2 grid w-full items-start">
                     <div className="w-full">
-                        <div className="grid h-[52px] grid-cols-9 items-center bg-[#ECECEC] text-[16px] font-semibold">
+                        <div className="grid h-[52px] grid-cols-9 items-center bg-[#ECECEC] text-[16px] font-semibold max-sm:hidden">
                             <p></p>
                             <p>Código</p>
                             <p>Código OEM</p>

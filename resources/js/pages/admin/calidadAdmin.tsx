@@ -63,7 +63,7 @@ export default function CalidadAdmin() {
                         <label htmlFor="imagenprincipal" className="block font-semibold text-gray-900">
                             Imagen principal:
                             <br />
-                            <span className="text-base font-normal">Resolucion recomendada: 1654x216 px</span>
+                            <span className="text-base font-normal">Resolucion recomendada: 600x476 px</span>
                         </label>
                         <div className="mt-2 flex justify-between rounded-lg border shadow-lg">
                             <div className="h-[200px] w-2/3 bg-[rgba(0,0,0,0.2)]">
@@ -92,14 +92,47 @@ export default function CalidadAdmin() {
                         </div>
                     </div>
 
-                    <div className="flex h-full flex-col">
+                    <div className="w-full">
+                        <label htmlFor="logos" className="block font-semibold text-gray-900">
+                            Logos:
+                            <br />
+                            <span className="text-base font-normal">Resolucion recomendada: 95x68 px</span>
+                        </label>
+                        <div className="mt-2 flex justify-between rounded-lg border shadow-lg">
+                            <div className="h-[200px] w-2/3 bg-[rgba(0,0,0,0.2)]">
+                                <img className="h-full w-full rounded-md object-cover" src={calidad?.logos} alt="" />
+                            </div>
+                            <div className="flex w-1/3 items-center justify-center">
+                                <div className="h-fit items-center self-center text-center">
+                                    <div className="relative mt-4 flex flex-col items-center text-sm/6 text-gray-600">
+                                        <label
+                                            htmlFor="logos"
+                                            className="bg-primary-red relative cursor-pointer rounded-md px-2 py-1 font-semibold text-black"
+                                        >
+                                            <span>Cambiar Imagen</span>
+                                            <input
+                                                id="logos"
+                                                name="logos"
+                                                onChange={(e) => setData('logos', e.target.files[0])}
+                                                type="file"
+                                                className="sr-only"
+                                            />
+                                        </label>
+                                        <p className="absolute top-10 max-w-[200px] break-words"> {data?.logos?.name}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-span-2 flex h-full flex-col">
                         <label className="font-semibold" htmlFor="bannerTitle">
                             Texto:
                         </label>
                         <CustomReactQuill additionalStyles="h-full" onChange={setText} value={text} />
                     </div>
                 </div>
-                <div className="mt-20 flex w-full justify-end">
+                <div className="mt-20 flex w-full justify-start">
                     <button className="hover:bg-primary-orange text-primary-orange border-primary-orange rounded-full border px-4 py-2 font-bold transition hover:text-white">
                         Actualizar
                     </button>

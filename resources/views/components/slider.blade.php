@@ -1,8 +1,8 @@
-<div class="overflow-hidden min-h-[598px]">
+<div class="overflow-hidden min-h-[598px] max-sm:min-h-[350px]">
     <div class="slider-track flex transition-transform duration-500 ease-in-out">
         @foreach ($sliders as $slider)
             @php $ext = pathinfo($slider->media, PATHINFO_EXTENSION); @endphp
-            <div class="slider-item min-w-full relative h-[400px] sm:h-[500px] lg:h-[678px]">
+            <div class="slider-item min-w-full relative h-[400px] sm:h-[500px] lg:h-[678px] max-sm:h-[350px]">
                 <div class="absolute inset-0 bg-black z-0">
                     @if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                         <img src="{{ asset($slider->media) }}" alt="Slider Image" class="w-full h-full object-cover"
@@ -15,14 +15,16 @@
                     @endif
                 </div>
                 <div class="absolute inset-0 bg-black opacity-30 z-10"></div>
-                <div class="absolute inset-0 flex z-20 lg:max-w-[1200px] lg:mx-auto">
-                    <div class="relative flex flex-col gap-4 sm:gap-6 lg:gap-19 w-full justify-end pb-30">
-                        <div class="max-w-[320px] sm:max-w-[400px] lg:max-w-[480px] text-white flex flex-col gap-5">
-                            <h1 class="text-[32px] font-medium w-[727px]">
+                <div class="absolute inset-0 flex z-20 lg:max-w-[1200px] lg:mx-auto max-sm:px-4">
+                    <div
+                        class="relative flex flex-col gap-4 sm:gap-6 lg:gap-19 max-sm:gap-3 w-full justify-end pb-30 max-sm:pb-16">
+                        <div
+                            class="max-w-[320px] sm:max-w-[400px] lg:max-w-[480px] max-sm:max-w-full text-white flex flex-col gap-5 max-sm:gap-3">
+                            <h1 class="text-[32px] max-sm:text-[20px] font-medium w-[727px] max-sm:w-full">
                                 {{ $slider->title }}
                             </h1>
                             <a href="{{ $slider->link}}"
-                                class="flex justify-center items-center w-[163px] h-[41px] bg-primary-orange text-[16px]">Ver
+                                class="flex justify-center items-center w-[163px] max-sm:w-[130px] h-[41px] max-sm:h-[36px] bg-primary-orange text-[16px] max-sm:text-[14px]">Ver
                                 productos</a>
                         </div>
                         {{-- <a href="{{ route('categorias') }}"
@@ -34,12 +36,12 @@
         @endforeach
     </div>
     <!-- Slider Navigation Dots -->
-    <div class="relative lg:max-w-[1200px] lg:mx-auto">
-        <div class="absolute bottom-10 w-full z-30">
-            <div class="flex space-x-1 lg:space-x-2">
+    <div class="relative lg:max-w-[1200px] lg:mx-auto max-sm:px-4">
+        <div class="absolute bottom-10 max-sm:bottom-6 w-full z-30">
+            <div class="flex space-x-1 lg:space-x-2 max-sm:space-x-1">
                 @foreach ($sliders as $i => $slider)
                     <button
-                        class="cursor-pointer dot w-4 sm:w-6 lg:w-12 h-1 sm:h-1.5 rounded-none transition-colors duration-300 bg-white {{ $i === 0 ? 'opacity-90' : 'opacity-50' }}"
+                        class="cursor-pointer dot w-4 sm:w-6 lg:w-12 max-sm:w-3 h-1 sm:h-1.5 max-sm:h-1 rounded-none transition-colors duration-300 bg-white {{ $i === 0 ? 'opacity-90' : 'opacity-50' }}"
                         data-dot-index="{{ $i }}" onclick="goToSlide({{ $i }})"></button>
                 @endforeach
             </div>

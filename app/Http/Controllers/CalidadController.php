@@ -32,8 +32,24 @@ class CalidadController extends Controller
         $data = $request->validate([
             'title' => 'sometimes|string|max:255',
             'text' => 'sometimes',
+            'logos' => 'sometimes|file',
             'image' => 'sometimes|file',
         ]);
+
+        // Verificar si se ha subido un nuevo logo
+        if ($request->hasFile('logos') && $calidad) {
+            // Guardar la ruta del archivo antiguo para eliminarlo después
+            $oldLogosPath = $calidad->getRawOriginal('logos');
+            // Guardar el nuevo archivo
+            $data['logos'] = $request->file('logos')->store('slider', 'public');
+
+            // Eliminar el archivo antiguo si existe
+            if ($oldLogosPath && Storage::disk('public')->exists($oldLogosPath)) {
+                Storage::disk('public')->delete($oldLogosPath);
+            }
+        } else if ($request->hasFile('logos') && !$calidad) {
+            $data['logos'] = $request->file('logos')->store('slider', 'public');
+        }
 
         if ($request->hasFile('image') && $calidad) {
             // Guardar la ruta del archivo antiguo para eliminarlo después

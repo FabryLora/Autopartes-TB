@@ -50,12 +50,27 @@
         {{-- Newsletter --}}
         <div class="flex h-full flex-col items-center gap-6 lg:items-start lg:gap-10">
             <h2 class="text-lg font-bold text-white">Suscribite al Newsletter</h2>
-            <form {{-- action="{{ route('newsletter.subscribe') }}" --}} method="POST"
+
+            {{-- Mensaje de confirmación --}}
+            <div id="newsletter-success"
+                class="hidden w-full sm:w-[287px] p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-sm font-medium">¡Te has suscrito correctamente al newsletter!</span>
+                </div>
+            </div>
+
+            {{-- Formulario del newsletter --}}
+            <form id="newsletter-form" {{-- action="{{ route('newsletter.subscribe') }}" --}} method="POST"
                 class="flex h-[44px] w-full items-center justify-between border border-[#E0E0E0] bg-white px-4 sm:w-[287px]">
                 @csrf
-                <input name="email" type="email" required class="w-full  outline-none  "
+                <input id="newsletter-email" name="email" type="email" required class="w-full outline-none"
                     placeholder="Ingresa tu email" />
-                <button type="submit">
+                <button type="submit" id="newsletter-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                         <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="#0072C6" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" />
@@ -98,7 +113,6 @@
                     </a>
                 @endif
 
-
                 @if(!empty($contacto->phone))
                     <a href="tel:{{ preg_replace('/\s/', '', $contacto->phone) }}"
                         class="flex items-center gap-3 transition-opacity hover:opacity-80">
@@ -109,14 +123,9 @@
                                     fill="white" />
                             </svg>
                         </div>
-
                         <p class="text-base text-white/80 break-words">{{ $contacto->phone }}</p>
                     </a>
                 @endif
-
-
-
-
             </div>
         </div>
     </div>
@@ -133,6 +142,37 @@
         </div>
     </div>
 </div>
+
+{{-- JavaScript para manejar el formulario del newsletter --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('newsletter-form');
+        const successMessage = document.getElementById('newsletter-success');
+        const emailInput = document.getElementById('newsletter-email');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Simular envío del formulario (aquí deberías hacer tu petición AJAX real)
+            // Por ahora solo mostramos el mensaje de confirmación
+
+            // Ocultar el formulario
+            form.classList.add('hidden');
+
+            // Mostrar mensaje de éxito
+            successMessage.classList.remove('hidden');
+
+            // Limpiar el campo de email
+            emailInput.value = '';
+
+            // Opcional: Ocultar el mensaje después de 5 segundos y mostrar el formulario de nuevo
+            setTimeout(function () {
+                successMessage.classList.add('hidden');
+                form.classList.remove('hidden');
+            }, 5000);
+        });
+    });
+</script>
 
 {{-- Incluir Font Awesome si no está ya incluido --}}
 @push('styles')
