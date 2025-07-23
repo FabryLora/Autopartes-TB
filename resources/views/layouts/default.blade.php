@@ -15,8 +15,9 @@
         }
     </style>
     <script src="//unpkg.com/alpinejs" defer></script>
-    <meta name="description" content={{@yield('description', 'Autopartes TB - Tu tienda de autopartes en línea') }}>
-    <meta name="keywords" content={{@yield('keywords', 'autopartes, repuestos, accesorios, automóviles, tienda en línea') }}>
+    <meta name="description" content="@yield('description', 'Autopartes TB - Tu tienda de autopartes en línea') ">
+    <meta name="keywords"
+        content="@yield('keywords', 'autopartes, repuestos, accesorios, automóviles, tienda en línea')">
 
 </head>
 

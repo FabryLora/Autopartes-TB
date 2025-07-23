@@ -2,8 +2,8 @@
 
 @section('title', 'Autopartes TB')
 
-@section('description', $metadatos->description)
-@section('keywords', $metadatos->keywords)
+@section('description', $metadatos->description ?? "")
+@section('keywords', $metadatos->keywords ?? "")
 
 @section('content')
     <x-slider :sliders="$sliders" />

@@ -102,7 +102,7 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
                                         ? Number(producto?.precio?.precio) * (1 - Number(producto?.descuento_oferta) / 100)
                                         : Number(producto?.precio?.precio),
                                 ) *
-                                (1 - Number(margen) / 100)
+                                (1 + Number(margen) / 100)
                             )?.toLocaleString('es-AR', {
                                 maximumFractionDigits: 2,
                                 minimumFractionDigits: 2,
@@ -112,7 +112,7 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
                             ${' '}
                             {Number(
                                 producto?.oferta == 1
-                                    ? Number(producto?.precio?.precio) * (1 - Number(producto?.descuento_oferta) / 100)
+                                    ? Number(producto?.precio?.precio) * (1 + Number(producto?.descuento_oferta) / 100)
                                     : Number(producto?.precio?.precio),
                             )?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                         </p>
@@ -124,7 +124,7 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
                             ${' '}
                             {Number(
                                 producto?.oferta == 1
-                                    ? Number(producto?.precio?.precio) * (1 - Number(producto?.descuento_oferta) / 100)
+                                    ? Number(producto?.precio?.precio) * (1 + Number(producto?.descuento_oferta) / 100)
                                     : producto?.precio?.precio,
                             )?.toLocaleString('es-AR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                         </p>
@@ -164,7 +164,7 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
                                         ? Number(producto?.precio?.precio) * cantidad * (1 - Number(producto?.descuento_oferta) / 100)
                                         : Number(producto?.precio?.precio) * cantidad,
                                 ) *
-                                (1 - Number(margen) / 100)
+                                (1 + Number(margen) / 100)
                             )?.toLocaleString('es-AR', {
                                 maximumFractionDigits: 2,
                                 minimumFractionDigits: 2,

@@ -25,7 +25,7 @@ class HomePages extends Controller
             return redirect('/privada/productos');
         }
 
-        $metadatos = Metadatos::where('name', 'home')->first();
+        $metadatos = Metadatos::where('title', 'home')->first();
 
         $categorias = Categoria::orderBy('order', 'asc')->get();
         $subcategorias = SubCategoria::orderBy('order', 'asc')->get();
