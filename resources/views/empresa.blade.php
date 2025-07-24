@@ -20,7 +20,6 @@
         <div class="mx-auto flex w-full max-w-[1200px] flex-col gap-4 px-4 lg:px-0">
             <h2 class="text-2xl font-semibold sm:text-[30px]">¿Por qué elegirnos?</h2>
             <div class="flex flex-col justify-between gap-4 sm:gap-5 md:flex-row">
-
                 <div
                     class="flex min-h-[300px] w-full flex-col items-center gap-4 bg-white py-10 sm:min-h-[350px] sm:py-16 md:min-h-[410px] md:py-20">
                     <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">

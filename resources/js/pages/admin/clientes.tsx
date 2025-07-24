@@ -91,7 +91,7 @@ export default function Clientes() {
         e.preventDefault();
 
         router.post(
-            route('importarCLientes'),
+            route('importarClientes'),
             {
                 archivo: archivo,
             },

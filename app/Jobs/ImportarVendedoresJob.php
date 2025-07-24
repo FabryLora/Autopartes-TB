@@ -31,7 +31,7 @@ class ImportarVendedoresJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $filePath = Storage::disk('public')->path($this->archivoPath);
+        $filePath = Storage::path($this->archivoPath);
         $spreadsheet = IOFactory::load($filePath);
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray(null, true, true, true);
@@ -42,7 +42,7 @@ class ImportarVendedoresJob implements ShouldQueue
 
         foreach ($rows as $index => $row) {
 
-            if ($index === 0) {
+            if ($index === 1) {
                 Log::info('Saltando encabezado');
                 continue;
             }
