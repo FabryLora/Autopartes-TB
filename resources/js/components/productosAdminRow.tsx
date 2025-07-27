@@ -24,7 +24,6 @@ export default function ProductosAdminRow({ producto }) {
         desc_visible: producto?.desc_visible,
         desc_invisible: producto?.desc_invisible,
         unidad_pack: producto?.unidad_pack,
-        oferta: producto?.oferta,
         stock: producto?.stock,
         descuento_oferta: producto?.descuento_oferta,
         id: producto?.id,
@@ -156,10 +155,6 @@ export default function ProductosAdminRow({ producto }) {
 
             <td className="flex h-[90px] flex-row items-center justify-center">
                 <Switch routeName="cambiarDestacado" id={producto?.id} status={producto?.destacado == 1} />
-            </td>
-
-            <td className="pl-3">
-                <Switch routeName="cambiarOferta" id={producto?.id} status={producto?.oferta == 1} />
             </td>
 
             <td className="w-[140px] text-center">

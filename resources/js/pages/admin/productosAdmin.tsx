@@ -98,6 +98,28 @@ export default function ProductosAdmin() {
         });
     };
 
+    const importarOfertas = (e) => {
+        e.preventDefault();
+
+        router.post(
+            route('importarOfertas'),
+            {
+                archivo: archivo,
+            },
+            {
+                onSuccess: () => {
+                    toast.success('Ofertas importadas correctamente');
+                    reset();
+                    setSubirOfertas(false);
+                },
+                onError: (errors) => {
+                    toast.error('Error al importar ofertas');
+                    console.log(errors);
+                },
+            },
+        );
+    };
+
     const importarProductos = (e) => {
         e.preventDefault();
 
@@ -443,7 +465,7 @@ export default function ProductosAdmin() {
                             exit={{ opacity: 0 }}
                             className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-black/50 text-left"
                         >
-                            <form /* onSubmit={subirOfertas} */ method="POST" className="relative rounded-lg bg-white text-black">
+                            <form onSubmit={importarOfertas} method="POST" className="relative rounded-lg bg-white text-black">
                                 <div className="bg-primary-orange sticky top-0 flex flex-row items-center gap-2 rounded-t-lg p-4">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -483,14 +505,7 @@ export default function ProductosAdmin() {
                                     >
                                         Cancelar
                                     </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            toast.success('Ofertas importadas correctamente');
-                                            setSubirOfertas(false);
-                                        }}
-                                        className="hover:text-primary-orange rounded-md px-2 py-1 text-white outline outline-white transition duration-300 hover:bg-white"
-                                    >
+                                    <button className="hover:text-primary-orange rounded-md px-2 py-1 text-white outline outline-white transition duration-300 hover:bg-white">
                                         Subir
                                     </button>
                                 </div>
@@ -544,7 +559,6 @@ export default function ProductosAdmin() {
                                     <td className="text-center">MARCAS</td>
                                     <td className="py-2 text-center">MODELOS</td>
                                     <td className="text-center">DESTACADO</td>
-                                    <td className="pl-3 text-center">OFERTA</td>
                                     <td className="text-center">EDITAR</td>
                                 </tr>
                             </thead>

@@ -198,6 +198,11 @@ class ProductoController extends Controller
             // Buscar el item del carrito que corresponde a este producto
             $itemCarrito = $carrito->where('id', $producto->id)->first();
 
+            $tieneOfertaVigente = $producto->ofertas()
+                ->where('user_id', Auth::id())
+                ->where('fecha_fin', '>', now())
+                ->exists();
+
             if ($itemCarrito) {
                 $producto->rowId = $itemCarrito ? $itemCarrito->rowId : null;
                 $producto->qty = $itemCarrito ? $itemCarrito->qty : null;
@@ -206,6 +211,10 @@ class ProductoController extends Controller
                 $producto->rowId = null;
                 $producto->qty = $qty; // Asignar qty por defecto si no está en el carrito
                 $producto->subtotal = $producto->precio ? $producto->precio->precio * ($producto->qty ?? 1) : 0; // Asignar precio base si no está en el carrito
+            }
+
+            if ($tieneOfertaVigente) {
+                $producto->oferta = true;
             }
 
             // Aquí puedes agregar más lógica si es necesario, como calcular el subtotal
@@ -219,8 +228,22 @@ class ProductoController extends Controller
         $categorias = Categoria::orderBy('order', 'asc')->get();
         $subcategorias = SubCategoria::orderBy('order', 'asc')->get();
 
-        $productosOferta = Producto::where('oferta', true)
-            ->with(['imagenes', 'marcas', 'modelos', 'precio'])
+        $userId = Auth::id();
+
+        $productosOferta = Producto::whereHas('ofertas', function ($query) use ($userId) {
+            $query->where('user_id', $userId)
+                ->where('fecha_fin', '>', now());
+        })
+            ->with([
+                'imagenes',
+                'marcas',
+                'modelos',
+                'precio',
+                'ofertas' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId)
+                        ->where('fecha_fin', '>', now());
+                }
+            ])
             ->orderBy('order', 'asc')
             ->get();
 
@@ -683,12 +706,21 @@ class ProductoController extends Controller
 
 
 
+
         if (Auth::check()) {
+
+            $tieneOfertaVigente = $producto->ofertas()
+                ->where('user_id', Auth::id())
+                ->where('fecha_fin', '>', now())
+                ->exists();
+
             Cart::add(
                 $producto->id,
                 $producto->name,
                 $producto->unidad_pack ?? 1,
-                $producto->oferta ? $producto->precio->precio * (1 - $producto->descuento_oferta / 100) : $producto->precio->precio, // Asegurarse de que el precio sea correcto
+                $tieneOfertaVigente
+                    ? $producto->precio->precio * (1 - $producto->descuento_oferta / 100)
+                    : $producto->precio->precio,
                 0
             );
 

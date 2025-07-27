@@ -51,7 +51,7 @@ export default function Vendedores() {
     // Manejadores para la paginación del backend
     const handlePageChange = (page) => {
         router.get(
-            route('admin.clientes'),
+            route('admin.vendedores'),
             {
                 page: page,
                 search: searchTerm,
@@ -66,7 +66,7 @@ export default function Vendedores() {
     // Función para realizar la búsqueda
     const handleSearch = () => {
         router.get(
-            route('admin.clientes'),
+            route('admin.vendedores'),
             {
                 search: searchTerm,
                 page: 1, // Resetear a la primera página al buscar

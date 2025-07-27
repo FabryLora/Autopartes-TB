@@ -14,6 +14,7 @@ use App\Models\SubCategoria;
 use App\Models\User;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -35,12 +36,20 @@ class   PrivadaController extends Controller
             // Buscar el item del carrito que corresponde a este producto
             $itemCarrito = $carrito->where('id', $producto->id)->first();
 
+            $tieneOfertaVigente = $producto->ofertas()
+                ->where('user_id', Auth::id())
+                ->where('fecha_fin', '>', now())
+                ->exists();
 
 
             // Agregar el rowId al producto
             $producto->rowId = $itemCarrito ? $itemCarrito->rowId : null;
             $producto->qty = $itemCarrito ? $itemCarrito->qty : null;
-            $producto->subtotal = $producto->oferta == 1 ? $producto->precio->precio * (1 - $producto->descuento_oferta / 100) * ($itemCarrito->qty ?? 1) : $producto->precio->precio * ($itemCarrito->qty ?? 1);
+            $producto->subtotal = $tieneOfertaVigente ? $producto->precio->precio * (1 - $producto->descuento_oferta / 100) * ($itemCarrito->qty ?? 1) : $producto->precio->precio * ($itemCarrito->qty ?? 1);
+
+            if ($tieneOfertaVigente) {
+                $producto->oferta = true;
+            }
 
             return $producto;
         });

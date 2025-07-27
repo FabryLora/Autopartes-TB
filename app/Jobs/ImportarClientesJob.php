@@ -31,7 +31,7 @@ class ImportarClientesJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $filePath = Storage::disk('public')->path($this->archivoPath);
+        $filePath = Storage::path($this->archivoPath);
         $spreadsheet = IOFactory::load($filePath);
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray(null, true, true, true);

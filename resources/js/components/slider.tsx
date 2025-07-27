@@ -60,21 +60,22 @@ const Slider = () => {
     };
 
     return (
-        <div className="relative mx-auto h-[232px] w-full max-sm:h-[180px]" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-            <div className="relative flex justify-center overflow-hidden shadow-lg">
+        <div
+            className="relative mx-auto h-[232px] w-full max-sm:h-[180px]"
+            style={{
+                background: 'linear-gradient(135deg, #4a90e2 0%, #357abd 50%, #1e5f99 100%)',
+                minHeight: '200px',
+            }}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+        >
+            <div className="relative flex h-full justify-center overflow-hidden shadow-lg">
                 <div
                     className="relative flex transition-transform duration-500 ease-in-out"
                     style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                 >
                     {productosOferta.map((slide, index) => (
-                        <div
-                            key={index}
-                            className="relative w-full flex-shrink-0"
-                            style={{
-                                background: 'linear-gradient(135deg, #4a90e2 0%, #357abd 50%, #1e5f99 100%)',
-                                minHeight: '200px',
-                            }}
-                        >
+                        <div key={index} className="relative w-full flex-shrink-0">
                             {/* Geometric Background Pattern */}
                             <div className="absolute inset-0 overflow-hidden">
                                 <div className="absolute top-0 right-0 h-full w-1/2 max-sm:w-1/3">

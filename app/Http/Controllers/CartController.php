@@ -45,11 +45,16 @@ class CartController extends Controller
             'price' => 'required|numeric|min:0',
         ]);
 
+        $tieneOfertaVigente = $producto->ofertas()
+            ->where('user_id', Auth::id())
+            ->where('fecha_fin', '>', now())
+            ->exists();
+
         Cart::add(
             $request->id,
             $request->name,
             $request->qty,
-            $producto->oferta == 1 ? $request->price * (1 - $producto->descuento_oferta / 100) : $producto->precio->precio, // Asegurarse de que el precio sea correcto
+            $tieneOfertaVigente ? $request->price * (1 - $producto->descuento_oferta / 100) : $producto->precio->precio, // Asegurarse de que el precio sea correcto
             0
         );
 
@@ -130,13 +135,18 @@ class CartController extends Controller
 
         $producto = Producto::where('code', $request->code)->with('precio')->first();
 
+        $tieneOfertaVigente = $producto->ofertas()
+            ->where('user_id', Auth::id())
+            ->where('fecha_fin', '>', now())
+            ->exists();
+
 
 
         Cart::add(
             $producto->id,
             $producto->name,
             $request->qty,
-            $producto->oferta ? $producto->precio->precio * (1 - $producto->descuento_oferta / 100) : $producto->precio->precio, // Asegurarse de que el precio sea correcto
+            $tieneOfertaVigente ? $producto->precio->precio * (1 - $producto->descuento_oferta / 100) : $producto->precio->precio, // Asegurarse de que el precio sea correcto
             0
         );
 

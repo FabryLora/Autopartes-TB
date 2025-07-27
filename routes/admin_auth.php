@@ -155,6 +155,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('/importar-excel/productos', [ImportController::class, 'importarProductos'])->name('importarProductos');
     Route::post('/importar-excel/clientes', [ImportController::class, 'importarClientes'])->name('importarClientes');
     Route::post('/importar-excel/vendedores', [ImportController::class, 'importarVendedores'])->name('importarVendedores');
+    Route::post('/importar-excel/ofertas', [ImportController::class, 'importarOfertas'])->name('importarOfertas');
 
     Route::get('admin/slider', [SliderController::class, 'index'])->name('admin.slider');
     Route::post('admin/slider/update', [SliderController::class, 'update'])->name('admin.slider.update');

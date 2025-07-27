@@ -65,4 +65,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(SucursalCliente::class, 'user_id');
     }
+
+    /**
+     * Get the ofertas associated with the user.
+     */
+    public function ofertas()
+    {
+        return $this->hasMany(Oferta::class, 'user_id');
+    }
 }

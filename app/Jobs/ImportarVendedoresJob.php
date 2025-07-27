@@ -42,7 +42,7 @@ class ImportarVendedoresJob implements ShouldQueue
 
         foreach ($rows as $index => $row) {
 
-            if ($index === 1) {
+            if ($index === 0 || trim($row['B']) == 'NOMBRE') {
                 Log::info('Saltando encabezado');
                 continue;
             }
