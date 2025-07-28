@@ -42,7 +42,7 @@ class ImportarClientesJob implements ShouldQueue
 
         foreach ($rows as $index => $row) {
 
-            if ($index === 0) {
+            if ($index === 0 || trim($row['S']) == 'LISTA') {
                 Log::info('Saltando encabezado');
                 continue;
             }
@@ -66,16 +66,17 @@ class ImportarClientesJob implements ShouldQueue
             $lista = trim($row['S']);
             $activo = trim($row['T']);
 
-            $lista_id = ListaDePrecios::where('name', $lista)->first()->id;
+            $lista_id = ListaDePrecios::where('name', $lista)->value('id');
 
-            if (!empty($vendendor)) {
-                $vendedor = User::where('name', $vendedor)->first();
+            if (!empty($vendedor)) {
+                $vendedor_record = User::where('name', $vendedor)->first();
+                $vendedor_id = $vendedor_record ? $vendedor_record->id : null;
             }
 
             $user = User::updateOrCreate([
                 'name' => $name,
                 'email' => $email,
-                'password' => bcrypt($cuit),
+                'password' => bcrypt(trim($cuit)),
                 'email_dos' => $email_dos,
                 'email_tres' => $email_tres,
                 'email_cuatro' => $email_cuatro,
@@ -89,9 +90,10 @@ class ImportarClientesJob implements ShouldQueue
                 'descuento_dos' => $descuento_dos,
                 'descuento_tres' => $descuento_tres,
                 'lista_de_precios_id' => $lista ? $lista_id : null,
-                'vendedor_id' => $vendedor ? $vendedor->id : null,
+                'vendedor_id' => $vendedor ? $vendedor_id : null,
                 'rol' => 'cliente',
-                'autorizado' => $activo === 'no' || $activo == 'No' || $activo == 'NO' ? false : true,
+                'autorizado' => true,
+
             ]);
 
             #sucursales es un string donde estan los nombres de las sucursales separados por una coma
