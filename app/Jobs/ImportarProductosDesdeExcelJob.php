@@ -144,14 +144,10 @@ class ImportarProductosDesdeExcelJob implements ShouldQueue
         $descripcion_visible = isset($row['D']) ? trim($row['D']) : '';
         $desc_invisible = isset($row['E']) ? trim($row['E']) : '';
         $unidad_pack = isset($row['F']) ? trim($row['F']) : '';
-        $familia = isset($row['G']) ? trim($row['G']) : '';
-        $codigo_oem = isset($row['H']) ? trim($row['H']) : '';
+        $codigo_oem = isset($row['G']) ? trim($row['G']) : '';
         $codigo_competidor = isset($row['I']) ? trim($row['I']) : '';
-        $stock = isset($row['J']) ? trim($row['J']) : 0;
-        $modelos = isset($row['K']) ? trim($row['K']) : '';
-        $medida = isset($row['L']) ? trim($row['L']) : '';
-        $marcas = isset($row['M']) ? trim($row['M']) : '';
-        $descuento_oferta = isset($row['N']) ? trim($row['N']) : 0;
+        $stock = isset($row['O']) ? trim($row['O']) : 0;
+        $descuento_oferta = isset($row['V']) ? trim($row['V']) : 0;
 
         // Validar que el código no esté vacío
         if (empty($codigo)) {
@@ -167,50 +163,15 @@ class ImportarProductosDesdeExcelJob implements ShouldQueue
                     'desc_visible' => $descripcion_visible,
                     'desc_invisible' => $desc_invisible,
                     'unidad_pack' => $unidad_pack ?? null,
-                    'familia' => $familia,
                     'code_oem' => $codigo_oem,
                     'code_competitor' => $codigo_competidor,
                     'stock' => is_numeric($stock) ? $stock : 0,
-                    'medida' => $medida,
                     'descuento_oferta' => is_numeric($descuento_oferta) ? $descuento_oferta : 0
                 ]
             );
 
-            // Procesar marcas
-            if (!empty($marcas)) {
-                $marcas_array = array_filter(array_map('trim', explode(',', $marcas)));
-                foreach ($marcas_array as $marca) {
-                    if (empty($marca)) continue;
 
-                    $categoria = Categoria::where('name', $marca)->first();
-                    if ($categoria) {
-                        ProductoMarca::firstOrCreate([
-                            'producto_id' => $producto->id,
-                            'categoria_id' => $categoria->id
-                        ]);
-                    } else {
-                        Log::info("Marca no encontrada: {$marca} (Fila {$numeroFila})");
-                    }
-                }
-            }
 
-            // Procesar modelos
-            if (!empty($modelos)) {
-                $modelos_array = array_filter(array_map('trim', explode(',', $modelos)));
-                foreach ($modelos_array as $modelo) {
-                    if (empty($modelo)) continue;
-
-                    $subCategoria = SubCategoria::where('name', $modelo)->first();
-                    if ($subCategoria) {
-                        ProductoModelo::firstOrCreate([
-                            'producto_id' => $producto->id,
-                            'sub_categoria_id' => $subCategoria->id
-                        ]);
-                    } else {
-                        Log::info("Modelo no encontrado: {$modelo} (Fila {$numeroFila})");
-                    }
-                }
-            }
 
             Log::info("Producto procesado exitosamente: {$codigo} (Fila {$numeroFila})");
         } catch (\Exception $e) {

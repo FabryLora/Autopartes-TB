@@ -86,9 +86,9 @@ class ImportarClientesJob implements ShouldQueue
                 'provincia' => $provincia,
                 'localidad' => $localidad,
                 'telefono' => $telefono,
-                'descuento_uno' => $descuento_uno,
-                'descuento_dos' => $descuento_dos,
-                'descuento_tres' => $descuento_tres,
+                'descuento_uno' => $descuento_uno ?? 0,
+                'descuento_dos' => $descuento_dos ?? 0,
+                'descuento_tres' => $descuento_tres ?? 0,
                 'lista_de_precios_id' => $lista ? $lista_id : null,
                 'vendedor_id' => $vendedor ? $vendedor_id : null,
                 'rol' => 'cliente',
@@ -107,6 +107,15 @@ class ImportarClientesJob implements ShouldQueue
                         SucursalCliente::firstOrCreate([
                             'user_id' => $user->id,
                             'sucursal_id' => $sucursal_selected->id
+                        ]);
+                    } else {
+                        $sucursall = Sucursal::firstOrCreate([
+                            'name' => $sucursal,
+                        ]);
+
+                        SucursalCliente::firstOrCreate([
+                            'user_id' => $user->id,
+                            'sucursal_id' => $sucursall->id
                         ]);
                     }
                 }
