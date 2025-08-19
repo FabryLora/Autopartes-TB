@@ -86,6 +86,8 @@ Route::middleware('auth')->group(function () {
 
         Route::post('recomprar', [PedidoController::class, 'recomprar'])
             ->name('recomprar');
+        Route::get('borrarCliente', [PrivadaController::class, 'borrarCliente'])
+            ->name('borrarCliente');
     });
 
 
@@ -112,7 +114,4 @@ Route::middleware('auth')->group(function () {
         ->name('destroy');
 
     Route::post('compraRapida', [CartController::class, 'compraRapida'])->name('compraRapida');
-
-    Route::get('borrarCliente', [PrivadaController::class, 'borrarCliente'])
-        ->name('borrarCliente');
 });

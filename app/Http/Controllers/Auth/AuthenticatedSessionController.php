@@ -47,9 +47,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended('/privada/productos');
         }
 
-        return back()->withErrors([
-            'login' => 'Las credenciales proporcionadas no son correctas o la cuenta no está autorizada.',
-        ]);
+        return redirect("/")->withErrors("Las credenciales proporcionadas no son correctas o la cuenta no está autorizada.");
     }
 
     /**
