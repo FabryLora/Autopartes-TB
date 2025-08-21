@@ -172,7 +172,7 @@ class ProductoController extends Controller
 
         // Filtro por código
         if ($request->filled('code')) {
-            $query->where('code', 'LIKE', '%' . $request->code . '%');
+            $query->where('code', 'LIKE', '%' . $request->code . '%')->orWhere('code_competitor', 'LIKE', '%' . $request->code . '%')->orWhere('code_competitor_dos', 'LIKE', '%' . $request->code . '%')->orWhere('code_competitor_tres', 'LIKE', '%' . $request->code . '%')->orWhere('code_competitor_cuatro', 'LIKE', '%' . $request->code . '%')->orWhere('code_competitor_cinco', 'LIKE', '%' . $request->code . '%')->orWhere('code_competitor_seis', 'LIKE', '%' . $request->code . '%')->orWhere('code_competitor_siete', 'LIKE', '%' . $request->code . '%');
         }
 
         // Filtro por código OEM
