@@ -90,16 +90,30 @@ class CartController extends Controller
 
     public function remove(Request $request)
     {
-        Cart::remove($request->rowId);
+        $data = $request->validate([
+            'rowId' => 'required|string',
+        ]);
 
-        // Guardar cambios en base de datos
-        if (Auth::check() && !session('cliente_seleccionado')) {
-            Cart::store(Auth::id());
-        } else {
-            Cart::store(session('cliente_seleccionado')->id);
+        $rowId = $data['rowId'];
+
+        // Si ya no existe, no explota: simplemente seguimos
+        if (! Cart::get($rowId)) {
+            return back()->with('info', 'Ese producto ya no estaba en el carrito.');
         }
 
-        return redirect()->back()->with('success', 'Producto eliminado del carrito');
+        Cart::remove($rowId);
+
+        // Persistencia (sobrescribe el guardado previo para evitar CartAlreadyStoredException)
+        $identifier = Auth::check() && !session('cliente_seleccionado')
+            ? Auth::id()
+            : optional(session('cliente_seleccionado'))->id;
+
+        if ($identifier) {
+            Cart::erase($identifier);
+            Cart::store($identifier);
+        }
+
+        return back()->with('success', 'Producto eliminado del carrito');
     }
 
     public function destroy()
