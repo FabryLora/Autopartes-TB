@@ -78,29 +78,55 @@ export default function ProductosAdminRow({ producto }) {
         );
     }, [modeloSelected, marcaSelected]);
 
+    const isImageFile = (file) => file.type.startsWith('image/');
+    const humanSize = (bytes) => (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    const fileKey = (f) => `${f.name}-${f.size}-${f.lastModified}`;
+
     const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
+        const picked = Array.from(e.target.files || []);
+        const already = data.new_images || [];
 
-        // Actualizar el form data con los archivos nuevos
-        setData('new_images', files);
+        const existing = new Set(already.map(fileKey));
+        const uniqueNew = picked.filter((f) => !existing.has(fileKey(f)));
 
-        // Crear previews de las nuevas imágenes
-        const previews = files.map((file) => {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) =>
-                    resolve({
-                        file: file,
-                        url: e.target.result,
-                        name: file.name,
-                        size: file.size,
-                        isNew: true,
-                    });
-                reader.readAsDataURL(file);
-            });
+        const merged = [...already, ...uniqueNew];
+        setData('new_images', merged);
+
+        const previewsPromises = uniqueNew.map(
+            (file) =>
+                new Promise((resolve) => {
+                    if (!isImageFile(file)) {
+                        resolve({
+                            file,
+                            url: null,
+                            name: file.name,
+                            size: file.size,
+                            mime: file.type,
+                            isImage: false,
+                            isNew: true,
+                        });
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (ev) =>
+                        resolve({
+                            file,
+                            url: ev.target.result,
+                            name: file.name,
+                            size: file.size,
+                            mime: file.type,
+                            isImage: true,
+                            isNew: true,
+                        });
+                    reader.readAsDataURL(file);
+                }),
+        );
+
+        Promise.all(previewsPromises).then((newPrev) => {
+            setNewImagePreviews((prev) => [...(prev || []), ...newPrev]);
         });
 
-        Promise.all(previews).then(setNewImagePreviews);
+        e.target.value = '';
     };
 
     const removeExistingImage = (indexToRemove) => {
@@ -361,7 +387,6 @@ export default function ProductosAdminRow({ producto }) {
                                     <input
                                         type="file"
                                         multiple
-                                        accept="image/*"
                                         onChange={handleFileChange}
                                         className="file:bg-primary-orange w-full rounded border p-2 file:cursor-pointer file:rounded-full file:px-4 file:py-2 file:text-white"
                                     />
@@ -400,15 +425,27 @@ export default function ProductosAdminRow({ producto }) {
                                     {/* Mostrar nuevas imágenes */}
                                     {newImagePreviews.length > 0 && (
                                         <div className="mt-4 space-y-2">
-                                            <h4>Nuevas imágenes ({newImagePreviews.length})</h4>
+                                            <h4>Nuevos archivos ({newImagePreviews.length})</h4>
                                             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                                                 {newImagePreviews.map((preview, index) => (
-                                                    <div key={index} className="relative">
-                                                        <img
-                                                            src={preview.url}
-                                                            alt={preview.name}
-                                                            className="h-32 w-full rounded border object-cover"
-                                                        />
+                                                    <div key={index} className="relative rounded border p-2">
+                                                        {preview.isImage ? (
+                                                            <img
+                                                                src={preview.url}
+                                                                alt={preview.name}
+                                                                className="h-32 w-full rounded border object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="flex h-32 w-full items-center justify-center rounded border bg-gray-50">
+                                                                <div className="text-center text-xs">
+                                                                    <div className="mx-auto max-w-[140px] truncate font-semibold">{preview.name}</div>
+                                                                    <div className="text-gray-500">{humanSize(preview.size)}</div>
+                                                                    <div className="mt-1 inline-block rounded bg-gray-200 px-2 py-0.5 text-[10px]">
+                                                                        {preview.mime || 'archivo'}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                         <button
                                                             type="button"
                                                             onClick={() => removeNewImage(index)}
@@ -417,9 +454,9 @@ export default function ProductosAdminRow({ producto }) {
                                                             ×
                                                         </button>
                                                         <p className="mt-1 truncate text-xs text-gray-600">{preview.name}</p>
-                                                        <p className="text-xs text-gray-500">{(preview.size / 1024 / 1024).toFixed(2)} MB</p>
-                                                        <span className="inline-block rounded bg-green-100 px-2 py-1 text-xs text-green-800">
-                                                            Nueva
+                                                        <p className="text-xs text-gray-500">{humanSize(preview.size)}</p>
+                                                        <span className="inline-block rounded bg-green-100 px-2 py-1 text-[10px] text-green-800">
+                                                            Nuevo
                                                         </span>
                                                     </div>
                                                 ))}

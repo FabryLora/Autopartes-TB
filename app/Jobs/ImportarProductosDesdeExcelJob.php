@@ -145,7 +145,13 @@ class ImportarProductosDesdeExcelJob implements ShouldQueue
         $desc_invisible = isset($row['E']) ? trim($row['E']) : '';
         $unidad_pack = isset($row['F']) ? trim($row['F']) : '';
         $codigo_oem = isset($row['G']) ? trim($row['G']) : '';
-        $codigo_competidor = isset($row['I']) ? trim($row['I']) : '';
+        $codigo_competidor = isset($row['H']) ? trim($row['H']) : '';
+        $codigo_competidor_dos = isset($row['I']) ? trim($row['I']) : '';
+        $codigo_competidor_tres = isset($row['J']) ? trim($row['J']) : '';
+        $codigo_competidor_cuatro = isset($row['K']) ? trim($row['K']) : '';
+        $codigo_competidor_cinco = isset($row['L']) ? trim($row['L']) : '';
+        $codigo_competidor_seis = isset($row['M']) ? trim($row['M']) : '';
+        $codigo_competidor_siete = isset($row['N']) ? trim($row['N']) : '';
         $stock = isset($row['O']) ? trim($row['O']) : 0;
         $descuento_oferta = isset($row['V']) ? trim($row['V']) : 0;
 
@@ -154,6 +160,7 @@ class ImportarProductosDesdeExcelJob implements ShouldQueue
             Log::warning("Fila {$numeroFila}: Código vacío, saltando");
             return;
         }
+
 
         try {
             $producto = Producto::updateOrCreate(
@@ -165,6 +172,12 @@ class ImportarProductosDesdeExcelJob implements ShouldQueue
                     'unidad_pack' => $unidad_pack ?? null,
                     'code_oem' => $codigo_oem,
                     'code_competitor' => $codigo_competidor,
+                    'code_competitor_dos' => $codigo_competidor_dos,
+                    'code_competitor_tres' => $codigo_competidor_tres,
+                    'code_competitor_cuatro' => $codigo_competidor_cuatro,
+                    'code_competitor_cinco' => $codigo_competidor_cinco,
+                    'code_competitor_seis' => $codigo_competidor_seis,
+                    'code_competitor_siete' => $codigo_competidor_siete,
                     'stock' => is_numeric($stock) ? $stock : 0,
                     'descuento_oferta' => is_numeric($descuento_oferta) ? $descuento_oferta : 0
                 ]

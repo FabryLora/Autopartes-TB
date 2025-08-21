@@ -37,6 +37,10 @@ export default function ProductosAdmin() {
     const [marcaSelected, setMarcaSelected] = useState([]);
     const [imagePreviews, setImagePreviews] = useState([]);
 
+    const isImageFile = (file) => file.type.startsWith('image/');
+    const humanSize = (bytes) => (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    const fileKey = (f) => `${f.name}-${f.size}-${f.lastModified}`;
+
     useEffect(() => {
         setData(
             'modelos',
@@ -49,28 +53,52 @@ export default function ProductosAdmin() {
     }, [modeloSelected, marcaSelected]);
 
     const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
+        const picked = Array.from(e.target.files || []);
+        const already = data.images || [];
 
-        // Actualizar el form data con los archivos
-        setData('images', files);
+        // evitar duplicados
+        const existing = new Set(already.map(fileKey));
+        const uniqueNew = picked.filter((f) => !existing.has(fileKey(f)));
 
-        // Crear previews de las imágenes
-        const previews = files.map((file) => {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) =>
-                    resolve({
-                        file: file,
-                        url: e.target.result,
-                        name: file.name,
-                        size: file.size,
-                    });
-                reader.readAsDataURL(file);
-            });
+        // 1) merge al form data
+        const merged = [...already, ...uniqueNew];
+        setData('images', merged);
+
+        // 2) construir previews: si es imagen => base64, si no => “file card”
+        const previewsPromises = uniqueNew.map(
+            (file) =>
+                new Promise((resolve) => {
+                    if (!isImageFile(file)) {
+                        resolve({
+                            file,
+                            url: null,
+                            name: file.name,
+                            size: file.size,
+                            mime: file.type,
+                            isImage: false,
+                        });
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (ev) =>
+                        resolve({
+                            file,
+                            url: ev.target.result,
+                            name: file.name,
+                            size: file.size,
+                            mime: file.type,
+                            isImage: true,
+                        });
+                    reader.readAsDataURL(file);
+                }),
+        );
+
+        Promise.all(previewsPromises).then((newPreviews) => {
+            setImagePreviews((prev) => [...(prev || []), ...newPreviews]);
         });
 
-        // Actualizar el estado de previews
-        Promise.all(previews).then(setImagePreviews);
+        // permitir volver a elegir el mismo archivo
+        e.target.value = '';
     };
 
     const removeImage = (indexToRemove) => {
@@ -344,7 +372,6 @@ export default function ProductosAdmin() {
                                         <input
                                             type="file"
                                             multiple
-                                            accept="image/*"
                                             onChange={handleFileChange}
                                             className="file:bg-primary-orange w-full rounded border p-2 file:cursor-pointer file:rounded-full file:px-4 file:py-2 file:text-white"
                                         />
@@ -354,15 +381,29 @@ export default function ProductosAdmin() {
                                         {/* Preview de imágenes */}
                                         {imagePreviews.length > 0 && (
                                             <div className="space-y-2">
-                                                <h4>Imágenes seleccionadas ({imagePreviews.length})</h4>
+                                                <h4>Archivos seleccionados ({imagePreviews.length})</h4>
                                                 <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                                                     {imagePreviews.map((preview, index) => (
-                                                        <div key={index} className="relative">
-                                                            <img
-                                                                src={preview.url}
-                                                                alt={preview.name}
-                                                                className="h-32 w-full rounded border object-cover"
-                                                            />
+                                                        <div key={index} className="relative rounded border p-2">
+                                                            {preview.isImage ? (
+                                                                <img
+                                                                    src={preview.url}
+                                                                    alt={preview.name}
+                                                                    className="h-32 w-full rounded border object-cover"
+                                                                />
+                                                            ) : (
+                                                                <div className="flex h-32 w-full items-center justify-center rounded border bg-gray-50">
+                                                                    <div className="text-center text-xs">
+                                                                        <div className="mx-auto max-w-[140px] truncate font-semibold">
+                                                                            {preview.name}
+                                                                        </div>
+                                                                        <div className="text-gray-500">{humanSize(preview.size)}</div>
+                                                                        <div className="mt-1 inline-block rounded bg-gray-200 px-2 py-0.5 text-[10px]">
+                                                                            {preview.mime || 'archivo'}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            )}
                                                             <button
                                                                 type="button"
                                                                 onClick={() => removeImage(index)}
@@ -371,7 +412,7 @@ export default function ProductosAdmin() {
                                                                 ×
                                                             </button>
                                                             <p className="mt-1 truncate text-xs text-gray-600">{preview.name}</p>
-                                                            <p className="text-xs text-gray-500">{(preview.size / 1024 / 1024).toFixed(2)} MB</p>
+                                                            <p className="text-xs text-gray-500">{humanSize(preview.size)}</p>
                                                         </div>
                                                     ))}
                                                 </div>

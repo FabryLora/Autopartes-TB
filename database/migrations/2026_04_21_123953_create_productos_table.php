@@ -23,6 +23,12 @@ return new class extends Migration
             $table->string('code')->nullable();
             $table->string('code_oem')->nullable();
             $table->string('code_competitor')->nullable();
+            $table->string('code_competitor_dos')->nullable();
+            $table->string('code_competitor_tres')->nullable();
+            $table->string('code_competitor_cuatro')->nullable();
+            $table->string('code_competitor_cinco')->nullable();
+            $table->string('code_competitor_seis')->nullable();
+            $table->string('code_competitor_siete')->nullable();
             $table->string('medida')->nullable();
             $table->longText('desc_visible')->nullable();
             $table->longText('desc_invisible')->nullable();
