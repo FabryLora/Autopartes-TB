@@ -87,7 +87,7 @@ class ListaDePreciosController extends Controller
 
         $listaDePrecios->update($data);
 
-        return redirect()->back()->with('success', 'Lista de precios actualizada correctamente.');
+        return redirect()->route('admin.listadeprecios');
     }
 
     /**
@@ -108,6 +108,6 @@ class ListaDePreciosController extends Controller
 
         $listaDePrecios->delete();
 
-        return redirect()->back()->with('success', 'Lista de precios eliminada correctamente.');
+        return redirect()->route('admin.listadeprecios');
     }
 }

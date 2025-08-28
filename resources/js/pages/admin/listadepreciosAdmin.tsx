@@ -117,7 +117,6 @@ export default function ListaDePreciosAdmin() {
                                     <td className="w-[400px] px-3 py-2 text-center">CODIGO</td>
                                     <td className="text-center">NOMBRE</td>
                                     <td className="text-center">ARCHIVO</td>
-
                                     <td className="text-center">EDITAR</td>
                                 </tr>
                             </thead>
