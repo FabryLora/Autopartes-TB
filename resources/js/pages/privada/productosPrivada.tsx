@@ -1,7 +1,7 @@
 import ProductosPrivadaRow from '@/components/productosPrivadaRow';
 import Slider from '@/components/slider';
 import { Head, router, usePage } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import DefaultLayout from '../defaultLayout';
 
@@ -27,17 +27,9 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
         localStorage.setItem('margenSwitch', JSON.stringify(margenSwitch));
     }, [margenSwitch]);
 
-    const handlePageChange = (page) => {
-        router.get(
-            route('index.privada.productos'),
-            {
-                page: page,
-            },
-            {
-                preserveState: true,
-                preserveScroll: true,
-            },
-        );
+    const handlePageChange = (url) => {
+        if (!url) return;
+        router.get(url, {}, { preserveState: true, preserveScroll: true });
     };
 
     const handleFastBuy = (e) => {
@@ -73,6 +65,31 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                 },
             },
         );
+    };
+
+    const formRef = useRef(null);
+
+    const handleFastBuyKeyDown = (e) => {
+        if (e.key !== 'Enter') return;
+
+        e.preventDefault(); // evita el submit automático por Enter
+
+        const form = formRef.current;
+        const focusables = Array.from(form.querySelectorAll('input, select, textarea')).filter(
+            (el) => !el.disabled && el.type !== 'hidden' && el.tabIndex !== -1 && el.offsetParent !== null, // visibles
+        );
+
+        const idx = focusables.indexOf(e.target);
+
+        if (idx > -1 && idx < focusables.length - 1) {
+            const next = focusables[idx + 1];
+            next.focus();
+            // opcional: seleccionar texto del siguiente input
+            if (typeof next.select === 'function') next.select();
+        } else {
+            // último campo → submit real
+            form.requestSubmit();
+        }
     };
 
     return (
@@ -123,23 +140,31 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                 <div className="bg-primary-orange h-[123px] w-full max-sm:h-auto max-sm:py-4">
                     <div className="mx-auto flex h-full w-[1200px] flex-row items-center max-sm:w-full max-sm:flex-col max-sm:gap-4 max-sm:px-4">
                         <p className="w-1/3 text-[24px] text-white max-sm:w-full max-sm:text-center max-sm:text-[20px]">Compra rápida</p>
+
                         <form
+                            ref={formRef}
                             onSubmit={handleFastBuy}
+                            onKeyDown={handleFastBuyKeyDown}
                             className="grid h-[47px] w-full grid-cols-5 gap-5 max-sm:h-auto max-sm:grid-cols-1 max-sm:gap-3"
                         >
                             <input
                                 name="code"
                                 placeholder="Codigo"
                                 type="text"
+                                autoComplete="off"
                                 className="focus:outline-primary-orange col-span-2 bg-white pl-2 transition duration-300 outline-none placeholder:text-black max-sm:col-span-1 max-sm:h-[40px]"
                             />
                             <input
                                 name="qty"
                                 placeholder="Cantidad"
                                 type="number"
+                                inputMode="numeric"
                                 className="focus:outline-primary-orange col-span-2 bg-white pl-2 transition duration-300 outline-none placeholder:text-black max-sm:col-span-1 max-sm:h-[40px]"
                             />
-                            <button className="border text-white transition duration-300 hover:bg-white hover:text-black max-sm:h-[40px]">
+                            <button
+                                type="submit"
+                                className="border text-white transition duration-300 hover:bg-white hover:text-black max-sm:h-[40px]"
+                            >
                                 Añadir
                             </button>
                         </form>
@@ -259,7 +284,7 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                                 {productos.links.map((link, index) => (
                                     <button
                                         key={index}
-                                        onClick={() => link.url && handlePageChange(link.url.split('page=')[1])}
+                                        onClick={() => link.url && handlePageChange(link.url)}
                                         disabled={!link.url}
                                         className={`px-4 py-2 max-sm:px-2 max-sm:py-1 max-sm:text-[12px] ${
                                             link.active

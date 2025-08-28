@@ -1,7 +1,8 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { router, useForm, usePage } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 /* import defaultPhoto from '../../images/defaultPhoto.png'; */
 
@@ -9,7 +10,44 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
     const { auth, ziggy } = usePage().props;
     const { user } = auth;
 
+    // helpers (arriba del componente o fuera)
+    const isVideo = (src = '') => {
+        try {
+            // soporta rutas con querystring
+            const url = new URL(src, window.location.origin);
+            const ext = url.pathname.split('.').pop()?.toLowerCase();
+            return ['mp4', 'webm', 'ogg', 'm4v'].includes(ext || '');
+        } catch {
+            const ext = src.split('?')[0].split('.').pop()?.toLowerCase();
+            return ['mp4', 'webm', 'ogg', 'm4v'].includes(ext || '');
+        }
+    };
+
     const [cantidad, setCantidad] = useState(producto?.qty != 1 ? producto?.qty : producto?.unidad_pack);
+
+    // estado que ya tenías
+    const [imageSlider, setImageSlider] = useState(false);
+    const [imageSelected, setImageSelected] = useState(0);
+    const imageSliderRef = useRef(null);
+
+    // cerrar al click afuera (igual que tenías)
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (imageSliderRef.current && !imageSliderRef.current.contains(event.target)) {
+                setImageSlider(false);
+            }
+        };
+        if (imageSlider) document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [imageSlider]);
+
+    // armar lista mixta imagen/video + poster para videos
+    const media = (producto?.imagenes || []).map((it) => ({
+        type: isVideo(it?.image) ? 'video' : 'image',
+        src: it?.image,
+    }));
+
+    const firstImageSrc = media.find((m) => m.type === 'image')?.src || null;
 
     useEffect(() => {
         if (producto?.rowId) {
@@ -77,9 +115,80 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
         <>
             {/* Vista desktop - tabla */}
             <div className="grid h-fit grid-cols-9 items-center border-b border-gray-200 py-2 text-[15px] text-black max-sm:hidden">
-                <div className="h-[85px] w-[85px]">
+                {imageSlider && (
+                    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/70">
+                        <button onClick={() => setImageSlider(false)} className="fixed top-4 right-4 p-2" aria-label="Cerrar">
+                            <X color="#fff" />
+                        </button>
+
+                        <div ref={imageSliderRef} className="relative w-full max-w-[90vw]">
+                            {/* Área principal */}
+                            <div className="flex h-[70vh] items-center justify-center">
+                                {media[imageSelected]?.type === 'video' ? (
+                                    <video
+                                        key={media[imageSelected]?.src} // fuerza recarga al cambiar
+                                        src={media[imageSelected]?.src}
+                                        className="max-h-[70vh] max-w-[90vw] rounded-md object-contain"
+                                        controls
+                                        autoPlay
+                                        muted
+                                        playsInline
+                                        loop
+                                        poster={firstImageSrc || undefined}
+                                    />
+                                ) : (
+                                    <img className="max-h-[70vh] max-w-[90vw] rounded-md object-contain" src={media[imageSelected]?.src} alt="" />
+                                )}
+                            </div>
+
+                            {/* Thumbnails */}
+                            <div className="fixed bottom-6 left-1/2 flex -translate-x-1/2 gap-3 overflow-x-auto px-4">
+                                {media.map((m, idx) => (
+                                    <button
+                                        onClick={() => setImageSelected(idx)}
+                                        key={`${m.src}-${idx}`}
+                                        className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-sm ring-2 transition ${idx === imageSelected ? 'ring-white' : 'ring-transparent'}`}
+                                        aria-label={`Vista previa ${idx + 1}`}
+                                    >
+                                        {m.type === 'image' ? (
+                                            <img src={m.src} className="h-full w-full object-cover" alt="" />
+                                        ) : (
+                                            <>
+                                                <div className="flex h-full w-full items-center justify-center bg-neutral-800 text-xs text-white"></div>
+
+                                                <span className="pointer-events-none absolute inset-0 grid place-items-center text-lg font-bold text-white">
+                                                    ▶
+                                                </span>
+                                            </>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Controles izquierda/derecha */}
+                            <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-4">
+                                <button
+                                    className="pointer-events-auto rounded-full p-2 hover:bg-white/10"
+                                    onClick={() => setImageSelected((prev) => (prev > 0 ? prev - 1 : media.length - 1))}
+                                    aria-label="Anterior"
+                                >
+                                    <ChevronLeft size="32px" color="white" />
+                                </button>
+                                <button
+                                    className="pointer-events-auto rounded-full p-2 hover:bg-white/10"
+                                    onClick={() => setImageSelected((prev) => (prev < media.length - 1 ? prev + 1 : 0))}
+                                    aria-label="Siguiente"
+                                >
+                                    <ChevronRight size="32px" color="white" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <button onClick={() => setImageSlider(true)} className="h-[85px] w-[85px]">
                     <img src={producto?.imagenes[0]?.image} className="h-full w-full object-contain" alt="" />
-                </div>
+                </button>
                 <p className="">{producto?.code}</p>
                 {/* mostrar uno debajo del otro */}
                 <p className="">
