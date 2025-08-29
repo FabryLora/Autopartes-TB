@@ -37,7 +37,6 @@ class CartController extends Controller
 
 
 
-
         $request->validate([
             'id' => 'required',
             'name' => 'required|string',
@@ -69,26 +68,30 @@ class CartController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
-            'qty' => 'required|integer|min:1'
+        $validated = $request->validate([
+            'qty'   => 'required|integer|min:1',
+            'rowId' => 'required|string',
         ]);
-        if ($request->rowId) {
-            Cart::update($request->rowId, $request->qty);
+
+        // 1) Actualiza la cantidad en el carrito de sesión
+        Cart::update($validated['rowId'], $validated['qty']);
+
+        // 2) Determina el identificador para persistir
+        $identifier = Auth::check() && !session('cliente_seleccionado')
+            ? Auth::id()
+            : optional(session('cliente_seleccionado'))->id;
+
+        // 3) Sobrescribe el carrito almacenado sin lanzar CartAlreadyStoredException
+        if ($identifier) {
+            Cart::erase($identifier);   // no lanza excepción si no existía
+            Cart::store($identifier);
         }
 
-
-
-        // Guardar cambios en base de datos
-        if (Auth::check() && !session('cliente_seleccionado')) {
-            Cart::store(Auth::id());
-        } else {
-            Cart::store(session('cliente_seleccionado')->id);
-        }
-
-        return redirect()->back()->with('success', 'Carrito actualizado correctamente');
+        return back()->with('success', 'Carrito actualizado correctamente');
     }
 
     public function remove(Request $request)
+
     {
         $data = $request->validate([
             'rowId' => 'required|string',
@@ -115,7 +118,6 @@ class CartController extends Controller
 
         return back()->with('success', 'Producto eliminado del carrito');
     }
-
     public function destroy()
     {
         Cart::destroy();
@@ -140,6 +142,7 @@ class CartController extends Controller
             return response()->json(['success' => true, 'message' => 'Carrito guardado']);
         }
     }
+
 
 
 
