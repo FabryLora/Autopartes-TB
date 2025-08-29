@@ -1,6 +1,7 @@
 import ProductosPrivadaRow from '@/components/productosPrivadaRow';
 import Slider from '@/components/slider';
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { ChevronUp, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import DefaultLayout from '../defaultLayout';
@@ -9,11 +10,29 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
     const { productos, auth, clienteSeleccionado, id, modelo_id, code, code_oem, desc_visible } = usePage().props;
     const user = auth.user;
 
+    const [filtros, setFiltros] = useState([
+        { name: 'id', filtro: id, valor: categorias.find((cat) => cat.id == id)?.name || 'Marca' },
+        { name: 'modelo_id', filtro: modelo_id, valor: subcategorias.find((sub) => sub.id == modelo_id)?.name || 'Modelo' },
+        { name: 'code', filtro: code, valor: code },
+        { name: 'code_oem', filtro: code_oem, valor: code_oem },
+        { name: 'descripcion', filtro: desc_visible, valor: desc_visible },
+    ]);
+
+    useEffect(() => {
+        setFiltros([
+            { name: 'id', filtro: id, valor: categorias.find((cat) => cat.id == id)?.name || 'Marca' },
+            { name: 'modelo_id', filtro: modelo_id, valor: subcategorias.find((sub) => sub.id == modelo_id)?.name || 'Modelo' },
+            { name: 'code', filtro: code, valor: code },
+            { name: 'code_oem', filtro: code_oem, valor: code_oem },
+            { name: 'descripcion', filtro: desc_visible, valor: desc_visible },
+        ]);
+    }, [id, modelo_id, code, code_oem, desc_visible]);
+
     const [margenSwitch, setMargenSwitch] = useState(false);
     const [vendedorScreen, setVendedorScreen] = useState(user?.rol == 'vendedor' && clienteSeleccionado == null);
     const [selectedUserId, setSelectedUserId] = useState(null);
 
-    const [marcaSelected, setMarcaSelected] = useState();
+    const [marcaSelected, setMarcaSelected] = useState(id ? id : null);
 
     useEffect(() => {
         if (user?.rol === 'vendedor' && !clienteSeleccionado) {
@@ -28,8 +47,15 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
     }, [margenSwitch]);
 
     const handlePageChange = (url) => {
-        if (!url) return;
-        router.get(url, {}, { preserveState: true, preserveScroll: true });
+        router.get(
+            url,
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
     };
 
     const handleFastBuy = (e) => {
@@ -91,6 +117,14 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
             form.requestSubmit();
         }
     };
+
+    const [openCategoria, setOpenCategoria] = useState(id ? id : null);
+
+    const toggleCategoria = (catId) => {
+        setOpenCategoria(openCategoria === catId ? null : catId);
+    };
+
+    const currentQuery = { id, modelo_id, code, code_oem, desc_visible };
 
     return (
         <DefaultLayout>
@@ -191,7 +225,7 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                         </select>
 
                         <select
-                            defaultValue={modelo_id || ''}
+                            defaultValue={modelo_id}
                             name="modelo_id"
                             className="focus:outline-primary-orange h-[47px] w-full border bg-white outline-0 transition duration-300 focus:outline max-sm:h-[40px]"
                         >
@@ -199,7 +233,7 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                             {subcategorias
                                 ?.filter((subcategoria) => subcategoria.categoria_id == marcaSelected)
                                 .map((subcategoria) => (
-                                    <option key={subcategoria.id} value={subcategoria.id}>
+                                    <option selected={modelo_id == subcategoria.id} key={subcategoria.id} value={subcategoria.id}>
                                         {subcategoria.name}
                                     </option>
                                 ))}
@@ -243,8 +277,82 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                         </button>
                     </form>
                 </div>
-                <div className="mx-auto flex w-[1200px] flex-col gap-2 max-sm:w-full max-sm:px-4">
-                    <div className="flex flex-row justify-end max-sm:justify-end">
+                <div className="relative mx-auto flex min-h-[1400px] w-[1200px] flex-col gap-2 max-sm:w-full max-sm:px-4">
+                    <div className="absolute top-8 -left-60 w-full max-w-[200px]">
+                        <div className="flex w-full flex-col">
+                            {categorias?.map((cat) => {
+                                const isOpen = openCategoria == cat.id;
+                                return (
+                                    <div key={cat.id} className="flex flex-col">
+                                        <div className="flex flex-row items-center border-t py-3">
+                                            <Link
+                                                href={route('index.privada.productos', { id: cat.id })}
+                                                className={`w-1/3 text-sm ${id == cat.id ? 'font-bold' : 'font-medium'}`}
+                                            >
+                                                {cat.name}
+                                            </Link>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => toggleCategoria(cat.id)}
+                                                aria-expanded={isOpen}
+                                                className="flex w-2/3 justify-end p-1 transition-transform duration-300"
+                                            >
+                                                <ChevronUp
+                                                    className={`h-4 w-4 transition-transform duration-300 ${isOpen ? 'rotate-0' : 'rotate-180'}`}
+                                                />
+                                            </button>
+                                        </div>
+
+                                        {/* Contenedor animado */}
+                                        <div
+                                            className={`grid overflow-hidden transition-all duration-300 ease-in-out ${
+                                                isOpen ? 'translate-y-0 grid-rows-[1fr] opacity-100' : '-translate-y-1 grid-rows-[0fr] opacity-0'
+                                            }`}
+                                        >
+                                            <div className="min-h-0">
+                                                {cat.subcategorias && (
+                                                    <div className="flex flex-col pl-4">
+                                                        {cat.subcategorias.map((subcat) => (
+                                                            <Link
+                                                                href={route('index.privada.productos', { id: cat.id, modelo_id: subcat.id })}
+                                                                key={subcat.id}
+                                                                className={`flex flex-row justify-between py-2 ${modelo_id == subcat.id ? 'font-bold' : ''}`}
+                                                            >
+                                                                <h3 className={`text-sm`}>{subcat.name}</h3>
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    <div className="flex flex-row justify-between">
+                        <div className="flex flex-row gap-3">
+                            {filtros
+                                ?.filter((f) => f.filtro)
+                                ?.map((filtro) => {
+                                    const nextQuery = Object.fromEntries(
+                                        Object.entries(currentQuery).filter(([k, v]) => k !== filtro.name && v != null && v !== ''),
+                                    );
+
+                                    return (
+                                        <div
+                                            key={`${filtro.name}-${filtro.filtro}`}
+                                            className="bg-primary-orange flex flex-row items-center gap-1 rounded-sm px-1 py-1 text-white"
+                                        >
+                                            <p>{filtro.valor}</p>
+                                            <Link href={route('index.privada.productos', nextQuery)} preserveScroll preserveState>
+                                                <X color="white" size="14px" />
+                                            </Link>
+                                        </div>
+                                    );
+                                })}
+                        </div>
                         <div className="flex flex-row items-center gap-2">
                             <p className="text-[16px] max-sm:text-[14px]">Vista mostrador</p>
                             <button

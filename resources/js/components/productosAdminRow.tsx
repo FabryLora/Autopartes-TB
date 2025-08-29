@@ -31,12 +31,25 @@ export default function ProductosAdminRow({ producto }) {
         marcas: producto?.marcas?.map((marca) => marca.categoria_id) || [],
     });
 
+    const [modeloSelected, setModeloSelected] = useState([]);
+    const [marcaSelected, setMarcaSelected] = useState([]);
+    const [existingImages, setExistingImages] = useState(producto.imagenes || []);
+    const [newImagePreviews, setNewImagePreviews] = useState([]);
+    const [imagesToDelete, setImagesToDelete] = useState([]);
+
+    useEffect(() => {
+        setExistingImages(producto.imagenes || []);
+    }, [producto]);
+
     const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         post(route('admin.productos.update'), {
             preserveScroll: true,
             onSuccess: () => {
                 toast.success('Producto actualizada correctamente');
+                setExistingImages(producto.imagenes || []);
+                setNewImagePreviews([]);
+                setImagesToDelete([]);
                 setEdit(false);
             },
             onError: (errors) => {
@@ -60,12 +73,6 @@ export default function ProductosAdminRow({ producto }) {
             });
         }
     };
-
-    const [modeloSelected, setModeloSelected] = useState([]);
-    const [marcaSelected, setMarcaSelected] = useState([]);
-    const [existingImages, setExistingImages] = useState(producto.imagenes || []);
-    const [newImagePreviews, setNewImagePreviews] = useState([]);
-    const [imagesToDelete, setImagesToDelete] = useState([]);
 
     useEffect(() => {
         setData(

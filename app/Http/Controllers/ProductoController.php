@@ -26,7 +26,6 @@ class ProductoController extends Controller
      */
     public function index(Request $request)
     {
-
         $categorias = Categoria::select('id', 'name')->get();
 
 
@@ -185,13 +184,13 @@ class ProductoController extends Controller
         }
 
         // Filtro por descripción visible
-        if ($request->filled('desc_visible')) {
-            $query->where('desc_visible', 'LIKE', '%' . $request->desc . '%')->orWhere('desc_invisible', 'LIKE', '%' . $request->desc . '%');
+        if ($request->filled('descripcion')) {
+            $query->where('desc_visible', 'LIKE', '%' . $request->descripcion . '%')->orWhere('desc_invisible', 'LIKE', '%' . $request->descripcion . '%');
         }
 
 
 
-        $productos = $query->paginate(perPage: $perPage);
+        $productos = $query->paginate($perPage)->withQueryString();
 
         // Modificar los productos para agregar rowId y qty del carrito
         $productos->getCollection()->transform(function ($producto) use ($carrito, $qty) {
@@ -225,7 +224,7 @@ class ProductoController extends Controller
         });
         # si el usuario es vendedor
 
-        $categorias = Categoria::orderBy('order', 'asc')->get();
+        $categorias = Categoria::orderBy('order', 'asc')->with('subcategorias')->get();
         $subcategorias = SubCategoria::orderBy('order', 'asc')->get();
 
         $userId = Auth::id();
@@ -256,7 +255,7 @@ class ProductoController extends Controller
             'modelo_id' => $request->modelo_id ?? null,
             'code' => $request->code ?? null,
             'code_oem' => $request->code_oem ?? null,
-            'desc_visible' => $request->desc_visible ?? null,
+            'desc_visible' => $request->descripcion ?? null,
 
         ]);
     }
