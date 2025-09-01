@@ -7,8 +7,13 @@ import toast from 'react-hot-toast';
 import DefaultLayout from '../defaultLayout';
 
 export default function ProductosPrivada({ categorias, subcategorias }) {
-    const { productos, auth, clienteSeleccionado, id, modelo_id, code, code_oem, desc_visible } = usePage().props;
+    const { productos, auth, clienteSeleccionado, id, modelo_id, code, code_oem, desc_visible, flash } = usePage().props;
     const user = auth.user;
+
+    useEffect(() => {
+        if (flash?.success) toast.success(flash.success);
+        if (flash?.error) toast.error(flash.error);
+    }, [flash?.success, flash?.error]);
 
     const [filtros, setFiltros] = useState([
         { name: 'id', filtro: id, valor: categorias.find((cat) => cat.id == id)?.name || 'Marca' },
@@ -60,6 +65,7 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
 
     const handleFastBuy = (e) => {
         e.preventDefault();
+
         router.post(
             route('compraRapida'),
             {
@@ -68,12 +74,6 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
             },
             {
                 preserveScroll: true,
-                onSuccess: () => {
-                    toast.success('Producto añadido al carrito');
-                },
-                onError: (errors) => {
-                    toast.error(errors.message || 'Error al añadir el producto');
-                },
             },
         );
     };

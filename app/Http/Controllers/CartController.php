@@ -153,7 +153,7 @@ class CartController extends Controller
         $producto = Producto::where('code', $request->code)->with('precio')->first();
 
         if (!$producto) {
-            return;
+            return back()->with('error', 'Producto no encontrado con el código proporcionado.');
         }
 
         $tieneOfertaVigente = $producto->ofertas()
@@ -179,5 +179,7 @@ class CartController extends Controller
         } else {
             Cart::store(session('cliente_seleccionado')->id);
         }
+
+        return back()->with('success', 'Producto añadido al carrito');
     }
 }

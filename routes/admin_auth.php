@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArchivoCalidadController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BannerPortadaController;
 use App\Http\Controllers\CalidadController;
 use App\Http\Controllers\CategoriaController;
@@ -39,6 +40,8 @@ Route::get('/adm', [AdminAuthController::class, 'login'])->name('admin.login');
 Route::post('/adm', [AdminAuthController::class, 'authenticate'])->name('admin.authenticate');
 
 Route::middleware('auth:admin')->group(function () {
+    Route::post('register', [RegisteredUserController::class, 'store'])
+        ->name('register.store');
     Route::post('admin-logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
     Route::get('admin/administradores', [AdminController::class, 'index'])->name('admin.index');
     Route::post('admin/store', [AdminController::class, 'store'])->name('admin.store');

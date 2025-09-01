@@ -19,38 +19,38 @@
 @endphp
 
 <div x-data="{
-        showModal: false,
-        modalType: 'login',
-        scrolled: false,
-        searchOpen: false,
-        mobileMenuOpen: false,
-        logoPrincipal: '{{ $logos->logo_principal ?? '' }}',
-        logoSecundario: '{{ $logos->logo_secundario ?? '' }}',
-        switchToLogin() {
-            this.modalType = 'login';
-        },
-        switchToRegister() {
-            this.modalType = 'register';
-        },
-        openModal(type = 'login') {
-            this.modalType = type;
-            this.showModal = true;
-        },
-        closeModal() {
-            this.showModal = false;
-        },
-        toggleMobileMenu() {
-            this.mobileMenuOpen = !this.mobileMenuOpen;
-        }
-    }" x-init="
-        @if ($isHome)
-            window.addEventListener('scroll', () => {
-                scrolled = window.scrollY > 0;
-            });
-        @else
-            scrolled = true;
-        @endif
-    " :class="{
+    showModal: false,
+    modalType: 'login',
+    scrolled: false,
+    searchOpen: false,
+    mobileMenuOpen: false,
+    logoPrincipal: '{{ $logos->logo_principal ?? '' }}',
+    logoSecundario: '{{ $logos->logo_secundario ?? '' }}',
+    switchToLogin() { this.modalType = 'login' },
+    switchToRegister() { this.modalType = 'register' },
+    openModal(type = 'login') { this.modalType = type; this.showModal = true },
+    closeModal() { this.showModal = false },
+    toggleMobileMenu() { this.mobileMenuOpen = !this.mobileMenuOpen }
+  }" x-init="
+    @if ($isHome)
+          window.addEventListener('scroll', () => { scrolled = window.scrollY > 0 })
+    @else
+          scrolled = true
+    @endif
+
+    @if ($errors->any())
+          showModal = true;
+          @if (old('_form') === 'register')
+            modalType = 'register';
+          @else
+            modalType = 'login';
+          @endif
+    @elseif (session('success_login'))
+          showModal = true; modalType = 'login';
+    @elseif (session('success_register'))
+          showModal = true; modalType = 'register';
+    @endif
+  " :class="{
         'bg-white shadow-md': scrolled || !{{ $isHome ? 'true' : 'false' }},
         'bg-transparent': !scrolled && {{ $isHome ? 'true' : 'false' }},
         'fixed top-0': {{ $isHome ? 'true' : 'false' }},
@@ -183,7 +183,7 @@
             @foreach(($isPrivate ? $privateLinks : $defaultLinks) as $link)
                 <a href="{{ $link['href'] }}" :class="scrolled ? 'text-black' : 'text-white'"
                     class="text-sm hover:text-primary-orange transition-colors duration-300 
-                                                                                                                        {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold' : '' }}">
+                                                                                                                                                    {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold' : '' }}">
                     {{ $link['title'] }}
                 </a>
             @endforeach
@@ -202,7 +202,7 @@
             @foreach(($isPrivate ? $privateLinks : $defaultLinks) as $link)
                 <a href="{{ $link['href'] }}"
                     class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-orange transition-colors duration-300
-                                                                                                                        {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold bg-orange-50 text-primary-orange' : '' }}"
+                                                                                                                                                    {{ Request::is(ltrim($link['href'], '/')) ? 'font-bold bg-orange-50 text-primary-orange' : '' }}"
                     @click="mobileMenuOpen = false">
                     {{ $link['title'] }}
                 </a>
@@ -211,15 +211,17 @@
     </div>
 
     <!-- Overlay del modal -->
-    <div x-show="showModal" x-transition.opacity x-cloak class="fixed inset-0 bg-black/50 z-50" @click="closeModal()">
+    <div x-show="showModal" x-transition.opacity x-cloak class="fixed inset-0 bg-black/50 z-50"
+        @mousedown.self="closeModal()" @keydown.escape.window="closeModal()">
     </div>
 
     <!-- Modal de Login -->
     <div x-show="showModal && modalType === 'login'" x-transition.opacity x-cloak
         class="fixed inset-0 flex items-center justify-center z-50 max-sm:px-4">
-        <form id="loginForm" method="POST" action="{{ route('login') }}" @click.away="closeModal()"
-            class="relative bg-white rounded-lg shadow-lg w-[400px] max-sm:w-full max-w-[90vw] p-6 max-sm:p-4">
-
+        <form id="loginForm" method="POST" action="{{ route('login') }}"
+            class="relative bg-white rounded-lg shadow-lg w-[400px] max-sm:w-full max-w-[90vw] p-6 max-sm:p-4"
+            @mousedown.stop @click.stop>
+            <input type="hidden" name="_form" value="login">
             <!-- Botón cerrar -->
             <button type="button" @click="closeModal()"
                 class="absolute top-4 right-4 max-sm:top-3 max-sm:right-3 text-gray-500 hover:text-gray-700">
@@ -239,6 +241,9 @@
                     </label>
                     <input name="usuario" type="text" id="login_name"
                         class="w-full px-3 py-2 max-sm:px-2 max-sm:py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange text-sm max-sm:text-xs">
+                    @error('usuario')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -247,7 +252,15 @@
                     </label>
                     <input name="password" type="password" id="login_password"
                         class="w-full px-3 py-2 max-sm:px-2 max-sm:py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange text-sm max-sm:text-xs">
+                    @error('password')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
+                @if (session('success_login'))
+                    <div class="mb-4 rounded border border-green-300 bg-green-50 p-2 text-green-800 text-sm">
+                        {{ session('success_login') }}
+                    </div>
+                @endif
 
                 <button form="loginForm" type="submit"
                     class="w-full bg-primary-orange text-white py-2 max-sm:py-1.5 px-4 rounded-md hover:bg-primary-orange/80 transition-colors text-sm max-sm:text-xs">
@@ -270,9 +283,10 @@
     <!-- Modal de Registro -->
     <div x-show="showModal && modalType === 'register'" x-transition.opacity x-cloak
         class="fixed inset-0 flex items-center justify-center z-50 max-sm:px-4">
-        <form id="registerForm" method="POST" action="{{ route('register') }}" @click.away="closeModal()"
-            class="relative bg-white rounded-lg shadow-lg w-[500px] max-sm:w-full max-w-[90vw] p-6 max-sm:p-4 max-h-[90vh] max-sm:max-h-[95vh] overflow-y-auto">
-
+        <form id="registerForm" method="POST" action="{{ route('register.store_cliente') }}"
+            class="relative bg-white rounded-lg shadow-lg w-[500px] max-sm:w-full max-w-[90vw] p-6 max-sm:p-4 max-h-[90vh] max-sm:max-h-[95vh] overflow-y-auto"
+            @mousedown.stop @click.stop>
+            <input type="hidden" name="_form" value="register">
             <!-- Botón cerrar -->
             <button type="button" @click="closeModal()"
                 class="absolute top-4 right-4 max-sm:top-3 max-sm:right-3 text-gray-500 hover:text-gray-700">
@@ -292,6 +306,9 @@
                     </label>
                     <input name="name" type="text" id="register_name"
                         class="w-full px-3 py-2 max-sm:px-2 max-sm:py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange text-sm max-sm:text-xs">
+                    @error('name')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -299,6 +316,9 @@
                         class="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Contraseña</label>
                     <input name="password" type="password" id="register_password"
                         class="w-full px-3 py-2 max-sm:px-2 max-sm:py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange text-sm max-sm:text-xs">
+                    @error('password')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -308,6 +328,9 @@
                     </label>
                     <input name="password_confirmation" type="password" id="register_password_confirmation"
                         class="w-full px-3 py-2 max-sm:px-2 max-sm:py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange text-sm max-sm:text-xs">
+                    @error('password_confirmation')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -316,6 +339,9 @@
                     </label>
                     <input name="email" type="email" id="register_email"
                         class="w-full px-3 py-2 max-sm:px-2 max-sm:py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange text-sm max-sm:text-xs">
+                    @error('email')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -324,6 +350,9 @@
                     </label>
                     <input name="cuit" type="text" id="register_cuit"
                         class="w-full px-3 py-2 max-sm:px-2 max-sm:py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-orange text-sm max-sm:text-xs">
+                    @error('cuit')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -375,6 +404,11 @@
                     Crear Cuenta
                 </button>
             </div>
+            @if (session('success_register'))
+                <div class="mb-4 rounded border border-green-300 bg-green-50 p-2 text-green-800 text-sm">
+                    {{ session('success_register') }}
+                </div>
+            @endif
 
             <div class="mt-4 max-sm:mt-3 text-center">
                 <p class="text-sm max-sm:text-xs text-gray-600">

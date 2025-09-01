@@ -8,8 +8,12 @@ import Dashboard from './dashboard';
 
 export default function Clientes() {
     const { clientes, provincias, vendedores, listas, sucursales } = usePage().props;
-
-    const { data, setData, post, reset } = useForm({
+    const [searchTerm, setSearchTerm] = useState('');
+    const [createView, setCreateView] = useState(false);
+    const [subirView, setSubirView] = useState(false);
+    const [archivo, setArchivo] = useState();
+    const [sucursalesSelected, setSucursalesSelected] = useState([]);
+    const { data, setData, post, reset, errors } = useForm({
         name: '',
     });
 
@@ -34,21 +38,11 @@ export default function Clientes() {
 
     const signup = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        signupForm.post(route('register'), {
-            onSuccess: () => {
-                setCreateView(false);
-            },
-            onError: (error) => {
-                console.error('Error al registrar el cliente:', error);
-            },
+        signupForm.post(route('register.store'), {
+            onSuccess: () => setCreateView(false),
+            onError: (error) => console.error('Error al registrar:', error),
         });
     };
-
-    const [searchTerm, setSearchTerm] = useState('');
-    const [createView, setCreateView] = useState(false);
-    const [subirView, setSubirView] = useState(false);
-    const [archivo, setArchivo] = useState();
-    const [sucursalesSelected, setSucursalesSelected] = useState([]);
 
     useEffect(() => {
         signupForm.setData(
@@ -109,6 +103,14 @@ export default function Clientes() {
         );
     };
 
+    const inputClass = (hasError: boolean) =>
+        `h-[45px] w-full pl-3 outline-1 transition duration-300 ${
+            hasError ? 'outline-red-500 focus:outline-red-500' : 'outline-[#DDDDE0] focus:outline-primary-orange'
+        }`;
+
+    // helper: texto de error
+    const FieldError = ({ msg }: { msg?: string }) => (msg ? <p className="mt-1 text-sm leading-4 text-red-600">{msg}</p> : null);
+
     return (
         <Dashboard>
             <div className="flex w-full flex-col p-6">
@@ -123,266 +125,317 @@ export default function Clientes() {
                             <form
                                 onSubmit={signup}
                                 className="flex h-fit max-h-[90vh] w-[600px] flex-col gap-6 overflow-y-auto bg-white p-5 shadow-md"
+                                noValidate
                             >
                                 <h2 className="text-xl font-bold text-black">Registrar cliente</h2>
+
                                 <div className="grid w-full grid-cols-2 gap-3 text-[16px]">
+                                    {/* Nombre */}
                                     <div className="col-span-2 flex flex-col gap-2">
-                                        <label htmlFor="name" className="">
-                                            Nombre de usuario
-                                        </label>
+                                        <label htmlFor="name">Nombre de usuario</label>
                                         <input
-                                            onChange={(ev) => signupForm.setData('name', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            type="text"
-                                            name="name"
                                             id="name"
+                                            name="name"
+                                            type="text"
+                                            className={inputClass(!!signupForm.errors.name)}
+                                            onChange={(e) => signupForm.setData('name', e.target.value)}
                                             required
+                                            aria-invalid={!!signupForm.errors.name}
                                         />
+                                        <FieldError msg={signupForm.errors.name} />
                                     </div>
+
+                                    {/* Password */}
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="password">Contraseña</label>
                                         <input
-                                            onChange={(ev) => signupForm.setData('password', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            type="password"
-                                            name="password"
                                             id="password"
+                                            name="password"
+                                            type="password"
+                                            className={inputClass(!!signupForm.errors.password)}
+                                            onChange={(e) => signupForm.setData('password', e.target.value)}
                                             required
+                                            aria-invalid={!!signupForm.errors.password}
                                         />
+                                        <FieldError msg={signupForm.errors.password} />
                                     </div>
+
+                                    {/* Confirmación */}
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="password_confirmation">Confirmar contraseña</label>
                                         <input
-                                            onChange={(ev) => signupForm.setData('password_confirmation', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            type="password"
-                                            name="password_confirmation"
                                             id="password_confirmation"
+                                            name="password_confirmation"
+                                            type="password"
+                                            className={inputClass(!!signupForm.errors.password_confirmation)}
+                                            onChange={(e) => signupForm.setData('password_confirmation', e.target.value)}
                                             required
+                                            aria-invalid={!!signupForm.errors.password_confirmation}
                                         />
+                                        <FieldError msg={signupForm.errors.password_confirmation} />
                                     </div>
+
+                                    {/* Email principal */}
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="email">Email</label>
                                         <input
-                                            onChange={(ev) => signupForm.setData('email', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            type="email"
-                                            name="email"
                                             id="email"
+                                            name="email"
+                                            type="email"
+                                            className={inputClass(!!signupForm.errors.email)}
+                                            onChange={(e) => signupForm.setData('email', e.target.value)}
+                                            aria-invalid={!!signupForm.errors.email}
                                         />
+                                        <FieldError msg={signupForm.errors.email} />
                                     </div>
 
+                                    {/* Emails extras */}
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="email2">Email 2</label>
                                         <input
-                                            onChange={(ev) => signupForm.setData('email_dos', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            type="email2"
-                                            name="email2"
                                             id="email2"
+                                            name="email_dos"
+                                            type="email"
+                                            className={inputClass(!!signupForm.errors.email_dos)}
+                                            onChange={(e) => signupForm.setData('email_dos', e.target.value)}
+                                            aria-invalid={!!signupForm.errors.email_dos}
                                         />
+                                        <FieldError msg={signupForm.errors.email_dos} />
                                     </div>
 
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="email3">Email 3</label>
                                         <input
-                                            onChange={(ev) => signupForm.setData('email_tres', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            type="email3"
-                                            name="email3"
                                             id="email3"
+                                            name="email_tres"
+                                            type="email"
+                                            className={inputClass(!!signupForm.errors.email_tres)}
+                                            onChange={(e) => signupForm.setData('email_tres', e.target.value)}
+                                            aria-invalid={!!signupForm.errors.email_tres}
                                         />
+                                        <FieldError msg={signupForm.errors.email_tres} />
                                     </div>
 
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="email4">Email 4</label>
                                         <input
-                                            onChange={(ev) => signupForm.setData('email_cuatro', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            type="email4"
-                                            name="email4"
                                             id="email4"
+                                            name="email_cuatro"
+                                            type="email"
+                                            className={inputClass(!!signupForm.errors.email_cuatro)}
+                                            onChange={(e) => signupForm.setData('email_cuatro', e.target.value)}
+                                            aria-invalid={!!signupForm.errors.email_cuatro}
                                         />
+                                        <FieldError msg={signupForm.errors.email_cuatro} />
                                     </div>
 
+                                    {/* Razón social */}
                                     <div className="flex flex-col gap-2">
-                                        <label htmlFor="razon social">Razon social</label>
+                                        <label htmlFor="razon_social">Razón social</label>
                                         <input
-                                            onChange={(ev) => signupForm.setData('razon_social', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                            id="razon_social"
+                                            name="razon_social"
                                             type="text"
-                                            name="razon social"
-                                            id="razon social"
+                                            className={inputClass(!!signupForm.errors.razon_social)}
+                                            onChange={(e) => signupForm.setData('razon_social', e.target.value)}
+                                            aria-invalid={!!signupForm.errors.razon_social}
                                         />
+                                        <FieldError msg={signupForm.errors.razon_social} />
                                     </div>
 
+                                    {/* CUIT */}
                                     <div className="flex flex-col gap-2">
-                                        <label htmlFor="dni">Cuit</label>
+                                        <label htmlFor="cuit">CUIT</label>
                                         <input
-                                            onChange={(ev) => signupForm.setData('cuit', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                            id="cuit"
+                                            name="cuit"
                                             type="text"
-                                            name="dni"
-                                            id="dni"
+                                            className={inputClass(!!signupForm.errors.cuit)}
+                                            onChange={(e) => signupForm.setData('cuit', e.target.value)}
                                             required
+                                            aria-invalid={!!signupForm.errors.cuit}
                                         />
+                                        <FieldError msg={signupForm.errors.cuit} />
                                     </div>
 
+                                    {/* Dirección */}
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="direccion">Dirección</label>
                                         <input
-                                            onChange={(ev) => signupForm.setData('direccion', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            type="text"
-                                            name="direccion"
                                             id="direccion"
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className="flex flex-col gap-2">
-                                        <label htmlFor="telefono">Telefono</label>
-                                        <input
-                                            onChange={(ev) => signupForm.setData('telefono', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
+                                            name="direccion"
                                             type="text"
-                                            name="telefono"
-                                            id="telefono"
+                                            className={inputClass(!!signupForm.errors.direccion)}
+                                            onChange={(e) => signupForm.setData('direccion', e.target.value)}
                                             required
+                                            aria-invalid={!!signupForm.errors.direccion}
                                         />
+                                        <FieldError msg={signupForm.errors.direccion} />
                                     </div>
 
+                                    {/* Teléfono */}
                                     <div className="flex flex-col gap-2">
-                                        <label htmlFor="lista">Lista</label>
+                                        <label htmlFor="telefono">Teléfono</label>
+                                        <input
+                                            id="telefono"
+                                            name="telefono"
+                                            type="text"
+                                            className={inputClass(!!signupForm.errors.telefono)}
+                                            onChange={(e) => signupForm.setData('telefono', e.target.value)}
+                                            required
+                                            aria-invalid={!!signupForm.errors.telefono}
+                                        />
+                                        <FieldError msg={signupForm.errors.telefono} />
+                                    </div>
+
+                                    {/* Lista de precios */}
+                                    <div className="flex flex-col gap-2">
+                                        <label htmlFor="lista_de_precios_id">Lista</label>
                                         <select
-                                            onChange={(ev) => signupForm.setData('lista_de_precios_id', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            name="lista_de_precios_id"
                                             id="lista_de_precios_id"
+                                            name="lista_de_precios_id"
+                                            className={inputClass(!!signupForm.errors.lista_de_precios_id)}
+                                            onChange={(e) => signupForm.setData('lista_de_precios_id', e.target.value)}
+                                            aria-invalid={!!signupForm.errors.lista_de_precios_id}
+                                            defaultValue=""
                                         >
-                                            <option disabled selected value="">
+                                            <option disabled value="">
                                                 Selecciona una lista
                                             </option>
-
-                                            {listas?.map((lista) => (
-                                                <option key={lista.id} value={lista.id}>
-                                                    {lista.name}
+                                            {listas?.map((l) => (
+                                                <option key={l.id} value={l.id}>
+                                                    {l.name}
                                                 </option>
                                             ))}
                                         </select>
+                                        <FieldError msg={signupForm.errors.lista_de_precios_id} />
                                     </div>
 
+                                    {/* Vendedor */}
                                     <div className="flex flex-col gap-2">
-                                        <label htmlFor="vendedor">Vendedor</label>
+                                        <label htmlFor="vendedor_id">Vendedor</label>
                                         <select
-                                            onChange={(ev) => signupForm.setData('vendedor_id', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            name="vendedor_id"
                                             id="vendedor_id"
+                                            name="vendedor_id"
+                                            className={inputClass(!!signupForm.errors.vendedor_id)}
+                                            onChange={(e) => signupForm.setData('vendedor_id', e.target.value)}
+                                            aria-invalid={!!signupForm.errors.vendedor_id}
+                                            defaultValue=""
                                         >
-                                            <option disabled selected value="">
+                                            <option disabled value="">
                                                 Selecciona un vendedor
                                             </option>
-
-                                            {vendedores?.map((vendedor) => (
-                                                <option key={vendedor.id} value={vendedor.id}>
-                                                    {vendedor.name}
+                                            {vendedores?.map((v) => (
+                                                <option key={v.id} value={v.id}>
+                                                    {v.name}
                                                 </option>
                                             ))}
                                         </select>
+                                        <FieldError msg={signupForm.errors.vendedor_id} />
                                     </div>
 
+                                    {/* Descuentos */}
                                     <div className="col-span-2 grid grid-cols-3 gap-4">
                                         <div className="flex flex-col gap-2">
                                             <label htmlFor="descuento_uno">Descuento 1</label>
                                             <input
-                                                className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                                onChange={(e) => signupForm.setData('descuento_uno', e.target.value)}
-                                                type="number"
-                                                name=""
                                                 id="descuento_uno"
+                                                type="number"
+                                                className={inputClass(!!signupForm.errors.descuento_uno)}
+                                                onChange={(e) => signupForm.setData('descuento_uno', e.target.value)}
+                                                aria-invalid={!!signupForm.errors.descuento_uno}
                                             />
+                                            <FieldError msg={signupForm.errors.descuento_uno} />
                                         </div>
                                         <div className="flex flex-col gap-2">
                                             <label htmlFor="descuento_dos">Descuento 2</label>
                                             <input
-                                                className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                                onChange={(e) => signupForm.setData('descuento_dos', e.target.value)}
-                                                type="number"
-                                                name=""
                                                 id="descuento_dos"
+                                                type="number"
+                                                className={inputClass(!!signupForm.errors.descuento_dos)}
+                                                onChange={(e) => signupForm.setData('descuento_dos', e.target.value)}
+                                                aria-invalid={!!signupForm.errors.descuento_dos}
                                             />
+                                            <FieldError msg={signupForm.errors.descuento_dos} />
                                         </div>
                                         <div className="flex flex-col gap-2">
                                             <label htmlFor="descuento_tres">Descuento 3</label>
                                             <input
-                                                className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                                onChange={(e) => signupForm.setData('descuento_tres', e.target.value)}
-                                                type="number"
-                                                name=""
                                                 id="descuento_tres"
+                                                type="number"
+                                                className={inputClass(!!signupForm.errors.descuento_tres)}
+                                                onChange={(e) => signupForm.setData('descuento_tres', e.target.value)}
+                                                aria-invalid={!!signupForm.errors.descuento_tres}
                                             />
+                                            <FieldError msg={signupForm.errors.descuento_tres} />
                                         </div>
                                     </div>
 
+                                    {/* Sucursales (react-select) */}
                                     <div className="col-span-2 flex flex-col gap-2">
                                         <label htmlFor="sucursal">Sucursales</label>
                                         <Select
-                                            options={sucursales?.map((sucursal) => ({
-                                                value: sucursal.id,
-                                                label: sucursal.name,
-                                            }))}
-                                            onChange={(options) => setSucursalesSelected(options)}
-                                            className=""
-                                            name="sucursal"
-                                            id="sucursal"
+                                            inputId="sucursal"
+                                            options={sucursales?.map((s) => ({ value: s.id, label: s.name }))}
+                                            onChange={(opts) => setSucursalesSelected(opts as any[])}
                                             isMulti
+                                            classNamePrefix="rs"
                                         />
+                                        <FieldError msg={signupForm.errors.sucursales as unknown as string} />
                                     </div>
 
+                                    {/* Provincia */}
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="provincia">Provincia</label>
                                         <select
-                                            required
-                                            onChange={(ev) => signupForm.setData('provincia', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            name="provincia"
                                             id="provincia"
+                                            name="provincia"
+                                            required
+                                            className={inputClass(!!signupForm.errors.provincia)}
+                                            onChange={(e) => signupForm.setData('provincia', e.target.value)}
+                                            aria-invalid={!!signupForm.errors.provincia}
+                                            defaultValue=""
                                         >
-                                            <option disabled selected value="">
+                                            <option disabled value="">
                                                 Selecciona una provincia
                                             </option>
-
                                             {provincias?.map((pr) => (
                                                 <option key={pr.id} value={pr.name}>
                                                     {pr.name}
                                                 </option>
                                             ))}
                                         </select>
+                                        <FieldError msg={signupForm.errors.provincia} />
                                     </div>
+
+                                    {/* Localidad dependiente */}
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="localidad">Localidad</label>
                                         <select
-                                            required
-                                            onChange={(ev) => signupForm.setData('localidad', ev.target.value)}
-                                            className="focus:outline-primary-orange h-[45px] w-full pl-3 outline-1 outline-[#DDDDE0] transition duration-300"
-                                            name="localidad"
                                             id="localidad"
+                                            name="localidad"
+                                            required
+                                            className={inputClass(!!signupForm.errors.localidad)}
+                                            onChange={(e) => signupForm.setData('localidad', e.target.value)}
+                                            aria-invalid={!!signupForm.errors.localidad}
+                                            value={signupForm.data.localidad || ''}
                                         >
-                                            <option disabled selected value="">
+                                            <option disabled value="">
                                                 Selecciona una localidad
                                             </option>
-
                                             {provincias
-                                                ?.find((pr) => pr.name === signupForm?.data?.provincia)
-                                                ?.localidades.map((loc, index) => (
-                                                    <option key={index} value={loc.name}>
+                                                ?.find((pr) => pr.name === signupForm.data.provincia)
+                                                ?.localidades?.map((loc: any, i: number) => (
+                                                    <option key={i} value={loc.name}>
                                                         {loc.name}
                                                     </option>
                                                 ))}
                                         </select>
+                                        <FieldError msg={signupForm.errors.localidad} />
                                     </div>
                                 </div>
+
+                                {/* acciones */}
                                 <div className="flex flex-row justify-between gap-4">
                                     <button
                                         type="button"
@@ -391,7 +444,9 @@ export default function Clientes() {
                                     >
                                         Cancelar
                                     </button>
-                                    <button className="bg-primary-orange col-span-2 h-[43px] w-full text-white">Regsitrar cliente</button>
+                                    <button disabled={signupForm.processing} className="bg-primary-orange col-span-2 h-[43px] w-full text-white">
+                                        {signupForm.processing ? 'Registrando...' : 'Registrar cliente'}
+                                    </button>
                                 </div>
                             </form>
                         </motion.div>
