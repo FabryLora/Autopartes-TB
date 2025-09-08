@@ -52,8 +52,9 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
     }, [margenSwitch]);
 
     const handlePageChange = (url) => {
+        const secureUrl = url.replace('http://', 'https://');
         router.get(
-            url,
+            secureUrl,
             {},
             {
                 preserveState: true,
