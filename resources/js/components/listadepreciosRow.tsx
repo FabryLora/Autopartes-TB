@@ -1,4 +1,33 @@
+import axios from 'axios';
+
 export default function ListaDePreciosRow({ lista }) {
+    const handleDownload = async () => {
+        try {
+            const filename = lista?.archivo.split('/').pop();
+            // Make a GET request to the download endpoint
+            const response = await axios.get(`/descargar/archivo/${filename}`, {
+                responseType: 'blob', // Important for file downloads
+            });
+
+            // Create a link element to trigger the download
+            const fileType = response.headers['content-type'] || 'application/octet-stream';
+            const blob = new Blob([response.data], { type: fileType });
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = lista?.name; // Descargar con el nombre original
+            document.body.appendChild(a);
+            a.click();
+
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Download failed:', error);
+
+            // Optional: show user-friendly error message
+            alert('Failed to download the file. Please try again.');
+        }
+    };
     return (
         <>
             <div className="grid grid-cols-5 gap-2 border-b py-2 text-[#74716A] max-sm:w-full max-sm:grid-cols-1 max-sm:gap-4 max-sm:py-4">
@@ -34,9 +63,9 @@ export default function ListaDePreciosRow({ lista }) {
                     {lista?.peso_archivo}
                 </div>
                 <div className="flex items-center max-sm:mt-2 max-sm:justify-center">
-                    <a href={lista?.archivo} target="_blank" rel="noopener noreferrer" className="block w-full max-sm:w-auto">
-                        <button className="bg-primary-orange h-10 w-full min-w-[138px] font-bold text-white max-sm:px-6">Ver Online</button>
-                    </a>
+                    <button onClick={handleDownload} className="block w-full max-sm:w-auto">
+                        <button className="bg-primary-orange h-10 w-full min-w-[138px] font-bold text-white max-sm:px-6">Descargar</button>
+                    </button>
                 </div>
             </div>
         </>

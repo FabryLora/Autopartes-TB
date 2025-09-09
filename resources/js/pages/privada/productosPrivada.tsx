@@ -7,9 +7,10 @@ import toast from 'react-hot-toast';
 import DefaultLayout from '../defaultLayout';
 
 export default function ProductosPrivada({ categorias, subcategorias }) {
-    const { productos, auth, clienteSeleccionado, id, modelo_id, code, code_oem, desc_visible, flash } = usePage().props;
+    const { productos, auth, clienteSeleccionado, id, modelo_id, code, code_oem, desc_visible, flash, medida } = usePage().props;
     const user = auth.user;
-
+    const [scrollStates, setScrollStates] = useState({});
+    const containerRefs = useRef({});
     useEffect(() => {
         if (flash?.success) toast.success(flash.success);
         if (flash?.error) toast.error(flash.error);
@@ -21,6 +22,7 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
         { name: 'code', filtro: code, valor: code },
         { name: 'code_oem', filtro: code_oem, valor: code_oem },
         { name: 'descripcion', filtro: desc_visible, valor: desc_visible },
+        { name: 'medida', filtro: medida, valor: medida },
     ]);
 
     useEffect(() => {
@@ -30,8 +32,9 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
             { name: 'code', filtro: code, valor: code },
             { name: 'code_oem', filtro: code_oem, valor: code_oem },
             { name: 'descripcion', filtro: desc_visible, valor: desc_visible },
+            { name: 'medida', filtro: medida, valor: medida },
         ]);
-    }, [id, modelo_id, code, code_oem, desc_visible]);
+    }, [id, modelo_id, code, code_oem, desc_visible, medida]);
 
     const [margenSwitch, setMargenSwitch] = useState(false);
     const [vendedorScreen, setVendedorScreen] = useState(user?.rol == 'vendedor' && clienteSeleccionado == null);
@@ -75,6 +78,16 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
             },
             {
                 preserveScroll: true,
+                onSuccess: () => {
+                    // Resetear el formulario
+                    formRef.current.reset();
+
+                    // Enfocar el primer input
+                    const firstInput = formRef.current.querySelector('input[name="code"]');
+                    if (firstInput) {
+                        firstInput.focus();
+                    }
+                },
             },
         );
     };
@@ -121,11 +134,26 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
 
     const [openCategoria, setOpenCategoria] = useState(id ? id : null);
 
+    useEffect(() => {
+        if (openCategoria && containerRefs.current[openCategoria]) {
+            const container = containerRefs.current[openCategoria];
+            setTimeout(() => {
+                const contentHeight = container.scrollHeight;
+                const needsScroll = contentHeight > 500;
+
+                setScrollStates((prev) => ({
+                    ...prev,
+                    [openCategoria]: needsScroll,
+                }));
+            }, 350);
+        }
+    }, [openCategoria]);
+
     const toggleCategoria = (catId) => {
         setOpenCategoria(openCategoria === catId ? null : catId);
     };
 
-    const currentQuery = { id, modelo_id, code, code_oem, desc_visible };
+    const currentQuery = { id, modelo_id, code, code_oem, desc_visible, medida };
 
     return (
         <DefaultLayout>
@@ -241,7 +269,7 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                         </select>
 
                         <input
-                            defaultValue={desc_visible || ''}
+                            defaultValue={medida || ''}
                             type="text"
                             name="medida"
                             placeholder="Medida"
@@ -283,6 +311,7 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                         <div className="flex w-full flex-col">
                             {categorias?.map((cat) => {
                                 const isOpen = openCategoria == cat.id;
+                                const needsScroll = scrollStates[cat.id] || false;
                                 return (
                                     <div key={cat.id} className="flex flex-col">
                                         <div className="flex flex-row items-center border-t py-3">
@@ -311,7 +340,10 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                                                 isOpen ? 'translate-y-0 grid-rows-[1fr] opacity-100' : '-translate-y-1 grid-rows-[0fr] opacity-0'
                                             }`}
                                         >
-                                            <div className="min-h-0">
+                                            <div
+                                                ref={(el) => (containerRefs.current[cat.id] = el)}
+                                                className={`max-h-[500px] min-h-0 ${needsScroll ? 'overflow-y-auto' : 'overflow-y-hidden'}`}
+                                            >
                                                 {cat.subcategorias && (
                                                     <div className="flex flex-col pl-4">
                                                         {cat.subcategorias.map((subcat) => (
@@ -353,6 +385,14 @@ export default function ProductosPrivada({ categorias, subcategorias }) {
                                         </div>
                                     );
                                 })}
+                            {Object.entries(currentQuery).filter(([k, v]) => v != null).length > 0 && (
+                                <Link
+                                    href={route('index.privada.productos')}
+                                    className="flex flex-row items-center gap-1 rounded-sm bg-red-500 px-2 py-1 text-white"
+                                >
+                                    Borrar Filtros
+                                </Link>
+                            )}
                         </div>
                         <div className="flex flex-row items-center gap-2">
                             <p className="text-[16px] max-sm:text-[14px]">Vista mostrador</p>

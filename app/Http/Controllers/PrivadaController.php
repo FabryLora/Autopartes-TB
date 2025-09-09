@@ -127,19 +127,16 @@ class   PrivadaController extends Controller
 
     public function hacerPedido(Request $request)
     {
-
-        $pedido = Pedido::create(
-            [
-                'user_id' => session('cliente_seleccionado') ? session('cliente_seleccionado')->id : auth()->id(),
-                'tipo_entrega' => $request->tipo_entrega,
-                'descuento' => $request->descuento,
-                'mensaje' => $request->mensaje,
-                'forma_pago' => $request->forma_pago,
-                'subtotal' => $request->subtotal,
-                'iva' => $request->iva,
-                'total' => $request->total,
-            ]
-        );
+        $pedido = Pedido::create([
+            'user_id' => session('cliente_seleccionado') ? session('cliente_seleccionado')->id : auth()->id(),
+            'tipo_entrega' => $request->tipo_entrega,
+            'descuento' => $request->descuento,
+            'mensaje' => $request->mensaje,
+            'forma_pago' => $request->forma_pago,
+            'subtotal' => $request->subtotal,
+            'iva' => $request->iva,
+            'total' => $request->total,
+        ]);
 
         foreach (Cart::content() as $item) {
             PedidoProducto::create([
@@ -150,14 +147,16 @@ class   PrivadaController extends Controller
             ]);
         }
 
-
-
-        // Enviar correo al administrador (o a la dirección que desees)
+        // Enviar correo
         Mail::to(Contacto::first()->mail_pedidos)->send(new PedidoMail($pedido, $request->file('archivo')));
 
-        Cart::destroy();
+        // IMPORTANTE: Eliminar el carrito almacenado en base de datos
+        $userId = session('cliente_seleccionado') ? session('cliente_seleccionado')->id : auth()->id();
+        Cart::erase($userId);
 
-        // Devolver mensaje de éxito al usuario
+        // Luego destruir el carrito en memoria
+        Cart::instance('default')->destroy();
+
         session([
             'pedido_id' => $pedido->id,
         ]);

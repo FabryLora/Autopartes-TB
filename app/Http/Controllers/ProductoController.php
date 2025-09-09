@@ -256,6 +256,7 @@ class ProductoController extends Controller
             'code' => $request->code ?? null,
             'code_oem' => $request->code_oem ?? null,
             'desc_visible' => $request->descripcion ?? null,
+            'medida' => $request->medida ?? null,
 
         ]);
     }

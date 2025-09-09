@@ -4,6 +4,7 @@ import { router, useForm, usePage } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
+import defaultImage from '../../images/logos/logotb-azul.png';
 /* import defaultPhoto from '../../images/defaultPhoto.png'; */
 
 export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) {
@@ -187,7 +188,7 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
                 )}
 
                 <button onClick={() => setImageSlider(true)} className="h-[85px] w-[85px]">
-                    <img src={producto?.imagenes[0]?.image} className="h-full w-full object-contain" alt="" />
+                    <img src={producto?.imagenes[0]?.image ?? defaultImage} className="h-full w-full object-contain" alt="" />
                 </button>
                 <p className="">{producto?.code}</p>
                 {/* mostrar uno debajo del otro */}
@@ -242,7 +243,26 @@ export default function ProductosPrivadaRow({ producto, margenSwitch, margen }) 
 
                 <p className="flex justify-end">
                     <div className="flex h-[38px] w-[99px] flex-row items-center border border-[#EEEEEE] px-2">
-                        <input value={cantidad} type="text" className="h-full w-full focus:outline-none" />
+                        <input
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                // Permitir valores vacíos temporalmente para que el usuario pueda borrar
+                                if (value === '' || (!isNaN(value) && Number(value) >= 0)) {
+                                    setCantidad(value);
+                                }
+                            }}
+                            onBlur={(e) => {
+                                const value = e.target.value;
+                                // Si está vacío o es menor que la unidad pack, establecer la cantidad mínima
+                                if (value === '' || Number(value) < Number(producto?.unidad_pack)) {
+                                    setCantidad(producto?.unidad_pack || 0);
+                                }
+                            }}
+                            min={producto?.unidad_pack}
+                            value={cantidad}
+                            type="number"
+                            className="h-full w-full focus:outline-none"
+                        />
                         <div className="flex h-full flex-col justify-center">
                             <button onClick={() => setCantidad(Number(cantidad) + Number(producto?.unidad_pack))} className="flex items-center">
                                 <FontAwesomeIcon icon={faChevronUp} size="xs" />
